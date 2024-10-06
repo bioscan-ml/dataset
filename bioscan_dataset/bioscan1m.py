@@ -45,7 +45,16 @@ COLUMN_DTYPES = {
     "author": "category",
 }
 
-usecols = [
+PARTITIONING_VERSIONS = [
+    "large_diptera_family",
+    "medium_diptera_family",
+    "small_diptera_family",
+    "large_insect_order",
+    "medium_insect_order",
+    "small_insect_order",
+]
+
+USECOLS = [
     "sampleid",
     "uri",
     "phylum",
@@ -71,12 +80,36 @@ class BIOSCAN1M(VisionDataset):
         the image directory, BIOSCAN-1M.
 
     split : str, default="train"
-        The dataset partition, one of ``"train"``, ``"val"``, or ``"test"``.
+        The dataset partition, one of:
+
+        - ``"train"``
+        - ``"val"``
+        - ``"test"``
+        - ``"no_split"``
+
+    partitioning_version : str, default="large_diptera_family"
+        The dataset partitioning version, one of:
+
+        - ``"large_diptera_family"``
+        - ``"medium_diptera_family"``
+        - ``"small_diptera_family"``
+        - ``"large_insect_order"``
+        - ``"medium_insect_order"``
+        - ``"small_insect_order"``
 
     target_type : str, default="species"
         Type of target to use. One of:
-        ``"phylum"``, ``"class"``, ``"order"``, ``"family"``, ``"subfamily"``,
-        ``"tribe"``, ``"genus"``, ``"species"``, ``"uri"``.
+
+        - ``"phylum"``
+        - ``"class"``
+        - ``"order"``
+        - ``"family"``
+        - ``"subfamily"``
+        - ``"tribe"``
+        - ``"genus"``
+        - ``"species"``
+        - ``"uri"``
+
         Where ``"uri"`` corresponds to the BIN cluster label.
 
     transform : Callable, default=None
@@ -90,7 +123,8 @@ class BIOSCAN1M(VisionDataset):
         self,
         root,
         split="train",
-        target_type="species",
+        partitioning_version="large_diptera_family",
+        target_type="family",
         transform=None,
         target_transform=None,
     ) -> None:
@@ -101,6 +135,7 @@ class BIOSCAN1M(VisionDataset):
         self.root = root
         self.image_dir = os.path.expanduser(os.path.join(self.root, "bioscan", "images", "cropped_256"))
 
+        self.partitioning_version = partitioning_version
         self.split = split
         if isinstance(target_type, list):
             self.target_type = target_type
@@ -114,7 +149,7 @@ class BIOSCAN1M(VisionDataset):
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self.metadata = self._load_metadata()
-        self._partition(split)
+        self._partition()
 
     def __len__(self):
         return len(self.metadata)
@@ -182,7 +217,7 @@ class BIOSCAN1M(VisionDataset):
             os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"),
             sep="\t",
             dtype=COLUMN_DTYPES,
-            usecols=usecols,
+            usecols=USECOLS + PARTITIONING_VERSIONS,
         )
         # Taxonomic label column names
         label_cols = [
@@ -220,7 +255,11 @@ class BIOSCAN1M(VisionDataset):
             df[c + "_index"] = df[c].cat.codes
         return df
 
-    def _partition(self, partition_name):
+    def _partition(self):
+        select = self.metadata[self.partitioning_version] == self.split
+        self.metadata = self.metadata.loc[select]
+
+    def _clibd_partition(self, partition_name):
         if partition_name == "train":
             partition_files = ["train_seen", "test_unseen_keys"]
         elif partition_name == "val":
