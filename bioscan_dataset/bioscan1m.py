@@ -14,7 +14,7 @@ import pandas as pd
 import PIL
 from torchvision.datasets.vision import VisionDataset
 
-column_dtypes = {
+COLUMN_DTYPES = {
     "sampleid": str,
     "processid": str,
     "uri": str,
@@ -167,7 +167,7 @@ class BIOSCAN1M(VisionDataset):
         df = pd.read_csv(
             os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"),
             sep="\t",
-            dtype=column_dtypes,
+            dtype=COLUMN_DTYPES,
             usecols=usecols,
         )
         # Convert missing values to NaN

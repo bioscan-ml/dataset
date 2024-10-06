@@ -14,7 +14,7 @@ import pandas as pd
 import PIL
 from torchvision.datasets.vision import VisionDataset
 
-df_dtypes = {
+COLUMN_DTYPES = {
     "processid": str,
     "sampleid": str,
     "taxon": "category",
@@ -223,7 +223,7 @@ class BIOSCAN5M(VisionDataset):
         pandas.DataFrame
             The metadata DataFrame.
         """
-        df = pd.read_csv(self.metadata_path, dtype=df_dtypes, usecols=df_usecols)
+        df = pd.read_csv(self.metadata_path, dtype=COLUMN_DTYPES, usecols=df_usecols)
         if self.max_nucleotides is not None:
             df["dna_barcode"] = df["dna_barcode"].str[: self.max_nucleotides]
         if self.reduce_repeated_barcodes:
