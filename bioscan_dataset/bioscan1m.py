@@ -184,8 +184,21 @@ class BIOSCAN1M(VisionDataset):
             dtype=COLUMN_DTYPES,
             usecols=usecols,
         )
+        # Taxonomic label column names
+        label_cols = [
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "subfamily",
+            "tribe",
+            "genus",
+            "species",
+            "uri",
+        ]
         # Convert missing values to NaN
-        df[df == "not_classified"] = pd.NA
+        for c in label_cols:
+            df.loc[df[c] == "not_classified", c] = pd.NA
         # Fix some tribe labels which were only partially applied
         df.loc[df["genus"].notna() & (df["genus"] == "Asteia"), "tribe"] = "Asteiini"
         df.loc[df["genus"].notna() & (df["genus"] == "Nemorilla"), "tribe"] = "Winthemiini"
@@ -202,17 +215,6 @@ class BIOSCAN1M(VisionDataset):
         sel = df["subfamily"].isna() & df["tribe"].notna()
         df.loc[sel, "subfamily"] = "unassigned " + df.loc[sel, "family"]
         # Convert label columns to category dtype; add index columns to use for targets
-        label_cols = [
-            "phylum",
-            "class",
-            "order",
-            "family",
-            "subfamily",
-            "tribe",
-            "genus",
-            "species",
-            "uri",
-        ]
         for c in label_cols:
             df[c] = df[c].astype("category")
             df[c + "_index"] = df[c].cat.codes
