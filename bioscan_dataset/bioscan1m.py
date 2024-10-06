@@ -111,7 +111,7 @@ class BIOSCAN1M(VisionDataset):
             raise RuntimeError("target_transform is specified but target_type is empty")
 
         if not self._check_exists():
-            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.image_dir}.")
+            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self.metadata = self._load_metadata()
         self._partition(split)
@@ -140,19 +140,33 @@ class BIOSCAN1M(VisionDataset):
 
         return X, target
 
-    def _check_exists(self) -> bool:
+    def _check_exists(self, verbose=0) -> bool:
         """Check if the dataset is already downloaded and extracted.
+
+        Parameters
+        ----------
+        verbose : int, default=0
+            Verbosity level.
 
         Returns
         -------
         bool
             True if the dataset is already downloaded and extracted, False otherwise.
         """
-        check = os.path.exists(os.path.join(self.image_dir, "part18", "4900531.jpg"))
-        check &= os.path.exists(os.path.join(self.image_dir, "part113", "BIOUG68114-B02.jpg"))
-        check &= os.path.exists(os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"))
-        check &= os.path.exists(os.path.join(self.root, "seen_keys.txt"))
-        return check
+        paths_to_check = [
+            os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"),
+            os.path.join(self.image_dir, "part18", "4900531.jpg"),
+            os.path.join(self.image_dir, "part113", "BIOUG68114-B02.jpg"),
+        ]
+        check_all = True
+        for p in paths_to_check:
+            check = os.path.exists(p)
+            if verbose >= 1 and not check:
+                print(f"File missing: {p}")
+            if verbose >= 2 and check:
+                print(f"File present: {p}")
+            check_all &= check
+        return check_all
 
     def _load_metadata(self) -> pd.DataFrame:
         """Extract metadata from sample names and creates a pandas DataFrame.
