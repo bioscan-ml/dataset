@@ -133,6 +133,7 @@ class BIOSCAN1M(VisionDataset):
 
         self.metadata = None
         self.root = root
+        self.metadata_path = os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv")
         self.image_dir = os.path.expanduser(os.path.join(self.root, "bioscan", "images", "cropped_256"))
 
         self.partitioning_version = partitioning_version
@@ -189,7 +190,7 @@ class BIOSCAN1M(VisionDataset):
             True if the dataset is already downloaded and extracted, False otherwise.
         """
         paths_to_check = [
-            os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"),
+            self.metadata_path,
             os.path.join(self.image_dir, "part18", "4900531.jpg"),
             os.path.join(self.image_dir, "part113", "BIOUG68114-B02.jpg"),
         ]
@@ -214,7 +215,7 @@ class BIOSCAN1M(VisionDataset):
         None
         """
         df = pd.read_csv(
-            os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv"),
+            self.metadata_path,
             sep="\t",
             dtype=COLUMN_DTYPES,
             usecols=USECOLS + PARTITIONING_VERSIONS,
