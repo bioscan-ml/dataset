@@ -12,6 +12,7 @@ import os
 
 import pandas as pd
 import PIL
+from torchvision.datasets.utils import check_integrity, download_and_extract_archive
 from torchvision.datasets.vision import VisionDataset
 
 COLUMN_DTYPES = {
@@ -120,7 +121,22 @@ class BIOSCAN5M(VisionDataset):
 
     target_transform : Callable, default=None
         Label transformation pipeline.
+
+    download : bool, default=False
+        If true, downloads the metadata from the internet and puts it in root directory.
+        If metadata is already downloaded, it is not downloaded again.
     """
+
+    base_folder = "bioscan5m"
+    meta = {
+        "urls": [
+            "https://zenodo.org/records/11973457/files/BIOSCAN_5M_Insect_Dataset_metadata_MultiTypes.zip",
+            "https://huggingface.co/datasets/Gharaee/BIOSCAN-5M/resolve/main/BIOSCAN_5M_Insect_Dataset_metadata_MultiTypes.zip",  # noqa: E501
+        ],
+        "filename": os.path.join("metadata", "csv", "BIOSCAN_5M_Insect_Dataset_metadata.csv"),
+        "archive_md5": "ac381b69fafdbaedc2f9cfb89e3571f7",
+        "csv_md5": "603020b433ef566946efba7a08dbb23d",
+    }
 
     def __init__(
         self,
@@ -134,6 +150,7 @@ class BIOSCAN5M(VisionDataset):
         transform=None,
         dna_transform=None,
         target_transform=None,
+        download=False,
     ) -> None:
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
@@ -141,8 +158,8 @@ class BIOSCAN5M(VisionDataset):
         self.metadata = None
         self.root = root
         self.image_package = image_package
-        self.image_dir = os.path.join(self.root, "images", self.image_package)
-        self.metadata_path = os.path.join(self.root, "metadata", "csv", "BIOSCAN_5M_Insect_Dataset_metadata.csv")
+        self.image_dir = os.path.join(self.root, self.base_folder, "images", self.image_package)
+        self.metadata_path = os.path.join(self.root, self.base_folder, self.meta["filename"])
 
         self.split = split
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
@@ -162,8 +179,11 @@ class BIOSCAN5M(VisionDataset):
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
 
+        if download:
+            self.download()
+
         if not self._check_exists():
-            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.image_dir}.")
+            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self.metadata = self._load_metadata()
 
@@ -201,18 +221,53 @@ class BIOSCAN5M(VisionDataset):
         values.append(target)
         return tuple(values)
 
-    def _check_exists(self) -> bool:
+    def _check_integrity_metadata(self, verbose=1) -> bool:
+        p = self.metadata_path
+        check = check_integrity(p, self.meta["csv_md5"])
+        if verbose >= 1 and not check:
+            print(f"File missing: {p}")
+        if verbose >= 2 and check:
+            print(f"File present: {p}")
+        return check
+
+    def _check_integrity_images(self, verbose=1) -> bool:
+        p = self.image_dir
+        check = os.path.isdir(p)
+        if verbose >= 1 and not check:
+            print(f"Directory missing: {p}")
+        if verbose >= 2 and check:
+            print(f"Directory present: {p}")
+        return check
+
+    def _check_integrity(self, verbose=1) -> bool:
         """Check if the dataset is already downloaded and extracted.
+
+        Parameters
+        ----------
+        verbose : int, default=1
+            Verbosity level.
 
         Returns
         -------
         bool
             True if the dataset is already downloaded and extracted, False otherwise.
         """
-        check = os.path.isfile(self.metadata_path)
+        check = True
+        check &= self._check_integrity_metadata()
         if "images" in self.modality:
-            check &= os.path.isdir(self.image_dir)
+            check &= self._check_integrity_images()
         return check
+
+    def _download_metadata(self) -> None:
+        if self._check_integrity_metadata():
+            print("Metadata CSV file already downloaded and verified")
+            return
+        download_and_extract_archive(self.meta["urls"][0], self.root, md5=self.meta["archive_md5"])
+
+    def download(self) -> None:
+        self._download_metadata()
+        if "images" in self.modality:
+            raise NotImplementedError("Automatically downloading image packages is not yet implemented.")
 
     def _load_metadata(self) -> pd.DataFrame:
         """
