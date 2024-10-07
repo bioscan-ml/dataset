@@ -41,7 +41,7 @@ COLUMN_DTYPES = {
     "chunk": str,
 }
 
-df_usecols = [
+USECOLS = [
     "processid",
     "chunk",
     "phylum",
@@ -410,7 +410,7 @@ class BIOSCAN5M(VisionDataset):
         pandas.DataFrame
             The metadata DataFrame.
         """
-        df = pd.read_csv(self.metadata_path, dtype=COLUMN_DTYPES, usecols=df_usecols)
+        df = pd.read_csv(self.metadata_path, dtype=COLUMN_DTYPES, usecols=USECOLS)
         if self.max_nucleotides is not None:
             df["dna_barcode"] = df["dna_barcode"].str[: self.max_nucleotides]
         if self.reduce_repeated_barcodes:
