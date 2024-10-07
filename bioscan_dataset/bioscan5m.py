@@ -84,14 +84,22 @@ class BIOSCAN5M(VisionDataset):
     Parameters
     ----------
     root : str
-        The root directory, to contain the downloaded tarball file, and
-        the image directory, BIOSCAN-5M.
+        The root directory, to contain the downloaded tarball files, and data directory.
 
     split : str, default="train"
         The dataset partition.
-        One of: ``"pretrain"``, ``"train"``, ``"val"``, ``"test"``,
-        ``"key_unseen"``, ``"val_unseen"``, ``"test_unseen"``,
-        ``"other_heldout"``, or ``"all"``.
+        One of:
+
+        - ``"pretrain"``
+        - ``"train"``
+        - ``"val"``
+        - ``"test"``
+        - ``"key_unseen"``
+        - ``"val_unseen"``
+        - ``"test_unseen"``
+        - ``"other_heldout"``
+        - ``"all"``
+
         Set to ``"all"`` to include all splits.
 
     modality : str or Iterable[str], default=("image", "dna")
@@ -110,8 +118,15 @@ class BIOSCAN5M(VisionDataset):
 
     target_type : str or Iterable[str], default="species"
         Type of target to use. One of, or a list of:
-        ``"phylum"``, ``"class"``, ``"order"``, ``"family"``, ``"subfamily"``,
-        ``"genus"``, ``"species"``, ``"dna_bin"``.
+
+        - ``"phylum"``
+        - ``"class"``
+        - ``"order"``
+        - ``"family"``
+        - ``"subfamily"``
+        - ``"genus"``
+        - ``"species"``
+        - ``"dna_bin"``
 
     transform : Callable, default=None
         Image transformation pipeline.
