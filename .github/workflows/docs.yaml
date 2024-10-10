@@ -38,24 +38,3 @@ jobs:
       uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "docs/"
-
-    - name: Determine default branch
-      run: |
-        DEFAULT_BRANCH=$(git remote show origin | awk '/HEAD branch/ {print $NF}')
-        echo "default_branch=$DEFAULT_BRANCH" >> $GITHUB_ENV
-        echo "default_branch_ref=refs/heads/$DEFAULT_BRANCH" >> $GITHUB_ENV
-
-    - name: Determine whether repo is public
-      run: |
-        REMOTE_HTTP=$(git remote get-url origin | sed -e "s|:\([^/]\)|/\1|g" -e "s|^git@|https://|" -e "s|\.git$||")
-        echo "Probing $REMOTE_HTTP"
-        if wget -q --method=HEAD ${REMOTE_HTTP}; then IS_PUBLIC=1; else IS_PUBLIC=0; fi
-        echo "is_public=$IS_PUBLIC"
-        echo "is_public=$IS_PUBLIC" >> $GITHUB_ENV
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == env.default_branch_ref && env.is_public == 1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: "docs/_build/html/"
