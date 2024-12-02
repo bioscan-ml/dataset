@@ -96,10 +96,8 @@ def load_metadata(
 
     reduce_repeated_barcodes : str or bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
-        If ``base``, duplicated barcodes are removed after truncating them to the length
-        specified by ``max_nucleotides``.
-        If ``"rstrip_Ns"``, duplicated barcodes are removed after truncating them to the
-        length specified by ``max_nucleotides`` and stripping trailing Ns.
+        If ``True``, duplicated barcodes are removed after truncating the barcodes to
+        the length specified by ``max_nucleotides`` and stripping trailing Ns.
         If ``False`` (default) no reduction is performed.
 
     split : str, default=None
@@ -154,14 +152,9 @@ def load_metadata(
         # by the order in which the data was collected.
         df = df.sample(frac=1, random_state=0)
         # Drop duplicated barcodes
-        if reduce_repeated_barcodes == "rstrip_Ns":
-            df["nucraw_strip"] = df["nucraw"].str.rstrip("N")
-            df = df.drop_duplicates(subset=["nucraw_strip"])
-            df.drop(columns=["nucraw_strip"], inplace=True)
-        elif reduce_repeated_barcodes == "base":
-            df = df.drop_duplicates(subset=["nucraw"])
-        else:
-            raise ValueError(f"Unfamiliar reduce_repeated_barcodes value: {reduce_repeated_barcodes}")
+        df["nucraw_strip"] = df["nucraw"].str.rstrip("N")
+        df = df.drop_duplicates(subset=["nucraw_strip"])
+        df.drop(columns=["nucraw_strip"], inplace=True)
         # Re-order the data (reverting the shuffle)
         df = df.sort_index()
     # Convert missing values to NaN
@@ -224,8 +217,8 @@ class BIOSCAN1M(VisionDataset):
         Which data modalities to use. One of, or a list of:
         ``"image"``, ``"dna"``.
 
-    reduce_repeated_barcodes : str or bool, default=False
-        Whether to reduce the dataset to only one sample per barcodes.
+    reduce_repeated_barcodes : bool, default=False
+        Whether to reduce the dataset to only one sample per barcode.
 
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.

@@ -102,12 +102,10 @@ def load_metadata(
         Note that the barcode should only be 660 base pairs long.
         Characters beyond this length are unlikely to be accurate.
 
-    reduce_repeated_barcodes : str or bool, default=False
+    reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
-        If ``base``, duplicated barcodes are removed after truncating them to the length
-        specified by ``max_nucleotides``.
-        If ``"rstrip_Ns"``, duplicated barcodes are removed after truncating them to the
-        length specified by ``max_nucleotides`` and stripping trailing Ns.
+        If ``True``, duplicated barcodes are removed after truncating the barcodes to
+        the length specified by ``max_nucleotides`` and stripping trailing Ns.
         If ``False`` (default) no reduction is performed.
 
     split : str, default=None
@@ -147,14 +145,9 @@ def load_metadata(
         # by the order in which the data was collected.
         df = df.sample(frac=1, random_state=0)
         # Drop duplicated barcodes
-        if reduce_repeated_barcodes == "rstrip_Ns":
-            df["dna_barcode_strip"] = df["dna_barcode"].str.rstrip("N")
-            df = df.drop_duplicates(subset=["dna_barcode_strip"])
-            df.drop(columns=["dna_barcode_strip"], inplace=True)
-        elif reduce_repeated_barcodes == "base":
-            df = df.drop_duplicates(subset=["dna_barcode"])
-        else:
-            raise ValueError(f"Unfamiliar reduce_repeated_barcodes value: {reduce_repeated_barcodes}")
+        df["dna_barcode_strip"] = df["dna_barcode"].str.rstrip("N")
+        df = df.drop_duplicates(subset=["dna_barcode_strip"])
+        df.drop(columns=["dna_barcode_strip"], inplace=True)
         # Re-order the data (reverting the shuffle)
         df = df.sort_index()
     # Filter to just the split of interest
@@ -219,8 +212,8 @@ class BIOSCAN5M(VisionDataset):
         The package to load images from. One of:
         ``"original_full"``, ``"cropped"``, ``"original_256"``, ``"cropped_256"``.
 
-    reduce_repeated_barcodes : str or bool, default=False
-        Whether to reduce the dataset to only one sample per barcodes.
+    reduce_repeated_barcodes : bool, default=False
+        Whether to reduce the dataset to only one sample per barcode.
 
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
