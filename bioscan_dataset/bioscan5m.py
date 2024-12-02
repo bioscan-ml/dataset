@@ -56,6 +56,9 @@ USECOLS = [
     "split",
 ]
 
+SEEN_SPLITS = ["train", "val", "test"]
+UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
+
 
 def get_image_path(row):
     """Get the image path for a row in the metadata DataFrame.
@@ -119,7 +122,9 @@ def load_metadata(
         - ``"val_unseen"``
         - ``"test_unseen"``
         - ``"other_heldout"``
-        - ``"all"``
+        - ``"all"``, which is the union of all splits
+        - ``"seen"``, which is the union of ``{"train", "val", "test"}``
+        - ``"unnseen"``, which is the union of ``{"key_unseen", "val_unseen", "test_unseen"}``
 
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
@@ -151,7 +156,13 @@ def load_metadata(
         # Re-order the data (reverting the shuffle)
         df = df.sort_index()
     # Filter to just the split of interest
-    if split is not None and split != "all":
+    if split is None or split == "all":
+        pass
+    elif split == "seen":
+        df = df[df["split"].isin(SEEN_SPLITS)]
+    elif split == "unseen":
+        df = df[df["split"].isin(UNSEEN_SPLITS)]
+    else:
         df = df[df["split"] == split]
     # Add index columns to use for targets
     label_cols = [
@@ -192,7 +203,9 @@ class BIOSCAN5M(VisionDataset):
         - ``"val_unseen"``
         - ``"test_unseen"``
         - ``"other_heldout"``
-        - ``"all"``
+        - ``"all"``, which is the union of all splits
+        - ``"seen"``, which is the union of ``{"train", "val", "test"}``
+        - ``"unnseen"``, which is the union of ``{"key_unseen", "val_unseen", "test_unseen"}``
 
         Set to ``"all"`` to include all splits.
 
@@ -410,6 +423,10 @@ class BIOSCAN5M(VisionDataset):
             split = self.split
         if split == "all":
             return all(self._check_integrity_images(split=s, verbose=verbose) for s in self.image_files)
+        if split == "seen":
+            return all(self._check_integrity_images(split=s, verbose=verbose) for s in SEEN_SPLITS)
+        if split == "unseen":
+            return all(self._check_integrity_images(split=s, verbose=verbose) for s in UNSEEN_SPLITS)
         check_all = True
         for file, data in self.image_files[split]:
             file = os.path.join(self.image_dir, file)
@@ -473,11 +490,13 @@ class BIOSCAN5M(VisionDataset):
         if self.split in ("all", "pretrain"):
             self._download_image_zip("pretrain01")
             self._download_image_zip("pretrain02")
-        if self.split in ("all", "train"):
+        if self.split in ("all", "train", "seen"):
             self._download_image_zip("train")
         if self.split in (
             "all",
             "eval",
+            "seen",
+            "unseen",
             "val",
             "test",
             "key_unseen",
