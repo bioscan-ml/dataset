@@ -71,7 +71,7 @@ USECOLS = [
 
 
 class BIOSCAN1M(VisionDataset):
-    """`BIOSCAN-1M <https://biodiversitygenomics.net/1M_insects/>`_ Dataset.
+    """`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`_ Dataset.
 
     Parameters
     ----------

@@ -79,7 +79,7 @@ def get_image_path(row):
 
 class BIOSCAN5M(VisionDataset):
     """
-    BIOSCAN-5M Dataset.
+    `BIOSCAN-5M <https://github.com/bioscan-ml/BIOSCAN-5M>`_ Dataset.
 
     Parameters
     ----------
