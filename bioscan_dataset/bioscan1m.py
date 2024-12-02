@@ -305,28 +305,3 @@ class BIOSCAN1M(VisionDataset):
             usecols=USECOLS + PARTITIONING_VERSIONS,
         )
         return self.metadata
-
-    def _clibd_partition(self, partition_name):
-        if partition_name == "train":
-            partition_files = ["train_seen", "test_unseen_keys"]
-        elif partition_name == "val":
-            partition_files = ["test_seen", "seen_keys", "test_unseen"]
-        elif partition_name == "test":
-            partition_files = [
-                "seen_keys",
-                "test_seen",
-                "test_unseen",
-                "test_unseen_keys",
-            ]
-        elif os.path.join(self.root, partition_name + ".txt"):
-            partition_files = [partition_name]
-        else:
-            raise ValueError(f"Unrecognized partition name: {partition_name}")
-
-        partition_samples = []
-        for fname in partition_files:
-            with open(os.path.join(self.root, fname + ".txt"), "r") as f:
-                partition_samples += f.readlines()
-
-        partition_samples = [x.rstrip() for x in partition_samples]
-        self.metadata = self.metadata.loc[self.metadata["sampleid"].isin(partition_samples)]
