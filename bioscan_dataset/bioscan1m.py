@@ -73,6 +73,8 @@ USECOLS = [
 
 def load_metadata(
     metadata_path,
+    max_nucleotides=None,
+    reduce_repeated_barcodes=False,
     split=None,
     partitioning_version="large_diptera_family",
     dtype=COLUMN_DTYPES,
@@ -85,6 +87,20 @@ def load_metadata(
     ----------
     metadata_path : str
         Path to metadata file.
+
+    max_nucleotides : int, default=None
+        Maximum nucleotide sequence length to keep for the DNA barcodes.
+        Set to ``None`` to keep the original data without truncation (default).
+        Note that the barcode should only be 660 base pairs long.
+        Characters beyond this length are unlikely to be accurate.
+
+    reduce_repeated_barcodes : str or bool, default=False
+        Whether to reduce the dataset to only one sample per barcode.
+        If ``base``, duplicated barcodes are removed after truncating them to the length
+        specified by ``max_nucleotides``.
+        If ``"rstrip_Ns"``, duplicated barcodes are removed after truncating them to the
+        length specified by ``max_nucleotides`` and stripping trailing Ns.
+        If ``False`` (default) no reduction is performed.
 
     split : str, default=None
         The dataset partition, one of:
@@ -129,6 +145,25 @@ def load_metadata(
         "species",
         "uri",
     ]
+    # Truncate the DNA barcodes to the specified length
+    if max_nucleotides is not None:
+        df["nucraw"] = df["nucraw"].str[:max_nucleotides]
+    # Reduce the dataset to only one sample per barcode
+    if reduce_repeated_barcodes:
+        # Shuffle the data order, to avoid bias in the subsampling that could be induced
+        # by the order in which the data was collected.
+        df = df.sample(frac=1, random_state=0)
+        # Drop duplicated barcodes
+        if reduce_repeated_barcodes == "rstrip_Ns":
+            df["nucraw_strip"] = df["nucraw"].str.rstrip("N")
+            df = df.drop_duplicates(subset=["nucraw_strip"])
+            df.drop(columns=["nucraw_strip"], inplace=True)
+        elif reduce_repeated_barcodes == "base":
+            df = df.drop_duplicates(subset=["nucraw"])
+        else:
+            raise ValueError(f"Unfamiliar reduce_repeated_barcodes value: {reduce_repeated_barcodes}")
+        # Re-order the data (reverting the shuffle)
+        df = df.sort_index()
     # Convert missing values to NaN
     for c in label_cols:
         df.loc[df[c] == "not_classified", c] = pd.NA
@@ -189,6 +224,15 @@ class BIOSCAN1M(VisionDataset):
         Which data modalities to use. One of, or a list of:
         ``"image"``, ``"dna"``.
 
+    reduce_repeated_barcodes : str or bool, default=False
+        Whether to reduce the dataset to only one sample per barcodes.
+
+    max_nucleotides : int, default=None
+        Maximum number of nucleotides to keep in the DNA barcode.
+        Set to ``None`` to keep the original data without truncation (default).
+        Note that the barcode should only be 660 base pairs long.
+        Characters beyond this length are unlikely to be accurate.
+
     target_type : str, default="family"
         Type of target to use. One of:
 
@@ -220,6 +264,8 @@ class BIOSCAN1M(VisionDataset):
         split="train",
         partitioning_version="large_diptera_family",
         modality=("image", "dna"),
+        reduce_repeated_barcodes=False,
+        max_nucleotides=None,
         target_type="family",
         transform=None,
         dna_transform=None,
@@ -239,6 +285,8 @@ class BIOSCAN1M(VisionDataset):
 
         self.partitioning_version = partitioning_version
         self.split = split
+        self.reduce_repeated_barcodes = reduce_repeated_barcodes
+        self.max_nucleotides = max_nucleotides
         self.dna_transform = dna_transform
 
         if isinstance(modality, str):
@@ -327,6 +375,8 @@ class BIOSCAN1M(VisionDataset):
         """
         self.metadata = load_metadata(
             self.metadata_path,
+            max_nucleotides=self.max_nucleotides,
+            reduce_repeated_barcodes=self.reduce_repeated_barcodes,
             split=self.split,
             partitioning_version=self.partitioning_version,
             usecols=USECOLS + PARTITIONING_VERSIONS,

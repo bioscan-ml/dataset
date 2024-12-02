@@ -138,8 +138,10 @@ def load_metadata(
         The metadata DataFrame.
     """
     df = pd.read_csv(metadata_path, dtype=dtype, **kwargs)
+    # Truncate the DNA barcodes to the specified length
     if max_nucleotides is not None:
         df["dna_barcode"] = df["dna_barcode"].str[:max_nucleotides]
+    # Reduce the dataset to only one sample per barcode
     if reduce_repeated_barcodes:
         # Shuffle the data order, to avoid bias in the subsampling that could be induced
         # by the order in which the data was collected.
@@ -521,8 +523,8 @@ class BIOSCAN5M(VisionDataset):
         self.metadata = load_metadata(
             self.metadata_path,
             max_nucleotides=self.max_nucleotides,
-            split=self.split,
             reduce_repeated_barcodes=self.reduce_repeated_barcodes,
+            split=self.split,
             usecols=USECOLS,
         )
         return self.metadata
