@@ -65,6 +65,7 @@ USECOLS = [
     "tribe",
     "genus",
     "species",
+    "nucraw",
     "image_file",
     "chunk_number",
 ]
@@ -184,6 +185,10 @@ class BIOSCAN1M(VisionDataset):
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
 
+    modality : str or Iterable[str], default=("image", "dna")
+        Which data modalities to use. One of, or a list of:
+        ``"image"``, ``"dna"``.
+
     target_type : str, default="family"
         Type of target to use. One of:
 
@@ -202,6 +207,9 @@ class BIOSCAN1M(VisionDataset):
     transform : Callable, default=None
         Image transformation pipeline.
 
+    dna_transform : Callable, default=None
+        DNA barcode transformation pipeline.
+
     target_transform : Callable, default=None
         Label transformation pipeline.
     """
@@ -211,8 +219,10 @@ class BIOSCAN1M(VisionDataset):
         root,
         split="train",
         partitioning_version="large_diptera_family",
+        modality=("image", "dna"),
         target_type="family",
         transform=None,
+        dna_transform=None,
         target_transform=None,
         download=False,
     ) -> None:
@@ -229,6 +239,13 @@ class BIOSCAN1M(VisionDataset):
 
         self.partitioning_version = partitioning_version
         self.split = split
+        self.dna_transform = dna_transform
+
+        if isinstance(modality, str):
+            self.modality = [modality]
+        else:
+            self.modality = list(modality)
+
         if isinstance(target_type, list):
             self.target_type = target_type
         else:
@@ -248,14 +265,23 @@ class BIOSCAN1M(VisionDataset):
     def __getitem__(self, index: int):
         sample = self.metadata.iloc[index]
         img_path = os.path.join(self.image_dir, f"part{sample['chunk_number']}", sample["image_file"])
-        X = PIL.Image.open(img_path)
+        values = []
+        for modality in self.modality:
+            if modality == "image":
+                X = PIL.Image.open(img_path)
+                if self.transform is not None:
+                    X = self.transform(X)
+            elif modality in ["dna_barcode", "dna", "barcode", "nucraw"]:
+                X = sample["nucraw"]
+                if self.dna_transform is not None:
+                    X = self.dna_transform(X)
+            else:
+                raise ValueError(f"Unfamiliar modality: {modality}")
+            values.append(X)
 
         target = []
         for t in self.target_type:
             target.append(sample[f"{t}_index"])
-
-        if self.transform is not None:
-            X = self.transform(X)
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
@@ -264,7 +290,8 @@ class BIOSCAN1M(VisionDataset):
         else:
             target = None
 
-        return X, target
+        values.append(target)
+        return tuple(values)
 
     def _check_exists(self, verbose=0) -> bool:
         """Check if the dataset is already downloaded and extracted.
