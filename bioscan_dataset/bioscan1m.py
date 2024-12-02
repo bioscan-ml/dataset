@@ -73,7 +73,7 @@ USECOLS = [
 
 def load_metadata(
     metadata_path,
-    max_nucleotides=None,
+    max_nucleotides=660,
     reduce_repeated_barcodes=False,
     split=None,
     partitioning_version="large_diptera_family",
@@ -88,9 +88,9 @@ def load_metadata(
     metadata_path : str
         Path to metadata file.
 
-    max_nucleotides : int, default=None
+    max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
-        Set to ``None`` to keep the original data without truncation (default).
+        Set to ``None`` to keep the original data without truncation.
         Note that the barcode should only be 660 base pairs long.
         Characters beyond this length are unlikely to be accurate.
 
@@ -227,7 +227,7 @@ class BIOSCAN1M(VisionDataset):
     reduce_repeated_barcodes : str or bool, default=False
         Whether to reduce the dataset to only one sample per barcodes.
 
-    max_nucleotides : int, default=None
+    max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
         Set to ``None`` to keep the original data without truncation (default).
         Note that the barcode should only be 660 base pairs long.
@@ -265,7 +265,7 @@ class BIOSCAN1M(VisionDataset):
         partitioning_version="large_diptera_family",
         modality=("image", "dna"),
         reduce_repeated_barcodes=False,
-        max_nucleotides=None,
+        max_nucleotides=660,
         target_type="family",
         transform=None,
         dna_transform=None,

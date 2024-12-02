@@ -82,7 +82,7 @@ def get_image_path(row):
 
 def load_metadata(
     metadata_path,
-    max_nucleotides=None,
+    max_nucleotides=660,
     reduce_repeated_barcodes=False,
     split=None,
     dtype=COLUMN_DTYPES,
@@ -96,7 +96,7 @@ def load_metadata(
     metadata_path : str
         Path to the metadata CSV file.
 
-    max_nucleotides : int, default=None
+    max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
         Set to ``None`` to keep the original data without truncation (default).
         Note that the barcode should only be 660 base pairs long.
@@ -222,8 +222,11 @@ class BIOSCAN5M(VisionDataset):
     reduce_repeated_barcodes : str or bool, default=False
         Whether to reduce the dataset to only one sample per barcodes.
 
-    max_nucleotides : int, default=None
+    max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
+        Set to ``None`` to keep the original data without truncation.
+        Note that the barcode should only be 660 base pairs long.
+        Characters beyond this length are unlikely to be accurate.
 
     target_type : str or Iterable[str], default="species"
         Type of target to use. One of, or a list of:
@@ -332,7 +335,7 @@ class BIOSCAN5M(VisionDataset):
         modality=("image", "dna"),
         image_package="cropped_256",
         reduce_repeated_barcodes=False,
-        max_nucleotides=None,
+        max_nucleotides=660,
         target_type="species",
         transform=None,
         dna_transform=None,
