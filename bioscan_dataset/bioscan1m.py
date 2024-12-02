@@ -70,7 +70,13 @@ USECOLS = [
 ]
 
 
-def load_metadata(metadata_path, dtype=COLUMN_DTYPES, **kwargs) -> pd.DataFrame:
+def load_metadata(
+    metadata_path,
+    split=None,
+    partitioning_version="large_diptera_family",
+    dtype=COLUMN_DTYPES,
+    **kwargs,
+) -> pd.DataFrame:
     """
     Load metadata from CSV file and prepare it for training.
 
@@ -78,6 +84,28 @@ def load_metadata(metadata_path, dtype=COLUMN_DTYPES, **kwargs) -> pd.DataFrame:
     ----------
     metadata_path : str
         Path to metadata file.
+
+    split : str, default=None
+        The dataset partition, one of:
+
+        - ``"train"``
+        - ``"val"``
+        - ``"test"``
+        - ``"no_split"``
+        - ``"all"``
+
+        If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
+        partition and the dataframe will contain every sample in the dataset.
+
+    partitioning_version : str, default="large_diptera_family"
+        The dataset partitioning version, one of:
+
+        - ``"large_diptera_family"``
+        - ``"medium_diptera_family"``
+        - ``"small_diptera_family"``
+        - ``"large_insect_order"``
+        - ``"medium_insect_order"``
+        - ``"small_insect_order"``
 
     **kwargs
         Additional keyword arguments to pass to :func:`pandas.read_csv`.
@@ -122,6 +150,10 @@ def load_metadata(metadata_path, dtype=COLUMN_DTYPES, **kwargs) -> pd.DataFrame:
     for c in label_cols:
         df[c] = df[c].astype("category")
         df[c + "_index"] = df[c].cat.codes
+    # Filter to just the split of interest
+    if split is not None and split != "all":
+        select = df[partitioning_version] == split
+        df = df.loc[select]
     return df
 
 
@@ -209,7 +241,6 @@ class BIOSCAN1M(VisionDataset):
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self._load_metadata()
-        self._partition()
 
     def __len__(self):
         return len(self.metadata)
@@ -269,13 +300,11 @@ class BIOSCAN1M(VisionDataset):
         """
         self.metadata = load_metadata(
             self.metadata_path,
+            split=self.split,
+            partitioning_version=self.partitioning_version,
             usecols=USECOLS + PARTITIONING_VERSIONS,
         )
         return self.metadata
-
-    def _partition(self):
-        select = self.metadata[self.partitioning_version] == self.split
-        self.metadata = self.metadata.loc[select]
 
     def _clibd_partition(self, partition_name):
         if partition_name == "train":

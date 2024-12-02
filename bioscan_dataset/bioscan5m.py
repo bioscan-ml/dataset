@@ -121,7 +121,7 @@ def load_metadata(
         - ``"other_heldout"``
         - ``"all"``
 
-        If this is ``None`` or ``"all"`` (default), the data is not filtered by
+        If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
     **kwargs
