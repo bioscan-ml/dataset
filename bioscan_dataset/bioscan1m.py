@@ -127,9 +127,13 @@ class BIOSCAN1M(VisionDataset):
         target_type="family",
         transform=None,
         target_transform=None,
+        download=False,
     ) -> None:
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
+
+        if download:
+            raise NotImplementedError("Download functionality not yet implemented.")
 
         self.metadata = None
         self.root = root
