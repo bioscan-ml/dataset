@@ -209,14 +209,13 @@ class BIOSCAN1M(VisionDataset):
         return check_all
 
     def _load_metadata(self) -> pd.DataFrame:
-        """Extract metadata from sample names and creates a pandas DataFrame.
-
-        This function goes through images and extracts age, gender, race, and the date and time of the photos from
-        the file names.
+        """
+        Load metadata from CSV file and prepare it for training.
 
         Returns
         -------
-        None
+        df : pd.DataFrame
+            The metadata DataFrame.
         """
         df = pd.read_csv(
             self.metadata_path,
