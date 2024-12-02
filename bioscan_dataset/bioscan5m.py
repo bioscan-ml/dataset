@@ -77,6 +77,100 @@ def get_image_path(row):
     return image_path
 
 
+def load_metadata(
+    metadata_path,
+    max_nucleotides=None,
+    reduce_repeated_barcodes=False,
+    split=None,
+    dtype=COLUMN_DTYPES,
+    **kwargs,
+) -> pd.DataFrame:
+    """
+    Load metadata from CSV file and prepare it for training.
+
+    Parameters
+    ----------
+    metadata_path : str
+        Path to the metadata CSV file.
+
+    max_nucleotides : int, default=None
+        Maximum nucleotide sequence length to keep for the DNA barcodes.
+        Set to ``None`` to keep the original data without truncation (default).
+        Note that the barcode should only be 660 base pairs long.
+        Characters beyond this length are unlikely to be accurate.
+
+    reduce_repeated_barcodes : str or bool, default=False
+        Whether to reduce the dataset to only one sample per barcode.
+        If ``base``, duplicated barcodes are removed after truncating them to the length
+        specified by ``max_nucleotides``.
+        If ``"rstrip_Ns"``, duplicated barcodes are removed after truncating them to the
+        length specified by ``max_nucleotides`` and stripping trailing Ns.
+        If ``False`` (default) no reduction is performed.
+
+    split : str, default=None
+        The dataset partition to return.
+        One of:
+
+        - ``"pretrain"``
+        - ``"train"``
+        - ``"val"``
+        - ``"test"``
+        - ``"key_unseen"``
+        - ``"val_unseen"``
+        - ``"test_unseen"``
+        - ``"other_heldout"``
+        - ``"all"``
+
+        If this is ``None`` or ``"all"`` (default), the data is not filtered by
+        partition and the dataframe will contain every sample in the dataset.
+
+    **kwargs
+        Additional keyword arguments to pass to :func:`pandas.read_csv`.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The metadata DataFrame.
+    """
+    df = pd.read_csv(metadata_path, dtype=dtype, **kwargs)
+    if max_nucleotides is not None:
+        df["dna_barcode"] = df["dna_barcode"].str[:max_nucleotides]
+    if reduce_repeated_barcodes:
+        # Shuffle the data order, to avoid bias in the subsampling that could be induced
+        # by the order in which the data was collected.
+        df = df.sample(frac=1, random_state=0)
+        # Drop duplicated barcodes
+        if reduce_repeated_barcodes == "rstrip_Ns":
+            df["dna_barcode_strip"] = df["dna_barcode"].str.rstrip("N")
+            df = df.drop_duplicates(subset=["dna_barcode_strip"])
+            df.drop(columns=["dna_barcode_strip"], inplace=True)
+        elif reduce_repeated_barcodes == "base":
+            df = df.drop_duplicates(subset=["dna_barcode"])
+        else:
+            raise ValueError(f"Unfamiliar reduce_repeated_barcodes value: {reduce_repeated_barcodes}")
+        # Re-order the data (reverting the shuffle)
+        df = df.sort_index()
+    # Filter to just the split of interest
+    if split is not None and split != "all":
+        df = df[df["split"] == split]
+    # Add index columns to use for targets
+    label_cols = [
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "subfamily",
+        "genus",
+        "species",
+        "dna_bin",
+    ]
+    for c in label_cols:
+        df[c + "_index"] = df[c].cat.codes
+    # Add path to image file
+    df["image_path"] = df.apply(get_image_path, axis=1)
+    return df
+
+
 class BIOSCAN5M(VisionDataset):
     """
     `BIOSCAN-5M <https://github.com/bioscan-ml/BIOSCAN-5M>`_ Dataset.
@@ -263,7 +357,7 @@ class BIOSCAN5M(VisionDataset):
         if not self._check_integrity():
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
-        self.metadata = self._load_metadata()
+        self._load_metadata()
 
     def __len__(self):
         return len(self.metadata)
@@ -404,45 +498,12 @@ class BIOSCAN5M(VisionDataset):
     def _load_metadata(self) -> pd.DataFrame:
         """
         Load metadata from CSV file and prepare it for training.
-
-        Returns
-        -------
-        pandas.DataFrame
-            The metadata DataFrame.
         """
-        df = pd.read_csv(self.metadata_path, dtype=COLUMN_DTYPES, usecols=USECOLS)
-        if self.max_nucleotides is not None:
-            df["dna_barcode"] = df["dna_barcode"].str[: self.max_nucleotides]
-        if self.reduce_repeated_barcodes:
-            # Shuffle the data order
-            df = df.sample(frac=1, random_state=0)
-            # Drop duplicated barcodes
-            if self.reduce_repeated_barcodes == "rstrip_Ns":
-                df["dna_barcode_strip"] = df["dna_barcode"].str.rstrip("N")
-                df = df.drop_duplicates(subset=["dna_barcode_strip"])
-                df.drop(columns=["dna_barcode_strip"], inplace=True)
-            elif self.reduce_repeated_barcodes == "base":
-                df = df.drop_duplicates(subset=["dna_barcode"])
-            else:
-                raise ValueError(f"Unfamiliar reduce_repeated_barcodes value: {self.reduce_repeated_barcodes}")
-            # Re-order the data (reverting the shuffle)
-            df = df.sort_index()
-        # Filter to just the split of interest
-        if self.split is not None and self.split != "all":
-            df = df[df["split"] == self.split]
-        # Add index columns to use for targets
-        label_cols = [
-            "phylum",
-            "class",
-            "order",
-            "family",
-            "subfamily",
-            "genus",
-            "species",
-            "dna_bin",
-        ]
-        for c in label_cols:
-            df[c + "_index"] = df[c].cat.codes
-        # Add path to image file
-        df["image_path"] = df.apply(get_image_path, axis=1)
-        return df
+        self.metadata = load_metadata(
+            self.metadata_path,
+            max_nucleotides=self.max_nucleotides,
+            split=self.split,
+            reduce_repeated_barcodes=self.reduce_repeated_barcodes,
+            usecols=USECOLS,
+        )
+        return self.metadata

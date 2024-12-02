@@ -70,6 +70,61 @@ USECOLS = [
 ]
 
 
+def load_metadata(metadata_path, dtype=COLUMN_DTYPES, **kwargs) -> pd.DataFrame:
+    """
+    Load metadata from CSV file and prepare it for training.
+
+    Parameters
+    ----------
+    metadata_path : str
+        Path to metadata file.
+
+    **kwargs
+        Additional keyword arguments to pass to :func:`pandas.read_csv`.
+
+    Returns
+    -------
+    df : pd.DataFrame
+        The metadata DataFrame.
+    """
+    df = pd.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
+    # Taxonomic label column names
+    label_cols = [
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "subfamily",
+        "tribe",
+        "genus",
+        "species",
+        "uri",
+    ]
+    # Convert missing values to NaN
+    for c in label_cols:
+        df.loc[df[c] == "not_classified", c] = pd.NA
+    # Fix some tribe labels which were only partially applied
+    df.loc[df["genus"].notna() & (df["genus"] == "Asteia"), "tribe"] = "Asteiini"
+    df.loc[df["genus"].notna() & (df["genus"] == "Nemorilla"), "tribe"] = "Winthemiini"
+    df.loc[df["genus"].notna() & (df["genus"] == "Philaenus"), "tribe"] = "Philaenini"
+    # Add missing genus labels
+    sel = df["genus"].isna() & df["species"].notna()
+    df.loc[sel, "genus"] = df.loc[sel, "species"].apply(lambda x: x.split(" ")[0])
+    # Add placeholder for missing tribe labels
+    sel = df["tribe"].isna() & df["genus"].notna()
+    sel2 = df["subfamily"].notna()
+    df.loc[sel & sel2, "tribe"] = "unassigned " + df.loc[sel, "subfamily"]
+    df.loc[sel & ~sel2, "tribe"] = "unassigned " + df.loc[sel, "family"]
+    # Add placeholder for missing subfamily labels
+    sel = df["subfamily"].isna() & df["tribe"].notna()
+    df.loc[sel, "subfamily"] = "unassigned " + df.loc[sel, "family"]
+    # Convert label columns to category dtype; add index columns to use for targets
+    for c in label_cols:
+        df[c] = df[c].astype("category")
+        df[c + "_index"] = df[c].cat.codes
+    return df
+
+
 class BIOSCAN1M(VisionDataset):
     """`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`_ Dataset.
 
@@ -153,7 +208,7 @@ class BIOSCAN1M(VisionDataset):
         if not self._check_exists():
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
-        self.metadata = self._load_metadata()
+        self._load_metadata()
         self._partition()
 
     def __len__(self):
@@ -211,53 +266,12 @@ class BIOSCAN1M(VisionDataset):
     def _load_metadata(self) -> pd.DataFrame:
         """
         Load metadata from CSV file and prepare it for training.
-
-        Returns
-        -------
-        df : pd.DataFrame
-            The metadata DataFrame.
         """
-        df = pd.read_csv(
+        self.metadata = load_metadata(
             self.metadata_path,
-            sep="\t",
-            dtype=COLUMN_DTYPES,
             usecols=USECOLS + PARTITIONING_VERSIONS,
         )
-        # Taxonomic label column names
-        label_cols = [
-            "phylum",
-            "class",
-            "order",
-            "family",
-            "subfamily",
-            "tribe",
-            "genus",
-            "species",
-            "uri",
-        ]
-        # Convert missing values to NaN
-        for c in label_cols:
-            df.loc[df[c] == "not_classified", c] = pd.NA
-        # Fix some tribe labels which were only partially applied
-        df.loc[df["genus"].notna() & (df["genus"] == "Asteia"), "tribe"] = "Asteiini"
-        df.loc[df["genus"].notna() & (df["genus"] == "Nemorilla"), "tribe"] = "Winthemiini"
-        df.loc[df["genus"].notna() & (df["genus"] == "Philaenus"), "tribe"] = "Philaenini"
-        # Add missing genus labels
-        sel = df["genus"].isna() & df["species"].notna()
-        df.loc[sel, "genus"] = df.loc[sel, "species"].apply(lambda x: x.split(" ")[0])
-        # Add placeholder for missing tribe labels
-        sel = df["tribe"].isna() & df["genus"].notna()
-        sel2 = df["subfamily"].notna()
-        df.loc[sel & sel2, "tribe"] = "unassigned " + df.loc[sel, "subfamily"]
-        df.loc[sel & ~sel2, "tribe"] = "unassigned " + df.loc[sel, "family"]
-        # Add placeholder for missing subfamily labels
-        sel = df["subfamily"].isna() & df["tribe"].notna()
-        df.loc[sel, "subfamily"] = "unassigned " + df.loc[sel, "family"]
-        # Convert label columns to category dtype; add index columns to use for targets
-        for c in label_cols:
-            df[c] = df[c].astype("category")
-            df[c + "_index"] = df[c].cat.codes
-        return df
+        return self.metadata
 
     def _partition(self):
         select = self.metadata[self.partitioning_version] == self.split
