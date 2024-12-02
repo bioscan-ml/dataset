@@ -184,7 +184,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
 
-    target_type : str, default="species"
+    target_type : str, default="family"
         Type of target to use. One of:
 
         - ``"phylum"``
