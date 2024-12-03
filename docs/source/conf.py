@@ -46,49 +46,6 @@ version = ".".join(release.split(".")[0:2])
 # -- Automatically generate API documentation --------------------------------
 
 
-def run_apidoc(_):
-    """
-    Call apidoc, with customised set up.
-    """
-    ignore_paths = [
-        os.path.join("..", project_path, "tests"),
-    ]
-
-    argv = [
-        "--force",  # Overwrite output files
-        "--follow-links",  # Follow symbolic links
-        "--separate",  # Put each module file in its own page
-        "--module-first",  # Put module documentation before submodule
-        "-o",
-        os.path.join(DOCS_SOURCE_DIR, "packages"),  # Output path
-        os.path.join("..", project_path),
-    ] + ignore_paths
-
-    try:
-        # Sphinx 1.7+
-        from sphinx.ext import apidoc
-
-        apidoc.main(argv)
-    except ImportError:
-        # Sphinx 1.6 (and earlier)
-        from sphinx import apidoc
-
-        argv.insert(0, apidoc.__file__)
-        apidoc.main(argv)
-
-
-def retitle_modules(_):
-    """
-    Overwrite the title of the modules.rst file.
-    """
-    pth = os.path.join(DOCS_SOURCE_DIR, "packages", "modules.rst")
-    lines = open(pth).read().splitlines()
-    # Overwrite the junk in the first two lines with a better title
-    lines[0] = "API Reference"
-    lines[1] = "============="
-    open(pth, "w").write("\n".join(lines))
-
-
 def auto_convert_readme(_):
     """
     Handle README.rst or README.md as available.
@@ -151,8 +108,6 @@ def setup(app):
     Set up our apidoc commands to run whenever sphinx is built.
     """
     app.connect("builder-inited", auto_convert_readme)
-    app.connect("builder-inited", run_apidoc)
-    app.connect("builder-inited", retitle_modules)
 
 
 # -- General configuration ---------------------------------------------------
