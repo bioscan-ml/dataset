@@ -90,7 +90,7 @@ def load_bioscan1m_metadata(
     **kwargs,
 ) -> pd.DataFrame:
     r"""
-    Load metadata from CSV file and prepare it for training.
+    Load BIOSCAN-1M metadata from CSV file and prepare it for training.
 
     Parameters
     ----------
@@ -109,7 +109,7 @@ def load_bioscan1m_metadata(
         the length specified by ``max_nucleotides`` and stripping trailing Ns.
         If ``False`` (default) no reduction is performed.
 
-    split : str, default=None
+    split : str, optional
         The dataset partition, one of:
 
         - ``"train"``
