@@ -295,6 +295,7 @@ class BIOSCAN1M(VisionDataset):
             self.target_type = [target_type]
         else:
             self.target_type = list(target_type)
+        self.target_type = ["uri" if t == "dna_bin" else t for t in self.target_type]
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
