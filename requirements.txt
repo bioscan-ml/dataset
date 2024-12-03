@@ -1,3 +1,4 @@
 pandas
 Pillow
+torch
 torchvision
