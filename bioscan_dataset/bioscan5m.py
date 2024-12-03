@@ -125,8 +125,8 @@ def load_bioscan5m_metadata(
         - ``"test_unseen"``
         - ``"other_heldout"``
         - ``"all"``, which is the union of all splits
-        - ``"seen"``, which is the union of ``{"train", "val", "test"}``
-        - ``"unnseen"``, which is the union of ``{"key_unseen", "val_unseen", "test_unseen"}``
+        - ``"seen"``, which is the union of {train, val, test}
+        - ``"unnseen"``, which is the union of {key_unseen, val_unseen, test_unseen}
 
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
@@ -206,8 +206,8 @@ class BIOSCAN5M(VisionDataset):
         - ``"test_unseen"``
         - ``"other_heldout"``
         - ``"all"``, which is the union of all splits
-        - ``"seen"``, which is the union of ``{"train", "val", "test"}``
-        - ``"unnseen"``, which is the union of ``{"key_unseen", "val_unseen", "test_unseen"}``
+        - ``"seen"``, which is the union of {train, val, test}
+        - ``"unnseen"``, which is the union of {key_unseen, val_unseen, test_unseen}
 
         Set to ``"all"`` to include all splits.
 
