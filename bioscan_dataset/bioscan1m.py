@@ -75,7 +75,7 @@ USECOLS = [
 ]
 
 
-def load_metadata(
+def load_bioscan1m_metadata(
     metadata_path,
     max_nucleotides=660,
     reduce_repeated_barcodes=False,
@@ -188,6 +188,9 @@ def load_metadata(
         select = df[partitioning_version] == split
         df = df.loc[select]
     return df
+
+
+load_metadata = load_bioscan1m_metadata
 
 
 class BIOSCAN1M(VisionDataset):

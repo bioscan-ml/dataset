@@ -84,7 +84,7 @@ def get_image_path(row):
     return image_path
 
 
-def load_metadata(
+def load_bioscan5m_metadata(
     metadata_path,
     max_nucleotides=660,
     reduce_repeated_barcodes=False,
@@ -179,6 +179,9 @@ def load_metadata(
     # Add path to image file
     df["image_path"] = df.apply(get_image_path, axis=1)
     return df
+
+
+load_metadata = load_bioscan5m_metadata
 
 
 class BIOSCAN5M(VisionDataset):
