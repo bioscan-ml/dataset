@@ -9,6 +9,7 @@ BIOSCAN-5M PyTorch Dataset.
 """
 
 import os
+from enum import Enum
 
 import pandas as pd
 import PIL
@@ -84,12 +85,16 @@ def get_image_path(row):
     return image_path
 
 
+class MetadataDtype(Enum):
+    DEFAULT = "BIOSCAN5M_default_dtypes"
+
+
 def load_bioscan5m_metadata(
     metadata_path,
     max_nucleotides=660,
     reduce_repeated_barcodes=False,
     split=None,
-    dtype=COLUMN_DTYPES,
+    dtype=MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pd.DataFrame:
     r"""
@@ -139,6 +144,9 @@ def load_bioscan5m_metadata(
     pandas.DataFrame
         The metadata DataFrame.
     """
+    if dtype == MetadataDtype.DEFAULT:
+        # Use our default column data types
+        dtype = COLUMN_DTYPES
     df = pd.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
     if max_nucleotides is not None:

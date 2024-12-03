@@ -9,6 +9,7 @@ BIOSCAN-1M PyTorch dataset.
 """
 
 import os
+from enum import Enum
 
 import pandas as pd
 import PIL
@@ -75,13 +76,17 @@ USECOLS = [
 ]
 
 
+class MetadataDtype(Enum):
+    DEFAULT = "BIOSCAN1M_default_dtypes"
+
+
 def load_bioscan1m_metadata(
     metadata_path,
     max_nucleotides=660,
     reduce_repeated_barcodes=False,
     split=None,
     partitioning_version="large_diptera_family",
-    dtype=COLUMN_DTYPES,
+    dtype=MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pd.DataFrame:
     r"""
@@ -134,6 +139,9 @@ def load_bioscan1m_metadata(
     df : pd.DataFrame
         The metadata DataFrame.
     """
+    if dtype == MetadataDtype.DEFAULT:
+        # Use our default column data types
+        dtype = COLUMN_DTYPES
     df = pd.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
     label_cols = [
