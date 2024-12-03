@@ -291,10 +291,10 @@ class BIOSCAN1M(VisionDataset):
         else:
             self.modality = list(modality)
 
-        if isinstance(target_type, list):
-            self.target_type = target_type
-        else:
+        if isinstance(target_type, str):
             self.target_type = [target_type]
+        else:
+            self.target_type = list(target_type)
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
