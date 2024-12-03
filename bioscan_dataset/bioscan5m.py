@@ -12,8 +12,12 @@ import os
 
 import pandas as pd
 import PIL
+import torch
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
 from torchvision.datasets.vision import VisionDataset
+
+RGB_MEAN = torch.tensor([0.76281859, 0.76503749, 0.76373138])
+RGB_STDEV = torch.tensor([0.67122520, 0.66740192, 0.66488950])
 
 COLUMN_DTYPES = {
     "processid": str,
