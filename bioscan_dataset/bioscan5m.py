@@ -1,4 +1,4 @@
-"""
+r"""
 BIOSCAN-5M PyTorch Dataset.
 
 :Date: 2024-06-05
@@ -65,7 +65,7 @@ UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
 
 
 def get_image_path(row):
-    """Get the image path for a row in the metadata DataFrame.
+    r"""Get the image path for a row in the metadata DataFrame.
 
     Parameters
     ----------
@@ -92,7 +92,7 @@ def load_metadata(
     dtype=COLUMN_DTYPES,
     **kwargs,
 ) -> pd.DataFrame:
-    """
+    r"""
     Load metadata from CSV file and prepare it for training.
 
     Parameters
@@ -182,7 +182,7 @@ def load_metadata(
 
 
 class BIOSCAN5M(VisionDataset):
-    """
+    r"""
     `BIOSCAN-5M <https://github.com/bioscan-ml/BIOSCAN-5M>`_ Dataset.
 
     Parameters
@@ -447,7 +447,7 @@ class BIOSCAN5M(VisionDataset):
         return check_all
 
     def _check_integrity(self, verbose=1) -> bool:
-        """
+        r"""
         Check if the dataset is already downloaded and extracted.
 
         Parameters
@@ -509,7 +509,7 @@ class BIOSCAN5M(VisionDataset):
             self._download_image_zip("eval")
 
     def download(self) -> None:
-        """
+        r"""
         Download and extract the data.
         """
         self._download_metadata()
@@ -517,7 +517,7 @@ class BIOSCAN5M(VisionDataset):
             self._download_images()
 
     def _load_metadata(self) -> pd.DataFrame:
-        """
+        r"""
         Load metadata from CSV file and prepare it for training.
         """
         self.metadata = load_metadata(

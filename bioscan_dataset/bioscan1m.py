@@ -1,4 +1,4 @@
-"""
+r"""
 BIOSCAN-1M PyTorch dataset.
 
 :Date: 2024-05-20
@@ -84,7 +84,7 @@ def load_metadata(
     dtype=COLUMN_DTYPES,
     **kwargs,
 ) -> pd.DataFrame:
-    """
+    r"""
     Load metadata from CSV file and prepare it for training.
 
     Parameters
@@ -191,7 +191,7 @@ def load_metadata(
 
 
 class BIOSCAN1M(VisionDataset):
-    """`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`_ Dataset.
+    r"""`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`_ Dataset.
 
     Parameters
     ----------
@@ -339,7 +339,7 @@ class BIOSCAN1M(VisionDataset):
         return tuple(values)
 
     def _check_exists(self, verbose=0) -> bool:
-        """Check if the dataset is already downloaded and extracted.
+        r"""Check if the dataset is already downloaded and extracted.
 
         Parameters
         ----------
@@ -367,7 +367,7 @@ class BIOSCAN1M(VisionDataset):
         return check_all
 
     def _load_metadata(self) -> pd.DataFrame:
-        """
+        r"""
         Load metadata from CSV file and prepare it for training.
         """
         self.metadata = load_metadata(
