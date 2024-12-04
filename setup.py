@@ -121,6 +121,7 @@ setup(
         "Topic :: Scientific/Engineering :: Image Recognition",
     ],
     project_urls={
+        "Documentation": "https://bioscan-dataset.readthedocs.io",
         "Source Code": "https://github.com/bioscan-ml/dataset",
         "Bug Tracker": "https://github.com/bioscan-ml/dataset/issues",
         "Citation": "https://arxiv.org/abs/2406.12723",
