@@ -7,7 +7,7 @@ In this package, we provide PyTorch/torchvision style dataset classes to load th
 
 BIOSCAN-1M and 5M are large multimodal datasets for insect biodiversity monitoring, containing over 1 million and 5 million specimens, respectively.
 The datasets are comprised of RGB microscopy images, DNA barcodes, and fine-grained, hierarchical taxonomic labels.
-Every sample has both an image and a DNA barcode, but the taxonomic labels are incomplete and only extend to the species level for around 9% of the specimens.
+Every sample has both an image and a DNA barcode, but the taxonomic labels are incomplete and only extend all the way to the species level for around 9% of the specimens.
 
 
 Installation
