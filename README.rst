@@ -223,7 +223,27 @@ Other resources
 Citation
 --------
 
-If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers resepctively:
+If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as appropriate.
+
+`BIOSCAN-5M <BS5M-paper_>`_:
+
+.. code-block:: bibtex
+
+   @misc{bioscan5m,
+      title={{BIOSCAN-5M}: A Multimodal Dataset for Insect Biodiversity},
+      author={Zahra Gharaee and Scott C. Lowe and ZeMing Gong and Pablo Millan Arias
+         and Nicholas Pellegrino and Austin T. Wang and Joakim Bruslund Haurum
+         and Iuliia Zarubiieva and Lila Kari and Dirk Steinke and Graham W. Taylor
+         and Paul Fieguth and Angel X. Chang
+      },
+      year={2024},
+      eprint={2406.12723},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      doi={10.48550/arxiv.2406.12723},
+   }
+
+`BIOSCAN-1M <BS1M-paper_>`_:
 
 .. code-block:: bibtex
 
@@ -241,20 +261,6 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
       year={2023},
       volume={36},
       url={https://proceedings.neurips.cc/paper_files/paper/2023/file/87dbbdc3a685a97ad28489a1d57c45c1-Paper-Datasets_and_Benchmarks.pdf},
-   }
-
-   @misc{bioscan5m,
-      title={{BIOSCAN-5M}: A Multimodal Dataset for Insect Biodiversity},
-      author={Zahra Gharaee and Scott C. Lowe and ZeMing Gong and Pablo Millan Arias
-         and Nicholas Pellegrino and Austin T. Wang and Joakim Bruslund Haurum
-         and Iuliia Zarubiieva and Lila Kari and Dirk Steinke and Graham W. Taylor
-         and Paul Fieguth and Angel X. Chang
-      },
-      year={2024},
-      eprint={2406.12723},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      doi={10.48550/arxiv.2406.12723},
    }
 
 .. _BS1M-paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
