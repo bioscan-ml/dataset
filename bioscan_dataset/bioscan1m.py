@@ -90,7 +90,7 @@ def load_bioscan1m_metadata(
     **kwargs,
 ) -> pd.DataFrame:
     r"""
-    Load BIOSCAN-1M metadata from CSV file and prepare it for training.
+    Load BIOSCAN-1M metadata from its TSV file, and prepare it for training.
 
     Parameters
     ----------
