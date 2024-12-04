@@ -1,7 +1,8 @@
+Jinja2>=3.0
 myst-parser
 pypandoc>=1.6.3
 readthedocs-sphinx-search; python_version>='3.6'
-sphinx>=3.5.4
+sphinx>=6.0.0
 sphinx-autobuild
 sphinx_rtd_theme
 watchdog<1.0.0; python_version<'3.6'
