@@ -103,7 +103,11 @@ setup(
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
+        "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
@@ -111,6 +115,14 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "Topic :: Scientific/Engineering :: Image Recognition",
     ],
-    # Could also include keywords, download_url, project_urls, etc.
+    project_urls={
+        "Source Code": "https://github.com/bioscan-ml/dataset",
+        "Bug Tracker": "https://github.com/bioscan-ml/dataset/issues",
+        "Citation": "https://arxiv.org/abs/2406.12723",
+    },
 )
