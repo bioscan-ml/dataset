@@ -1,5 +1,8 @@
+BIOSCAN Dataset Package
+=======================
+
 .. include:: readme.rst
-    :start-line: 2
+    :start-line: 15
 
 .. toctree::
     :maxdepth: 2

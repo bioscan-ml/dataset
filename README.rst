@@ -1,7 +1,18 @@
-|pre-commit| |black|
 
 BIOSCAN Datasets for PyTorch
 ============================
+
++------------------+----------------------------------------------------------------------+
+| Latest Release   | |PyPI badge|                                                         |
++------------------+----------------------------------------------------------------------+
+| License          | |License|                                                            |
++------------------+----------------------------------------------------------------------+
+| Documentation    | |Documentation|                                                      |
++------------------+----------------------------------------------------------------------+
+| Code style       | |black| |pre-commit|                                                 |
++------------------+----------------------------------------------------------------------+
+| Citation         | |DOI badge|                                                          |
++------------------+----------------------------------------------------------------------+
 
 In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BS1M-paper_>`_ and `BIOSCAN-5M <BS5M-paper_>`_ datasets.
 
@@ -266,9 +277,21 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 .. _BS1M-paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BS5M-paper: https://arxiv.org/abs/2406.12723
 
+.. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
+   :target: https://pypi.org/project/bioscan-dataset/
+   :alt: Latest PyPI release
+.. |Documentation| image:: https://img.shields.io/badge/docs-readthedocs-blue
+   :target: https://bioscan-dataset.readthedocs.io
+   :alt: Documentation
+.. |DOI badge| image:: https://img.shields.io/badge/DOI-10.48550/arxiv.2406.12723-blue.svg
+   :target: https://www.doi.org/10.48550/arxiv.2406.12723
+   :alt: DOI
+.. |License| image:: https://img.shields.io/pypi/l/bioscan-dataset
+   :target: https://raw.githubusercontent.com/bioscan-ml/dataset/master/LICENSE
+   :alt: MIT License
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
-   :alt: pre-commit
+   :alt: pre-commit enabled
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: black
