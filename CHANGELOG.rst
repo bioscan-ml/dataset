@@ -11,8 +11,8 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Categories for changes are: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 
-Version `0.1.0 <https://github.com/bioscan-ml/bioscan_dataset/tree/0.1.0>`__
+Version `1.0.0 <https://github.com/bioscan-ml/bioscan_dataset/tree/1.0.0>`__
 ----------------------------------------------------------------------------
 
-Release date: YYYY-MM-DD.
-Initial release (to be released).
+Release date: 2024-12-03.
+Initial release.
