@@ -217,7 +217,7 @@ Other resources
 - The dataset can be explored through a web interface using our `BIOSCAN Browser <https://bioscan-browser.netlify.app/>`_.
 - Read more about the `International Barcode of Life (iBOL) <https://ibol.org/>`_ and `BIOSCAN <https://ibol.org/bioscan/>`_ initiatives.
 - See the code for the `cropping tool <https://github.com/bioscan-ml/BIOSCAN-5M/tree/main/BIOSCAN_crop_resize>`_ that was applied to the images to create the cropped image package.
-- See the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`_ described in the BIOSCAN-5M paper.
+- Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`_ described in the BIOSCAN-5M paper.
 
 
 Citation
