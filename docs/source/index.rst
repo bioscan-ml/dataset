@@ -7,5 +7,4 @@
 
     api
     changelog
-    py-modindex
     genindex
