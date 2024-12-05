@@ -189,7 +189,7 @@ The dataset class supports the use of data transforms for the image and DNA barc
    import torch
    import torchvision.transforms as transforms
    from bioscan_dataset import BIOSCAN5M
-   from bioscan_dataset.BIOSCAN5M import RGB_MEAN, RGB_STDEV
+   from bioscan_dataset.bioscan5m import RGB_MEAN, RGB_STDEV
 
    # Create an image transform, standardizing image size and normalizing pixel values
    image_transform = transforms.Compose(
