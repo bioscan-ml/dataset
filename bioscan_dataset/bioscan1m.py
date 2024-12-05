@@ -121,6 +121,10 @@ def load_bioscan1m_metadata(
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
+        Note that the contents of the split depends on the value of ``partitioning_version``.
+        If ``partitioning_version`` is changed, the same ``split`` value will yield
+        completely different records.
+
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
 
