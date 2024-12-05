@@ -187,7 +187,7 @@ The dataset class supports the use of data transforms for the image and DNA barc
 .. code-block:: python
 
    import torch
-   import torchvision.transforms as transforms
+   from torchvision.transforms import v2 as transforms
    from bioscan_dataset import BIOSCAN5M
    from bioscan_dataset.bioscan5m import RGB_MEAN, RGB_STDEV
 
@@ -195,7 +195,8 @@ The dataset class supports the use of data transforms for the image and DNA barc
    image_transform = transforms.Compose(
        [
            transforms.Resize(224),
-           transforms.ToTensor(),
+           transforms.ToImage(),
+           transforms.ToDtype(torch.float32, scale=True),
            transforms.Normalize(mean=RGB_MEAN, std=RGB_STDEV),
        ]
    )
