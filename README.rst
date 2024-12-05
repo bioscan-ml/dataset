@@ -194,7 +194,7 @@ The dataset class supports the use of data transforms for the image and DNA barc
    # Create an image transform, standardizing image size and normalizing pixel values
    image_transform = transforms.Compose(
        [
-           transforms.Resize(224),
+           transforms.CenterCrop(256),
            transforms.ToImage(),
            transforms.ToDtype(torch.float32, scale=True),
            transforms.Normalize(mean=RGB_MEAN, std=RGB_STDEV),
