@@ -87,7 +87,7 @@ To use a different image package, follow the download instructions given in the 
 
    # Manually download original_full from
    # https://drive.google.com/drive/u/1/folders/1Jc57eKkeiYrnUBc9WlIp-ZS_L1bVlT-0
-   # and unzip the 5 zip files into ~/Datasets/bioscan/bioscan-5m/original_full/
+   # and unzip the 5 zip files into ~/Datasets/bioscan/bioscan-5m/bioscan5m/images/original_full/
    # Then load the dataset as follows:
    dataset = BIOSCAN5M(
        root="~/Datasets/bioscan/bioscan-5m/", image_package="original_full"
