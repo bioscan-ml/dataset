@@ -20,6 +20,8 @@ BIOSCAN-1M and 5M are large multimodal datasets for insect biodiversity monitori
 The datasets are comprised of RGB microscopy images, DNA barcodes, and fine-grained, hierarchical taxonomic labels.
 Every sample has both an image and a DNA barcode, but the taxonomic labels are incomplete and only extend all the way to the species level for around 9% of the specimens.
 
+Documentation, including the full API details, is available online at readthedocs_.
+
 
 Installation
 ------------
@@ -277,12 +279,13 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 
 .. _BS1M-paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BS5M-paper: https://arxiv.org/abs/2406.12723
+.. _readthedocs: https://bioscan-dataset.readthedocs.io
 
 .. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
    :target: https://pypi.org/project/bioscan-dataset/
    :alt: Latest PyPI release
 .. |Documentation| image:: https://img.shields.io/badge/docs-readthedocs-blue
-   :target: https://bioscan-dataset.readthedocs.io
+   :target: readthedocs_
    :alt: Documentation
 .. |DOI badge| image:: https://img.shields.io/badge/DOI-10.48550/arxiv.2406.12723-blue.svg
    :target: https://www.doi.org/10.48550/arxiv.2406.12723
