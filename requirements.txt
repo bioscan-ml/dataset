@@ -1,4 +1,4 @@
-pandas
-Pillow
-torch
-torchvision
+pandas>=1.0.0
+Pillow>=4.1.1
+torch>=1.4.0
+torchvision>=0.6.0
