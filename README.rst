@@ -26,6 +26,8 @@ Documentation, including the full API details, is available online at readthedoc
 Installation
 ------------
 
+The bioscan-dataset package is available on PyPI_, and the latest version can be installed into your current environment using pip_.
+
 To install the package, run:
 
 .. code-block:: bash
@@ -279,10 +281,12 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 
 .. _BS1M-paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BS5M-paper: https://arxiv.org/abs/2406.12723
+.. _PyPI: https://pypi.org/project/bioscan-dataset/
 .. _readthedocs: https://bioscan-dataset.readthedocs.io
+.. _pip: https://pip.pypa.io/
 
 .. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
-   :target: https://pypi.org/project/bioscan-dataset/
+   :target: PyPI_
    :alt: Latest PyPI release
 .. |Documentation| image:: https://img.shields.io/badge/docs-readthedocs-blue
    :target: readthedocs_
