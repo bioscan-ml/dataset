@@ -17,7 +17,7 @@ import torch
 from torchvision.datasets.vision import VisionDataset
 
 RGB_MEAN = torch.tensor([0.72510918, 0.72891550, 0.72956181])
-RGB_STDEV = torch.tensor([0.66364000, 0.66088159, 0.66035860])
+RGB_STDEV = torch.tensor([0.12654378, 0.14301962, 0.16103319])
 
 COLUMN_DTYPES = {
     "sampleid": str,
