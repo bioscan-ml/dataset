@@ -115,7 +115,7 @@ These partitions only use samples labelled to species-level.
 The ``pretrain`` split, which contains 90% of the data, is available for self- and semi-supervised training.
 Note that these samples may include species in the unseen partition, since we don't know what species these specimens are.
 
-Additionally, there is an ``other_heldout`` split, which contains more unseen species with either too samples to use for testing, or a genus label which does not appear in the seen set.
+Additionally, there is an ``other_heldout`` split, which contains more unseen species with either too few samples to use for testing, or a genus label which does not appear in the seen set.
 This partition can be used for training a novelty detector, without exposing the detector to the species in the unseen species set.
 
 +-------------+---------------------+-----------------------------------+-------------+------------+-----------+
