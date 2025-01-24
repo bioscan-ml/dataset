@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+body {
+  font-family: "Source Sans 3",Lato,proxima-nova,Helvetica Neue,Arial,sans-serif;
+}
+
+.rst-content .toctree-wrapper>p.caption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+legend {
+  font-family:Montserrat,Roboto Slab,ff-tisa-web-pro,Georgia,Arial,sans-serif
+}
+
+.highlight pre {
+  font-family: "Source Code Pro",SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
+}
+
+.caption-text {
+  color: #10b981;
+}
+.wy-side-nav-search {
+  background-color: #047857;
+}
+vertical p.caption {
+  color: #0ea5e9;
+}
+a {
+  color: #075985;
+  text-underline-offset: 4px;
+}
+a:hover {
+  text-decoration-line: underline;
+}
+
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) > dt {
+  background-color: #e6f9f3;
+  color: #108866;
+  border-top-color: #6fccb2;
+}
+.rst-content .viewcode-link {
+  color: #0ea5e9;
+}
