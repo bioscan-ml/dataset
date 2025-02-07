@@ -165,3 +165,7 @@ html.writer-html5
   border-top-color: var(--color-emerald-500);
   color: var(--color-emerald-700);
 }
+
+.rst-content .viewcode-link {
+  color: var(--color-emerald-500);
+}
