@@ -102,6 +102,15 @@ footer {
   }
 }
 
+.wy-side-nav-search > div.switch-menus > div.version-switch select {
+  color: hsla(0,0%,100%,.5);
+  font-family: "Source Sans 3", Lato, sans-serif;
+
+  &:hover {
+    color: hsla(0,0%,100%,.6);
+  }
+}
+
 /* Button */
 .btn-neutral {
   background-color: var(--color-white) !important;
