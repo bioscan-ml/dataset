@@ -138,6 +138,10 @@ if sys.version_info >= (3, 6):
     # but only available on Python 3.6 and above.
     extensions.append("sphinx_search.extension")
 
+# Some extensions should only be run if we are on Read the Docs
+if os.environ.get("READTHEDOCS") == "True":
+    extensions.append("sphinxcontrib.googleanalytics")
+
 # Napoleon settings
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
@@ -303,3 +307,7 @@ intersphinx_mapping = {
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for Google Analytics extension ----------------------------------
+
+googleanalytics_id = "G-9F4YTY8WM2"
