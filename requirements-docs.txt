@@ -5,4 +5,5 @@ readthedocs-sphinx-search; python_version>='3.6'
 sphinx>=6.0.0
 sphinx-autobuild
 sphinx_rtd_theme
+sphinxcontrib-googleanalytics>=0.4
 watchdog<1.0.0; python_version<'3.6'
