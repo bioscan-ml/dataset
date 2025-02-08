@@ -47,7 +47,7 @@ For example, to load the BIOSCAN-1M dataset:
 
    dataset = BIOSCAN1M(root="~/Datasets/bioscan/bioscan-1m/")
 
-   for (image, dna_barcode), label in dataset:
+   for image, dna_barcode, label in dataset:
        # Do something with the image, dna_barcode, and label
        pass
 
@@ -59,7 +59,7 @@ To load the BIOSCAN-5M dataset:
 
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/")
 
-   for (image, dna_barcode), label in dataset:
+   for image, dna_barcode, label in dataset:
        # Do something with the image, dna_barcode, and label
        pass
 
