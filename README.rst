@@ -180,7 +180,9 @@ or a list of labels, e.g.
        root="~/Datasets/bioscan/bioscan-5m/", target_type=["genus", "species", "dna_bin"]
    )
 
-The value of the target yielded for a data sample is an integer corresponding to the index of its label.
+The format of the target label can be specified by setting the ``target_format`` argument to either ``"index"`` or ``"text"``.
+The default setting is ``"index"``, which returns the integer index corresponding to the label.
+If ``"text"`` is selected, the output will be the actual string representation of the label.
 
 
 Data transforms
