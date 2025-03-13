@@ -249,6 +249,10 @@ class BIOSCAN5M(VisionDataset):
         - ``"species"``
         - ``"dna_bin"``
 
+    target_format : str, default="index"
+        Format of the target value. One of:
+        ``"index"``, ``"text"``.
+
     transform : Callable, default=None
         Image transformation pipeline.
 
@@ -346,6 +350,7 @@ class BIOSCAN5M(VisionDataset):
         reduce_repeated_barcodes=False,
         max_nucleotides=660,
         target_type="species",
+        target_format="index",
         transform=None,
         dna_transform=None,
         target_transform=None,
@@ -361,6 +366,7 @@ class BIOSCAN5M(VisionDataset):
         self.metadata_path = os.path.join(self.root, self.base_folder, self.meta["filename"])
 
         self.split = split
+        self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
         self.dna_transform = dna_transform
@@ -378,6 +384,9 @@ class BIOSCAN5M(VisionDataset):
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
+
+        if self.target_format not in ["index", "text"]:
+            raise ValueError(f"Unknown target_format: {self.target_format}")
 
         if download:
             self.download()
@@ -409,7 +418,10 @@ class BIOSCAN5M(VisionDataset):
 
         target = []
         for t in self.target_type:
-            target.append(sample[f"{t}_index"])
+            if self.target_format == "index":
+                target.append(sample[f"{t}_index"])
+            elif self.target_format == "text":
+                target.append(sample[f"{t}"])
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
