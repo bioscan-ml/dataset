@@ -1,0 +1,184 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+
+/* Color scheme */
+body {
+  --color-white: #fff;
+  --color-gray-50: #f9fafb;
+  --color-gray-200: #e5e7eb;
+  --color-gray-500: #6b7280;
+  --color-gray-800: #1f2937;
+  --color-gray-700: #374151;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-500: #10b981;
+  --color-emerald-700: #047857;
+  --color-sky-500: #0ea5e9;
+  --color-sky-800: #075985;
+}
+
+/* Typography */
+body {
+  color: var(--color-gray-800);
+  font-family: "Source Sans 3", Lato, sans-serif;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+legend {
+  color: var(--color-sky-800);
+  font-family: "Montserrat", Roboto Slab, serif;
+  font-weight: 700;
+}
+
+.highlight pre {
+  font-family: "Source Code Pro", SFMono-Regular, monospace;
+  font-weight: 400;
+}
+
+a {
+  color: var(--color-sky-800) !important;
+  font-weight: 500;
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+footer {
+  color: var(--color-gray-500);
+}
+
+.wy-menu-vertical p.caption {
+  color: var(--color-gray-500);
+}
+
+.wy-nav-top,
+.wy-nav-top a,
+.wy-side-nav-search a {
+  color: var(--color-white) !important;
+  text-decoration: none;
+}
+
+/* Layout blocks */
+.wy-nav-side {
+  background-color: var(--color-gray-800);
+  border-right: 1px solid var(--color-gray-200);
+}
+
+.wy-side-nav-search {
+  background-color: var(--color-emerald-500);
+}
+
+.wy-nav-top {
+  background-color: var(--color-emerald-500);
+}
+
+.wy-nav-content {
+  background: var(--color-white);
+  border-right: 1px solid var(--color-gray-200);
+  overflow: auto;
+}
+
+.wy-nav-content-wrap {
+  background-color: var(--color-gray-50);
+}
+
+/* Text input */
+.wy-side-nav-search input[type="text"] {
+  background-color: var(--color-white);
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-200);
+  box-shadow: none;
+  color: var(--color-gray-500);
+  padding: 0.5rem 0.75rem;
+
+  &::placeholder {
+    color: var(--color-gray-500);
+  }
+}
+
+.wy-side-nav-search > div.switch-menus > div.version-switch {
+  select {
+    font-family: "Source Sans 3", Lato, sans-serif;
+    border-radius: 4px;
+    color: var(--color-white) !important;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+  }
+
+  &:has(> select):after {
+    color: var(--color-white);
+  }
+}
+
+/* Button */
+.btn-neutral {
+  background-color: var(--color-white) !important;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-200);
+  box-shadow: none;
+  color: var(--color-gray-800) !important;
+  padding: 0.5rem 0.75rem;
+
+  &:hover {
+    background-color: var(--color-gray-200) !important;
+    text-decoration: none;
+  }
+
+  &:visited {
+    color: var(--color-gray-800) !important;
+  }
+}
+
+/* Separators */
+hr,
+#search-results li {
+  border-color: var(--color-gray-200) !important;
+}
+
+/* Tree navigation */
+.wy-menu-vertical {
+  a {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--color-white) !important;
+
+    &:hover {
+      background-color: var(--color-gray-700);
+    }
+  }
+
+  button {
+    color: var(--color-white) !important;
+  }
+
+  li.current {
+    background-color: var(--color-gray-700);
+  }
+}
+
+/* Code blocks */
+.rst-content div[class^="highlight"] {
+  background-color: var(--color-gray-50);
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-200);
+}
+
+html.writer-html5
+  .rst-content
+  dl[class]:not(.option-list):not(.field-list):not(.footnote):not(
+    .citation
+  ):not(.glossary):not(.simple)
+  > dt {
+  background-color: var(--color-emerald-50);
+  border-top-color: var(--color-emerald-500);
+  color: var(--color-emerald-700);
+}
+
+.rst-content .viewcode-link {
+  color: var(--color-sky-600);
+}
