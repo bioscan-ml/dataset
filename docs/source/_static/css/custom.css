@@ -102,12 +102,16 @@ footer {
   }
 }
 
-.wy-side-nav-search > div.switch-menus > div.version-switch select {
-  color: hsla(0,0%,100%,.5);
-  font-family: "Source Sans 3", Lato, sans-serif;
+.wy-side-nav-search > div.switch-menus > div.version-switch {
+  select {
+    font-family: "Source Sans 3", Lato, sans-serif;
+    border-radius: 4px;
+    color: var(--color-white) !important;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+  }
 
-  &:hover {
-    color: hsla(0,0%,100%,.6);
+  &:has(> select):after {
+    color: var(--color-white);
   }
 }
 
