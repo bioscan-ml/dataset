@@ -245,8 +245,8 @@ class BIOSCAN1M(VisionDataset):
         Note that the barcode should only be 660 base pairs long.
         Characters beyond this length are unlikely to be accurate.
 
-    target_type : str, default="family"
-        Type of target to use. One of:
+    target_type : str or Iterable[str], default="family"
+        Type of target to use. One of, or a list of:
 
         - ``"phylum"``
         - ``"class"``
