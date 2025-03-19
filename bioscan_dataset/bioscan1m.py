@@ -354,7 +354,7 @@ class BIOSCAN1M(VisionDataset):
             if self.target_format == "index":
                 target.append(sample[f"{t}_index"])
             elif self.target_format == "text":
-                target.append(sample[f"{t}"])
+                target.append(sample[t])
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
