@@ -260,6 +260,17 @@ class BIOSCAN1M(VisionDataset):
 
         Where ``"uri"`` corresponds to the BIN cluster label.
 
+    target_format : str, default="index"
+        Format in which the targets will be returned. One of:
+        ``"index"``, ``"text"``.
+        If this is set to ``"index"`` (default), target(s) will each be returned as
+        integer indices, each of which corresponds to a value for that taxonomic rank in
+        a look-up-table.
+        Missing values will be filled with ``-1``.
+        This format is appropriate for use in classification tasks.
+        If this is set to ``"text"``, the target(s) will each be returned as a string,
+        appropriate for processing with language models.
+
     transform : Callable, default=None
         Image transformation pipeline.
 
@@ -279,6 +290,7 @@ class BIOSCAN1M(VisionDataset):
         reduce_repeated_barcodes=False,
         max_nucleotides=660,
         target_type="family",
+        target_format="index",
         transform=None,
         dna_transform=None,
         target_transform=None,
@@ -297,6 +309,7 @@ class BIOSCAN1M(VisionDataset):
 
         self.partitioning_version = partitioning_version
         self.split = split
+        self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
         self.dna_transform = dna_transform
@@ -314,6 +327,9 @@ class BIOSCAN1M(VisionDataset):
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
+
+        if self.target_format not in ["index", "text"]:
+            raise ValueError(f"Unknown target_format: {self.target_format}")
 
         if not self._check_exists():
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
@@ -342,7 +358,12 @@ class BIOSCAN1M(VisionDataset):
 
         target = []
         for t in self.target_type:
-            target.append(sample[f"{t}_index"])
+            if self.target_format == "index":
+                target.append(sample[f"{t}_index"])
+            elif self.target_format == "text":
+                target.append(sample[t])
+            else:
+                raise ValueError(f"Unknown target_format: {self.target_format}")
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
