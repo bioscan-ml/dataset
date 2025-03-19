@@ -180,9 +180,26 @@ or a list of labels, e.g.
        root="~/Datasets/bioscan/bioscan-5m/", target_type=["genus", "species", "dna_bin"]
    )
 
-The format of the target label can be specified by setting the ``target_format`` argument to either ``"index"`` or ``"text"``.
-The default setting is ``"index"``, which returns the integer index corresponding to the label.
-If ``"text"`` is selected, the output will be the actual string representation of the label.
+By default, the target values will be provided as integer indices that map to the labels for that taxonomic rank (with value ``-1`` used for missing labels), appropriate for training a classification model with cross-entropy.
+This format can be controlled with the ``target_format`` argument, which takes values of either ``"index"`` or ``"text"``.
+If this is set to ``target_format="text"``, the output will instead be the raw label string:
+
+.. code-block:: python
+
+   # Default target format is "index"
+   dataset = BIOSCAN5M(
+       root="~/Datasets/bioscan/bioscan-5m/", target_type="species", target_format="index"
+   )
+   assert dataset[0][-1] is 240
+
+   # Using target format "text"
+   dataset = BIOSCAN5M(
+       root="~/Datasets/bioscan/bioscan-5m/", target_type="species", target_format="text"
+   )
+   assert dataset[0][-1] is "Gnamptogenys sulcata"
+
+The default setting is ``target_format="index"``.
+Note that if multiple targets types are given, each label will be returned in the same format.
 
 
 Data transforms
