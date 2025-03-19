@@ -261,8 +261,15 @@ class BIOSCAN1M(VisionDataset):
         Where ``"uri"`` corresponds to the BIN cluster label.
 
     target_format : str, default="index"
-        Format of the target value. One of:
+        Format in which the targets will be returned. One of:
         ``"index"``, ``"text"``.
+        If this is set to ``"index"`` (default), target(s) will each be returned as
+        integer indices, each of which corresponds to a value for that taxonomic rank in
+        a look-up-table.
+        Missing values will be filled with ``-1``.
+        This format is appropriate for use in classification tasks.
+        If this is set to ``"text"``, the target(s) will each be returned as a string,
+        appropriate for processing with language models.
 
     transform : Callable, default=None
         Image transformation pipeline.
