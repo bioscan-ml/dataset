@@ -39,7 +39,7 @@ To install the package, run:
 Usage
 -----
 
-The datasets can be used in the same way as PyTorch's torchvision datasets.
+The datasets can be used in the same way as PyTorch's `torchvision datasets <https://pytorch.org/vision/main/datasets.html#built-in-datasets_>`_.
 For example, to load the BIOSCAN-1M dataset:
 
 .. code-block:: python
