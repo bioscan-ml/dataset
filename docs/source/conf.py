@@ -68,6 +68,8 @@ def auto_convert_readme(_):
         # Change hard API URLs to dynamically generated class links
         readme_rst = readme_rst.replace("`BIOSCAN1M <BS1M-class_>`_", ":class:`~.bioscan_dataset.BIOSCAN1M`")
         readme_rst = readme_rst.replace("`BIOSCAN5M <BS5M-class_>`_", ":class:`~.bioscan_dataset.BIOSCAN5M`")
+        readme_rst = readme_rst.replace("``index2label``", ":meth:`~.bioscan_dataset.BIOSCAN5M.index2label`")
+        readme_rst = readme_rst.replace("``label2index``", ":meth:`~.bioscan_dataset.BIOSCAN5M.label2index`")
         print(f"Writing {readme_path_output}")
         with open(readme_path_output, "w") as f:
             f.write(readme_rst)
