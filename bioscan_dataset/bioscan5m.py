@@ -10,6 +10,7 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
+from typing import Any, Tuple
 
 import pandas as pd
 import PIL
@@ -408,7 +409,33 @@ class BIOSCAN5M(VisionDataset):
     def __len__(self):
         return len(self.metadata)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Tuple[Any, ...]:
+        """
+        Get a sample from the dataset.
+
+        Parameters
+        ----------
+        index : int
+            Index of the sample to retrieve.
+
+        Returns
+        -------
+        image : PIL.Image.Image
+            The image, if the ``"image"`` modality is requested, optionally transformed
+            by the ``transform`` pipeline.
+
+        dna : str
+            The DNA barcode, if the ``"dna"`` modality is requested, optionally
+            transformed by the ``dna_transform`` pipeline.
+
+        target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
+            The target(s), optionally transformed by the ``target_transform`` pipeline.
+            If ``target_format="index"``, the target(s) will be returned as integer
+            indices, with missing values filled with ``-1``.
+            If ``target_format="text"``, the target(s) will be returned as a string.
+            If there are multiple targets, they will be returned as a tuple.
+            If ``target_type`` is an empty list, the output ``target`` will be ``None``.
+        """
         sample = self.metadata.iloc[index]
         img_path = os.path.join(self.image_dir, sample["image_path"])
         values = []
