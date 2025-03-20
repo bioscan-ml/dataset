@@ -260,6 +260,8 @@ class BIOSCAN5M(VisionDataset):
         If this is set to ``"text"``, the target(s) will each be returned as a string,
         appropriate for processing with language models.
 
+        .. versionadded:: 1.1.0
+
     transform : Callable, default=None
         Image transformation pipeline.
 
