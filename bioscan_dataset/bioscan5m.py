@@ -12,7 +12,7 @@ import os
 from enum import Enum
 from typing import Any, Tuple
 
-import pandas as pd
+import pandas
 import PIL
 import torch
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
@@ -81,7 +81,7 @@ def get_image_path(row):
         The path to the image file.
     """
     image_path = row["split"] + os.path.sep
-    if pd.notna(row["chunk"]) and row["chunk"]:
+    if pandas.notna(row["chunk"]) and row["chunk"]:
         image_path += str(row["chunk"]) + os.path.sep
     image_path += row["processid"] + ".jpg"
     return image_path
@@ -98,7 +98,7 @@ def load_bioscan5m_metadata(
     split=None,
     dtype=MetadataDtype.DEFAULT,
     **kwargs,
-) -> pd.DataFrame:
+) -> pandas.DataFrame:
     r"""
     Load BIOSCAN-5M metadata from its CSV file and prepare it for training.
 
@@ -149,7 +149,7 @@ def load_bioscan5m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
-    df = pd.read_csv(metadata_path, dtype=dtype, **kwargs)
+    df = pandas.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
     if max_nucleotides is not None:
         df["dna_barcode"] = df["dna_barcode"].str[:max_nucleotides]
@@ -579,7 +579,7 @@ class BIOSCAN5M(VisionDataset):
         if "image" in self.modality:
             self._download_images()
 
-    def _load_metadata(self) -> pd.DataFrame:
+    def _load_metadata(self) -> pandas.DataFrame:
         r"""
         Load metadata from CSV file and prepare it for training.
         """
