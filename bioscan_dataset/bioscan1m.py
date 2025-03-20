@@ -407,7 +407,7 @@ class BIOSCAN1M(VisionDataset):
         return len(self.metadata)
 
     def __getitem__(self, index: int) -> Tuple[Any, ...]:
-        """
+        r"""
         Get a sample from the dataset.
 
         Parameters
