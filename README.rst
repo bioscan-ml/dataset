@@ -14,12 +14,12 @@ BIOSCAN Datasets for PyTorch
 | Citation         | |DOI badge|                                                          |
 +------------------+----------------------------------------------------------------------+
 
-In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BS1M-paper_>`_ and `BIOSCAN-5M <BS5M-paper_>`_ datasets.
+In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BIOSCAN-1M paper_>`_ and `BIOSCAN-5M <BIOSCAN-5M paper_>`_ datasets.
 
 BIOSCAN-1M and 5M are large multimodal datasets for insect biodiversity monitoring, containing over 1 million and 5 million specimens, respectively.
 The datasets are comprised of RGB microscopy images, DNA barcodes, and fine-grained, hierarchical taxonomic labels.
 Every sample has both an image and a DNA barcode, but the taxonomic labels are incomplete and only extend all the way to the species level for around 9% of the specimens.
-For more details about the datasets, please see the `BIOSCAN-1M paper <BS1M-paper_>`_ and `BIOSCAN-5M paper <BS5M-paper_>`_, respectively.
+For more details about the datasets, please see the `BIOSCAN-1M paper`_ and `BIOSCAN-5M paper`_, respectively.
 
 Documentation about this package, including the full API details, is available online at readthedocs_.
 
@@ -39,7 +39,7 @@ To install the package, run:
 Usage
 -----
 
-The datasets can be used in the same way as PyTorch's `torchvision datasets <https://pytorch.org/vision/main/datasets.html#built-in-datasets_>`_.
+The datasets can be used in the same way as PyTorch's `torchvision datasets <https://pytorch.org/vision/main/datasets.html#built-in-datasets>`__.
 For example, to load the BIOSCAN-1M dataset:
 
 .. code-block:: python
@@ -67,7 +67,7 @@ To load the BIOSCAN-5M dataset:
 
 Note that although BIOSCAN-5M is a superset of BIOSCAN-1M, the repeated data samples are not identical between the two due to data cleaning and processing differences.
 Additionally, note that the splits are incompatible between the two datasets.
-For details, see the `BIOSCAN-5M paper <BS5M-paper_>`_.
+For details, see the `BIOSCAN-5M paper`_.
 
 For these reasons, we recommend new projects use the BIOSCAN-5M dataset over BIOSCAN-1M.
 
@@ -82,7 +82,7 @@ This can be performed by setting the argument ``download=True``:
 
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", download=True)
 
-To use a different image package, follow the download instructions given in the `BIOSCAN-5M repository <https://github.com/bioscan-ml/BIOSCAN-5M?tab=readme-ov-file#dataset-access>`_, then set the argument ``image_package`` to the desired package name, e.g.
+To use a different image package, follow the download instructions given in the `BIOSCAN-5M repository <https://github.com/bioscan-ml/BIOSCAN-5M?tab=readme-ov-file#dataset-access>`__, then set the argument ``image_package`` to the desired package name, e.g.
 
 .. code-block:: python
 
@@ -93,7 +93,7 @@ To use a different image package, follow the download instructions given in the 
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", image_package="original_full")
 
 For `BIOSCAN1M <BS1M-class_>`_, automatic dataset download is not supported and so the dataset must be manually downloaded.
-See the `BIOSCAN-1M repository <https://github.com/bioscan-ml/BIOSCAN-1M?tab=readme-ov-file#-dataset-access>`_ for download instructions.
+See the `BIOSCAN-1M repository <https://github.com/bioscan-ml/BIOSCAN-1M?tab=readme-ov-file#-dataset-access>`__ for download instructions.
 
 
 Partition/split selection
@@ -137,7 +137,7 @@ This partition can be used for training a novelty detector, without exposing the
 | heldout     | other_heldout       | novelty detector training         |      76,590 |     41,250 |     9,862 |
 +-------------+---------------------+-----------------------------------+-------------+------------+-----------+
 
-For more details about the BIOSCAN-5M partitioning, please see the `BIOSCAN-5M paper <BS5M-paper_>`_.
+For more details about the BIOSCAN-5M partitioning, please see the `BIOSCAN-5M paper`_.
 
 
 Input modality selection
@@ -263,11 +263,11 @@ The dataset class supports the use of data transforms for the image and DNA barc
 Other resources
 ---------------
 
-- Read the `BIOSCAN-1M paper <BS1M-paper_>`_ and `BIOSCAN-5M paper <BS5M-paper_>`_.
-- The dataset can be explored through a web interface using our `BIOSCAN Browser <https://bioscan-browser.netlify.app/>`_.
-- Read more about the `International Barcode of Life (iBOL) <https://ibol.org/>`_ and `BIOSCAN <https://ibol.org/bioscan/>`_ initiatives.
-- See the code for the `cropping tool <https://github.com/bioscan-ml/BIOSCAN-5M/tree/main/BIOSCAN_crop_resize>`_ that was applied to the images to create the cropped image package.
-- Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`_ described in the BIOSCAN-5M paper.
+- Read the `BIOSCAN-1M paper`_ and `BIOSCAN-5M paper`_.
+- The dataset can be explored through a web interface using our `BIOSCAN Browser`_.
+- Read more about the `International Barcode of Life (iBOL) <https://ibol.org/>`__ and `BIOSCAN <https://ibol.org/bioscan/>`__ initiatives.
+- See the code for the `cropping tool <https://github.com/bioscan-ml/BIOSCAN-5M/tree/main/BIOSCAN_crop_resize>`__ that was applied to the images to create the cropped image package.
+- Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`__ described in the BIOSCAN-5M paper.
 
 
 Citation
@@ -275,7 +275,7 @@ Citation
 
 If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as appropriate.
 
-`BIOSCAN-5M <BS5M-paper_>`_:
+`BIOSCAN-5M <BIOSCAN-5M paper_>`_:
 
 .. code-block:: bibtex
 
@@ -295,7 +295,7 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
       url={https://proceedings.neurips.cc/paper_files/paper/2024/file/3fdbb472813041c9ecef04c20c2b1e5a-Paper-Datasets_and_Benchmarks_Track.pdf},
    }
 
-`BIOSCAN-1M <BS1M-paper_>`_:
+`BIOSCAN-1M <BIOSCAN-1M paper_>`_:
 
 .. code-block:: bibtex
 
@@ -315,13 +315,14 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
       url={https://proceedings.neurips.cc/paper_files/paper/2023/file/87dbbdc3a685a97ad28489a1d57c45c1-Paper-Datasets_and_Benchmarks.pdf},
    }
 
-.. _BS1M-paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
-.. _BS5M-paper: https://arxiv.org/abs/2406.12723
+.. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
+.. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
+.. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
+.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
+.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
+.. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
 .. _readthedocs: https://bioscan-dataset.readthedocs.io
-.. _pip: https://pip.pypa.io/
-.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/latest/api.html#bioscan_dataset.BIOSCAN1M
-.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/latest/api.html#bioscan_dataset.BIOSCAN5M
 
 .. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
    :target: PyPI_
