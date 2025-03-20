@@ -10,8 +10,9 @@ BIOSCAN-1M PyTorch dataset.
 
 import os
 from enum import Enum
+from typing import Any, Tuple
 
-import pandas as pd
+import pandas
 import PIL
 import torch
 from torchvision.datasets.vision import VisionDataset
@@ -88,7 +89,7 @@ def load_bioscan1m_metadata(
     partitioning_version="large_diptera_family",
     dtype=MetadataDtype.DEFAULT,
     **kwargs,
-) -> pd.DataFrame:
+) -> pandas.DataFrame:
     r"""
     Load BIOSCAN-1M metadata from its TSV file, and prepare it for training.
 
@@ -140,13 +141,13 @@ def load_bioscan1m_metadata(
 
     Returns
     -------
-    df : pd.DataFrame
+    df : pandas.DataFrame
         The metadata DataFrame.
     """
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
-    df = pd.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
+    df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
     label_cols = [
         "phylum",
@@ -175,7 +176,7 @@ def load_bioscan1m_metadata(
         df = df.sort_index()
     # Convert missing values to NaN
     for c in label_cols:
-        df.loc[df[c] == "not_classified", c] = pd.NA
+        df.loc[df[c] == "not_classified", c] = pandas.NA
     # Fix some tribe labels which were only partially applied
     df.loc[df["genus"].notna() & (df["genus"] == "Asteia"), "tribe"] = "Asteiini"
     df.loc[df["genus"].notna() & (df["genus"] == "Nemorilla"), "tribe"] = "Winthemiini"
@@ -245,8 +246,8 @@ class BIOSCAN1M(VisionDataset):
         Note that the barcode should only be 660 base pairs long.
         Characters beyond this length are unlikely to be accurate.
 
-    target_type : str, default="family"
-        Type of target to use. One of:
+    target_type : str or Iterable[str], default="family"
+        Type of target to use. One of, or a list of:
 
         - ``"phylum"``
         - ``"class"``
@@ -270,6 +271,8 @@ class BIOSCAN1M(VisionDataset):
         This format is appropriate for use in classification tasks.
         If this is set to ``"text"``, the target(s) will each be returned as a string,
         appropriate for processing with language models.
+
+        .. versionadded:: 1.1.0
 
     transform : Callable, default=None
         Image transformation pipeline.
@@ -339,7 +342,33 @@ class BIOSCAN1M(VisionDataset):
     def __len__(self):
         return len(self.metadata)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Tuple[Any, ...]:
+        """
+        Get a sample from the dataset.
+
+        Parameters
+        ----------
+        index : int
+            Index of the sample to retrieve.
+
+        Returns
+        -------
+        image : PIL.Image.Image
+            The image, if the ``"image"`` modality is requested, optionally transformed
+            by the ``transform`` pipeline.
+
+        dna : str
+            The DNA barcode, if the ``"dna"`` modality is requested, optionally
+            transformed by the ``dna_transform`` pipeline.
+
+        target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
+            The target(s), optionally transformed by the ``target_transform`` pipeline.
+            If ``target_format="index"``, the target(s) will be returned as integer
+            indices, with missing values filled with ``-1``.
+            If ``target_format="text"``, the target(s) will be returned as a string.
+            If there are multiple targets, they will be returned as a tuple.
+            If ``target_type`` is an empty list, the output ``target`` will be ``None``.
+        """
         sample = self.metadata.iloc[index]
         img_path = os.path.join(self.image_dir, f"part{sample['chunk_number']}", sample["image_file"])
         values = []
@@ -403,7 +432,7 @@ class BIOSCAN1M(VisionDataset):
             check_all &= check
         return check_all
 
-    def _load_metadata(self) -> pd.DataFrame:
+    def _load_metadata(self) -> pandas.DataFrame:
         r"""
         Load metadata from CSV file and prepare it for training.
         """

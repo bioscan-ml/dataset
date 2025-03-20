@@ -50,7 +50,7 @@ def auto_convert_readme(_):
     """
     Handle README.rst or README.md as available.
 
-    If it exists, makes a symbolic link to README.rst at docs/source/readme.rst.
+    If it exists, adapt README.rst to docs/source/readme.rst.
     Otherwise, and if it exists, converts README.md to to rST format, the
     output of which is docs/source/readme.rst.
     """
@@ -62,21 +62,21 @@ def auto_convert_readme(_):
     os.makedirs(output_dir, exist_ok=True)
 
     if os.path.isfile(readme_path_rst):
-        # Make docs/source/readme.rst be a symbolic link to README.rst
-        #
-        # We can't overwrite an existing file when calling os.symlink, so
-        # we write to a temporary file and copy that over instead.
-        tmp_path = tempfile.mktemp(dir=output_dir)
-        try:
-            os.symlink(readme_path_rst, tmp_path)
-            os.replace(tmp_path, readme_path_output)
-        finally:
-            if os.path.islink(tmp_path):
-                os.remove(tmp_path)
+        # Copy the file, with some replacements
+        with open(readme_path_rst, "r") as f:
+            readme_rst = f.read()
+        # Change hard API URLs to dynamically generated class links
+        readme_rst = readme_rst.replace("`BIOSCAN1M <BS1M-class_>`_", ":class:`~.bioscan_dataset.BIOSCAN1M`")
+        readme_rst = readme_rst.replace("`BIOSCAN5M <BS5M-class_>`_", ":class:`~.bioscan_dataset.BIOSCAN5M`")
+        print(f"Writing {readme_path_output}")
+        with open(readme_path_output, "w") as f:
+            f.write(readme_rst)
 
     elif os.path.isfile(readme_path_md):
         # Otherwise, if README.md exists convert it to markdown using pandoc
         import pypandoc
+
+        print("Converting markdown README to rST format")
 
         # Download pandoc if necessary. If pandoc is already installed and on
         # the PATH, the installed version will be used. Otherwise, we will

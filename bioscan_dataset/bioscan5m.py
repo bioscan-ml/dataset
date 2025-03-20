@@ -10,8 +10,9 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
+from typing import Any, Tuple
 
-import pandas as pd
+import pandas
 import PIL
 import torch
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
@@ -80,7 +81,7 @@ def get_image_path(row):
         The path to the image file.
     """
     image_path = row["split"] + os.path.sep
-    if pd.notna(row["chunk"]) and row["chunk"]:
+    if pandas.notna(row["chunk"]) and row["chunk"]:
         image_path += str(row["chunk"]) + os.path.sep
     image_path += row["processid"] + ".jpg"
     return image_path
@@ -97,7 +98,7 @@ def load_bioscan5m_metadata(
     split=None,
     dtype=MetadataDtype.DEFAULT,
     **kwargs,
-) -> pd.DataFrame:
+) -> pandas.DataFrame:
     r"""
     Load BIOSCAN-5M metadata from its CSV file and prepare it for training.
 
@@ -148,7 +149,7 @@ def load_bioscan5m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
-    df = pd.read_csv(metadata_path, dtype=dtype, **kwargs)
+    df = pandas.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
     if max_nucleotides is not None:
         df["dna_barcode"] = df["dna_barcode"].str[:max_nucleotides]
@@ -259,6 +260,8 @@ class BIOSCAN5M(VisionDataset):
         This format is appropriate for use in classification tasks.
         If this is set to ``"text"``, the target(s) will each be returned as a string,
         appropriate for processing with language models.
+
+        .. versionadded:: 1.1.0
 
     transform : Callable, default=None
         Image transformation pipeline.
@@ -406,7 +409,33 @@ class BIOSCAN5M(VisionDataset):
     def __len__(self):
         return len(self.metadata)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Tuple[Any, ...]:
+        """
+        Get a sample from the dataset.
+
+        Parameters
+        ----------
+        index : int
+            Index of the sample to retrieve.
+
+        Returns
+        -------
+        image : PIL.Image.Image
+            The image, if the ``"image"`` modality is requested, optionally transformed
+            by the ``transform`` pipeline.
+
+        dna : str
+            The DNA barcode, if the ``"dna"`` modality is requested, optionally
+            transformed by the ``dna_transform`` pipeline.
+
+        target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
+            The target(s), optionally transformed by the ``target_transform`` pipeline.
+            If ``target_format="index"``, the target(s) will be returned as integer
+            indices, with missing values filled with ``-1``.
+            If ``target_format="text"``, the target(s) will be returned as a string.
+            If there are multiple targets, they will be returned as a tuple.
+            If ``target_type`` is an empty list, the output ``target`` will be ``None``.
+        """
         sample = self.metadata.iloc[index]
         img_path = os.path.join(self.image_dir, sample["image_path"])
         values = []
@@ -550,7 +579,7 @@ class BIOSCAN5M(VisionDataset):
         if "image" in self.modality:
             self._download_images()
 
-    def _load_metadata(self) -> pd.DataFrame:
+    def _load_metadata(self) -> pandas.DataFrame:
         r"""
         Load metadata from CSV file and prepare it for training.
         """
