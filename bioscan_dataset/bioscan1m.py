@@ -10,9 +10,10 @@ BIOSCAN-1M PyTorch dataset.
 
 import os
 from enum import Enum
-from typing import Any, Tuple
+from typing import Any, Iterable, Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
 import pandas
 import PIL
 import torch
@@ -340,7 +341,7 @@ class BIOSCAN1M(VisionDataset):
 
         self._load_metadata()
 
-    def index2label(self, column, index):
+    def index2label(self, column: str, index: Union[int, Iterable[int]]) -> Union[str, npt.NDArray[np.str_]]:
         r"""
         Convert target's integer index to text label.
 
@@ -372,7 +373,7 @@ class BIOSCAN1M(VisionDataset):
         out[index < 0] = ""
         return out
 
-    def label2index(self, column, label):
+    def label2index(self, column: str, label: Union[str, Iterable[str]]) -> Union[int, npt.NDArray[np.int_]]:
         r"""
         Convert target's text label to integer index.
 
