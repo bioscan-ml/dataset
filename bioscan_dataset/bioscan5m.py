@@ -427,6 +427,13 @@ class BIOSCAN5M(VisionDataset):
             in the specified column.
             Entries containing missing values, indicated by negative indices, are mapped
             to an empty string.
+
+        Examples
+        --------
+        >>> dataset.index2label("order", [4])
+        'Diptera'
+        >>> dataset.index2label("order", [4, 9, -1, 4])
+        array(['Diptera', 'Lepidoptera', '', 'Diptera'], dtype=object)
         """
         if not hasattr(index, "__len__"):
             # Single index
@@ -459,6 +466,13 @@ class BIOSCAN5M(VisionDataset):
             in the specified column.
             Entries containing missing values, indicated by empty strings, are mapped
             to ``-1``.
+
+        Examples
+        --------
+        >>> dataset.label2index("order", "Diptera")
+        4
+        >>> dataset.label2index("order", ["Diptera", "Lepidoptera", "", "Diptera"])
+        array([4, 9, -1, 4])
         """
         if isinstance(label, str):
             # Single index
