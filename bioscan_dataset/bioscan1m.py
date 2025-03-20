@@ -372,6 +372,37 @@ class BIOSCAN1M(VisionDataset):
         out[index < 0] = ""
         return out
 
+    def label2index(self, column, label):
+        r"""
+        Convert target's text label to integer index.
+
+        .. versionadded:: 1.1.0
+
+        Parameters
+        ----------
+        column : str
+            The dataset column name to map. This is the same as the ``target_type``.
+        label : str or Iterable[str]
+            The text label or labels to map to integer indices.
+
+        Returns
+        -------
+        int or numpy.array[int]
+            The integer index or indices corresponding to the text label or labels
+            in the specified column.
+            Entries containing missing values, indicated by empty strings, are mapped
+            to ``-1``.
+        """
+        if isinstance(label, str):
+            # Single index
+            if label == "":
+                return -1
+            return self.metadata[column].cat.categories.get_loc(label)
+        labels = label
+        out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
+        out = np.asarray(out)
+        return out
+
     def __len__(self):
         return len(self.metadata)
 
