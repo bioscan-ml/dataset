@@ -12,6 +12,7 @@ import os
 from enum import Enum
 from typing import Any, Tuple
 
+import numpy as np
 import pandas
 import PIL
 import torch
@@ -338,6 +339,38 @@ class BIOSCAN1M(VisionDataset):
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self._load_metadata()
+
+    def index2label(self, column, index):
+        r"""
+        Convert target's integer index to text label.
+
+        .. versionadded:: 1.1.0
+
+        Parameters
+        ----------
+        column : str
+            The dataset column name to map. This is the same as the ``target_type``.
+        index : int or Iterable[int]
+            The integer index or indices to map to labels.
+
+        Returns
+        -------
+        str or numpy.array[str]
+            The text label or labels corresponding to the integer index or indices
+            in the specified column.
+            Entries containing missing values, indicated by negative indices, are mapped
+            to an empty string.
+        """
+        if not hasattr(index, "__len__"):
+            # Single index
+            if index < 0:
+                return ""
+            return self.metadata[column].cat.categories[index]
+        index = np.asarray(index)
+        out = self.metadata[column].cat.categories[index]
+        out = np.asarray(out)
+        out[index < 0] = ""
+        return out
 
     def __len__(self):
         return len(self.metadata)
