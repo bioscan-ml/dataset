@@ -237,7 +237,10 @@ class BIOSCAN1M(VisionDataset):
 
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
-        ``"image"``, ``"dna"``.
+        ``"image"``, ``"dna"``, or any column name in the metadata CSV file.
+
+        .. versionchanged:: 1.1.0
+            Added support for arbitrary modalities.
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -426,6 +429,13 @@ class BIOSCAN1M(VisionDataset):
             The DNA barcode, if the ``"dna"`` modality is requested, optionally
             transformed by the ``dna_transform`` pipeline.
 
+        *modalities : Any
+            Any other modalities requested, as specified in the ``modality`` parameter.
+            The data is extracted from the appropriate column in the metadata TSV file,
+            without any transformations.
+
+            .. versionadded:: 1.1.0
+
         target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
             The target(s), optionally transformed by the ``target_transform`` pipeline.
             If ``target_format="index"``, the target(s) will be returned as integer
@@ -446,6 +456,8 @@ class BIOSCAN1M(VisionDataset):
                 X = sample["nucraw"]
                 if self.dna_transform is not None:
                     X = self.dna_transform(X)
+            elif modality in self.metadata.columns:
+                X = sample[modality]
             else:
                 raise ValueError(f"Unfamiliar modality: {modality}")
             values.append(X)
