@@ -10,8 +10,10 @@ BIOSCAN-1M PyTorch dataset.
 
 import os
 from enum import Enum
-from typing import Any, Tuple
+from typing import Any, Iterable, Tuple, Union
 
+import numpy as np
+import numpy.typing as npt
 import pandas
 import PIL
 import torch
@@ -339,11 +341,74 @@ class BIOSCAN1M(VisionDataset):
 
         self._load_metadata()
 
+    def index2label(self, column: str, index: Union[int, Iterable[int]]) -> Union[str, npt.NDArray[np.str_]]:
+        r"""
+        Convert target's integer index to text label.
+
+        .. versionadded:: 1.1.0
+
+        Parameters
+        ----------
+        column : str
+            The dataset column name to map. This is the same as the ``target_type``.
+        index : int or Iterable[int]
+            The integer index or indices to map to labels.
+
+        Returns
+        -------
+        str or numpy.array[str]
+            The text label or labels corresponding to the integer index or indices
+            in the specified column.
+            Entries containing missing values, indicated by negative indices, are mapped
+            to an empty string.
+        """
+        if not hasattr(index, "__len__"):
+            # Single index
+            if index < 0:
+                return ""
+            return self.metadata[column].cat.categories[index]
+        index = np.asarray(index)
+        out = self.metadata[column].cat.categories[index]
+        out = np.asarray(out)
+        out[index < 0] = ""
+        return out
+
+    def label2index(self, column: str, label: Union[str, Iterable[str]]) -> Union[int, npt.NDArray[np.int_]]:
+        r"""
+        Convert target's text label to integer index.
+
+        .. versionadded:: 1.1.0
+
+        Parameters
+        ----------
+        column : str
+            The dataset column name to map. This is the same as the ``target_type``.
+        label : str or Iterable[str]
+            The text label or labels to map to integer indices.
+
+        Returns
+        -------
+        int or numpy.array[int]
+            The integer index or indices corresponding to the text label or labels
+            in the specified column.
+            Entries containing missing values, indicated by empty strings, are mapped
+            to ``-1``.
+        """
+        if isinstance(label, str):
+            # Single index
+            if label == "":
+                return -1
+            return self.metadata[column].cat.categories.get_loc(label)
+        labels = label
+        out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
+        out = np.asarray(out)
+        return out
+
     def __len__(self):
         return len(self.metadata)
 
     def __getitem__(self, index: int) -> Tuple[Any, ...]:
-        """
+        r"""
         Get a sample from the dataset.
 
         Parameters

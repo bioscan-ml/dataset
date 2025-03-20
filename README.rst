@@ -200,6 +200,9 @@ If this is set to ``target_format="text"``, the output will instead be the raw l
 The default setting is ``target_format="index"``.
 Note that if multiple targets types are given, each label will be returned in the same format.
 
+To map target indices back to text labels, the dataset class provides the ``index2label`` method.
+Similarly, the ``label2index`` method can be used to map text labels to indices.
+
 
 Data transforms
 ~~~~~~~~~~~~~~~
