@@ -157,6 +157,27 @@ or ``"dna"``:
 
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", modality="dna")
 
+Additionally, any column names from the metadata can be used as input modalities.
+For example, to load the latitude and longitude coordinates as inputs:
+
+.. code-block:: python
+
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", modality=("coord-lat", "coord-lon"))
+
+or to load the size of the insect (in pixels) in addition to the DNA barcode:
+
+.. code-block:: python
+
+   dataset = BIOSCAN5M(
+       root="~/Datasets/bioscan/", modality=("dna", "image_measurement_value")
+   )
+
+Multiple modalities can be selected by passing a list of column names.
+Each item in the dataset will have the inputs in the same order as specified in the ``modality`` argument.
+
+All samples have an image and a DNA barcode, but other fields may be incomplete.
+Any missing values will be replaced with NaN.
+
 
 Target selection
 ~~~~~~~~~~~~~~~~
@@ -237,14 +258,6 @@ The dataset class supports the use of data transforms for the image and DNA barc
        transform=image_transform,
        dna_transform=dna_transform,
    )
-
-
-Size and geolocation metadata
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The BIOSCAN-5M dataset also contains insect size and geolocation metadata.
-Loading this metadata is not yet supported by the `BIOSCAN5M <BS5M-class_>`_ pytorch dataset class.
-In the meantime, users of the dataset are welcome to explore this metadata themselves.
 
 
 Other resources
