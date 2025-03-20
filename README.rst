@@ -45,7 +45,7 @@ For example, to load the BIOSCAN-1M dataset:
 
    from bioscan_dataset import BIOSCAN1M
 
-   dataset = BIOSCAN1M(root="~/Datasets/bioscan/bioscan-1m/")
+   dataset = BIOSCAN1M(root="~/Datasets/bioscan/")
 
    for image, dna_barcode, label in dataset:
        # Do something with the image, dna_barcode, and label
@@ -57,7 +57,7 @@ To load the BIOSCAN-5M dataset:
 
    from bioscan_dataset import BIOSCAN5M
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/")
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/")
 
    for image, dna_barcode, label in dataset:
        # Do something with the image, dna_barcode, and label
@@ -79,7 +79,7 @@ This can be performed by setting the argument ``download=True``:
 
 .. code-block:: python
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/", download=True)
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", download=True)
 
 To use a different image package, follow the download instructions given in the `BIOSCAN-5M repository <https://github.com/bioscan-ml/BIOSCAN-5M?tab=readme-ov-file#dataset-access>`_, then set the argument ``image_package`` to the desired package name, e.g.
 
@@ -87,11 +87,9 @@ To use a different image package, follow the download instructions given in the 
 
    # Manually download original_full from
    # https://drive.google.com/drive/u/1/folders/1Jc57eKkeiYrnUBc9WlIp-ZS_L1bVlT-0
-   # and unzip the 5 zip files into ~/Datasets/bioscan/bioscan-5m/bioscan5m/images/original_full/
+   # and unzip the 5 zip files into ~/Datasets/bioscan/bioscan5m/images/original_full/
    # Then load the dataset as follows:
-   dataset = BIOSCAN5M(
-       root="~/Datasets/bioscan/bioscan-5m/", image_package="original_full"
-   )
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", image_package="original_full")
 
 For `BIOSCAN1M <BS1M-class_>`_, automatic dataset download is not supported and so the dataset must be manually downloaded.
 See the `BIOSCAN-1M repository <https://github.com/bioscan-ml/BIOSCAN-1M?tab=readme-ov-file#-dataset-access>`_ for download instructions.
@@ -107,7 +105,7 @@ For example, to load the validation split:
 
 .. code-block:: python
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/", split="val")
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", split="val")
 
 In the BIOSCAN-5M dataset, the dataset is partitioned so there are ``train``, ``val``, and ``test`` splits to use for closed-world tasks (seen species), and ``key_unseen``, ``val_unseen``, and ``test_unseen`` splits to use for open-world tasks (unseen species).
 These partitions only use samples labelled to species-level.
@@ -150,13 +148,13 @@ This can be changed by setting the argument ``input_modality`` to either ``"imag
 
 .. code-block:: python
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/", modality="image")
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", modality="image")
 
 or ``"dna"``:
 
 .. code-block:: python
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/", modality="dna")
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", modality="dna")
 
 
 Target selection
@@ -170,14 +168,14 @@ The target can be a single label, e.g.
 
 .. code-block:: python
 
-   dataset = BIOSCAN5M(root="~/Datasets/bioscan/bioscan-5m/", target_type="genus")
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", target_type="genus")
 
 or a list of labels, e.g.
 
 .. code-block:: python
 
    dataset = BIOSCAN5M(
-       root="~/Datasets/bioscan/bioscan-5m/", target_type=["genus", "species", "dna_bin"]
+       root="~/Datasets/bioscan/", target_type=["genus", "species", "dna_bin"]
    )
 
 By default, the target values will be provided as integer indices that map to the labels for that taxonomic rank (with value ``-1`` used for missing labels), appropriate for training a classification model with cross-entropy.
@@ -188,13 +186,13 @@ If this is set to ``target_format="text"``, the output will instead be the raw l
 
    # Default target format is "index"
    dataset = BIOSCAN5M(
-       root="~/Datasets/bioscan/bioscan-5m/", target_type="species", target_format="index"
+       root="~/Datasets/bioscan/", target_type="species", target_format="index"
    )
    assert dataset[0][-1] is 240
 
    # Using target format "text"
    dataset = BIOSCAN5M(
-       root="~/Datasets/bioscan/bioscan-5m/", target_type="species", target_format="text"
+       root="~/Datasets/bioscan/", target_type="species", target_format="text"
    )
    assert dataset[0][-1] is "Gnamptogenys sulcata"
 
@@ -230,7 +228,7 @@ The dataset class supports the use of data transforms for the image and DNA barc
    )
    # Load the dataset with the transforms applied for each sample
    ds_train = BIOSCAN5M(
-       root="~/Datasets/bioscan/bioscan-5m/",
+       root="~/Datasets/bioscan/",
        split="train",
        transform=image_transform,
        dna_transform=dna_transform,
