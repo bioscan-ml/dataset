@@ -320,8 +320,8 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
 .. _readthedocs: https://bioscan-dataset.readthedocs.io
 .. _pip: https://pip.pypa.io/
-.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/latest/api.html#bioscan_dataset.BIOSCAN1M
-.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/latest/api.html#bioscan_dataset.BIOSCAN5M
+.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
+.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
 
 .. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
    :target: PyPI_
