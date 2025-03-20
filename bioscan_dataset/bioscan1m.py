@@ -511,7 +511,7 @@ class BIOSCAN1M(VisionDataset):
 
     def _load_metadata(self) -> pandas.DataFrame:
         r"""
-        Load metadata from CSV file and prepare it for training.
+        Load metadata from TSV file and prepare it for training.
         """
         self.metadata = load_metadata(
             self.metadata_path,
