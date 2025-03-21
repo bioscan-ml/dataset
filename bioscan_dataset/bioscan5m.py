@@ -620,13 +620,13 @@ class BIOSCAN5M(VisionDataset):
             True if the dataset is already downloaded and extracted, False otherwise.
         """
         check = True
-        check &= self._check_integrity_metadata()
+        check &= self._check_integrity_metadata(verbose=verbose)
         if "image" in self.modality:
-            check &= self._check_integrity_images()
+            check &= self._check_integrity_images(verbose=verbose)
         return check
 
     def _download_metadata(self, verbose=1) -> None:
-        if self._check_integrity_metadata():
+        if self._check_integrity_metadata(verbose=verbose):
             if verbose >= 1:
                 print("Metadata CSV file already downloaded and verified")
             return
@@ -644,7 +644,7 @@ class BIOSCAN5M(VisionDataset):
         download_and_extract_archive(data["url"], self.root, md5=data.get("md5"))
 
     def _download_images(self, verbose=1) -> None:
-        if self._check_integrity_images():
+        if self._check_integrity_images(verbose=verbose):
             if verbose >= 1:
                 print("Images already downloaded and verified")
             return
