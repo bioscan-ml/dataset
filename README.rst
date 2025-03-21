@@ -1,18 +1,7 @@
+|PyPI badge| |License| |Documentation| |black| |pre-commit| |DOI badge|
 
 BIOSCAN Datasets for PyTorch
 ============================
-
-+------------------+----------------------------------------------------------------------+
-| Latest Release   | |PyPI badge|                                                         |
-+------------------+----------------------------------------------------------------------+
-| License          | |License|                                                            |
-+------------------+----------------------------------------------------------------------+
-| Documentation    | |Documentation|                                                      |
-+------------------+----------------------------------------------------------------------+
-| Code style       | |black| |pre-commit|                                                 |
-+------------------+----------------------------------------------------------------------+
-| Citation         | |DOI badge|                                                          |
-+------------------+----------------------------------------------------------------------+
 
 In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BIOSCAN-1M paper_>`_ and `BIOSCAN-5M <BIOSCAN-5M paper_>`_ datasets.
 
