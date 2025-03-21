@@ -242,6 +242,12 @@ class BIOSCAN1M(VisionDataset):
         .. versionchanged:: 1.1.0
             Added support for arbitrary modalities.
 
+    image_package : str, default="cropped_256"
+        The package to load images from. One of:
+        ``"original_full"``, ``"cropped"``, ``"original_256"``, ``"cropped_256"``.
+
+        .. versionadded:: 1.1.0
+
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
 
@@ -295,6 +301,7 @@ class BIOSCAN1M(VisionDataset):
         split="train",
         partitioning_version="large_diptera_family",
         modality=("image", "dna"),
+        image_package="cropped_256",
         reduce_repeated_barcodes=False,
         max_nucleotides=660,
         target_type="family",
@@ -313,7 +320,8 @@ class BIOSCAN1M(VisionDataset):
         self.metadata = None
         self.root = root
         self.metadata_path = os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv")
-        self.image_dir = os.path.expanduser(os.path.join(self.root, "bioscan", "images", "cropped_256"))
+        self.image_package = image_package
+        self.image_dir = os.path.join(self.root, "bioscan", "images", self.image_package)
 
         self.partitioning_version = partitioning_version
         self.split = split
