@@ -1,4 +1,13 @@
-|PyPI badge| |License| |Documentation| |black| |pre-commit| |DOI badge|
+.. raw:: html
+
+   <p style="margin: 0;">
+     <a href="https://pypi.org/project/bioscan-dataset/"><img alt="Latest PyPI release" src="https://img.shields.io/pypi/v/bioscan-dataset.svg" style="max-width: 100%;"></a>
+     <a href="https://raw.githubusercontent.com/bioscan-ml/dataset/master/LICENSE"><img alt="MIT License" src="https://img.shields.io/pypi/l/bioscan-dataset" style="max-width: 100%;"></a>
+     <a href="https://bioscan-dataset.readthedocs.io"><img alt="Documentation" src="https://img.shields.io/badge/docs-readthedocs-blue" style="max-width: 100%;"></a>
+     <a href="https://github.com/psf/black"><img alt="black" src="https://img.shields.io/badge/code%20style-black-000000.svg" style="max-width: 100%;"></a>
+     <a href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit enabled" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&amp;logoColor=white" style="max-width: 100%;"></a>
+     <a href="https://www.doi.org/10.48550/arxiv.2406.12723"><img alt="DOI" src="https://img.shields.io/badge/DOI-10.48550/arxiv.2406.12723-blue.svg" style="max-width: 100%;"></a>
+   </p>
 
 BIOSCAN Datasets for PyTorch
 ============================
@@ -312,22 +321,3 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 .. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
 .. _readthedocs: https://bioscan-dataset.readthedocs.io
-
-.. |PyPI badge| image:: https://img.shields.io/pypi/v/bioscan-dataset.svg
-   :target: PyPI_
-   :alt: Latest PyPI release
-.. |Documentation| image:: https://img.shields.io/badge/docs-readthedocs-blue
-   :target: readthedocs_
-   :alt: Documentation
-.. |DOI badge| image:: https://img.shields.io/badge/DOI-10.48550/arxiv.2406.12723-blue.svg
-   :target: https://www.doi.org/10.48550/arxiv.2406.12723
-   :alt: DOI
-.. |License| image:: https://img.shields.io/pypi/l/bioscan-dataset
-   :target: https://raw.githubusercontent.com/bioscan-ml/dataset/master/LICENSE
-   :alt: MIT License
-.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
-   :target: https://github.com/pre-commit/pre-commit
-   :alt: pre-commit enabled
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: black
