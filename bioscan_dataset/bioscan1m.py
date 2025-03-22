@@ -237,7 +237,7 @@ class BIOSCAN1M(VisionDataset):
 
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
-        ``"image"``, ``"dna"``, or any column name in the metadata CSV file.
+        ``"image"``, ``"dna"``, or any column name in the metadata TSV file.
 
         .. versionchanged:: 1.1.0
             Added support for arbitrary modalities.
