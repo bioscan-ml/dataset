@@ -529,4 +529,5 @@ class BIOSCAN1M(VisionDataset):
             partitioning_version=self.partitioning_version,
             usecols=USECOLS + PARTITIONING_VERSIONS,
         )
+        self.metadata.drop(columns=PARTITIONING_VERSIONS, inplace=True)
         return self.metadata
