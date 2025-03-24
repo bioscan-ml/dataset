@@ -25,13 +25,20 @@ Documentation about this package, including the full API details, is available o
 Installation
 ------------
 
-The bioscan-dataset package is available on PyPI_, and the latest version can be installed into your current environment using pip_.
+The bioscan-dataset package is available on PyPI_, and the latest release can be installed into your current environment using pip_.
 
 To install the package, run:
 
 .. code-block:: bash
 
    pip install bioscan-dataset
+
+The package source code is available on `GitHub <our repo_>`_.
+If you can't want for the next PyPI release, the latest (unstable) version can be installed with:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/bioscan-ml/dataset.git
 
 
 Usage
@@ -318,6 +325,7 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
 .. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
 .. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
+.. _our repo: https://github.com/bioscan-ml/dataset
 .. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
 .. _readthedocs: https://bioscan-dataset.readthedocs.io
