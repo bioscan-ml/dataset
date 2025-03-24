@@ -34,7 +34,7 @@ To install the package, run:
    pip install bioscan-dataset
 
 The package source code is available on `GitHub <our repo_>`_.
-If you can't want for the next PyPI release, the latest (unstable) version can be installed with:
+If you can't wait for the next PyPI release, the latest (unstable) version can be installed with:
 
 .. code-block:: bash
 
