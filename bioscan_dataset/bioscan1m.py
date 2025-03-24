@@ -446,11 +446,11 @@ class BIOSCAN1M(VisionDataset):
 
         Returns
         -------
-        image : PIL.Image.Image
+        image : PIL.Image.Image or Any
             The image, if the ``"image"`` modality is requested, optionally transformed
             by the ``transform`` pipeline.
 
-        dna : str
+        dna : str or Any
             The DNA barcode, if the ``"dna"`` modality is requested, optionally
             transformed by the ``dna_transform`` pipeline.
 
