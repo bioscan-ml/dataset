@@ -9,6 +9,7 @@ BIOSCAN-1M PyTorch dataset.
 """
 
 import os
+import warnings
 from enum import Enum
 from typing import Any, Iterable, Tuple, Union
 
@@ -340,6 +341,22 @@ class BIOSCAN1M(VisionDataset):
         else:
             self.target_type = list(target_type)
         self.target_type = ["uri" if t == "dna_bin" else t for t in self.target_type]
+
+        # Check that the target_type is compatible with the partitioning version
+        too_fine_ranks = {"subfamily", "tribe", "genus", "species"}
+        if self.partitioning_version in {"large_insect_order", "medium_insect_order", "small_insect_order"}:
+            too_fine_ranks.add("family")
+        bad_ranks = too_fine_ranks.intersection(self.target_type)
+        if bad_ranks:
+            warnings.warn(
+                f"The target_type includes taxonomic ranks {bad_ranks} that are more"
+                f" fine-grained than the partitioning version ('{self.partitioning_version}')"
+                " was designed for."
+                " This will mean the test partition contains categories which do not"
+                " appear in the train partition.",
+                UserWarning,
+                stacklevel=2,
+            )
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
