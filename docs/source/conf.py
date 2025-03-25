@@ -211,6 +211,9 @@ html_css_files = [
     "css/custom.css",
 ]
 
+# Custom favicon
+html_favicon = "_static/favicon.png"
+
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
