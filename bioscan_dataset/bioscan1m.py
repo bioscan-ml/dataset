@@ -371,7 +371,7 @@ class BIOSCAN1M(VisionDataset):
 
     def index2label(
         self,
-        index: Union[int, Iterable[int]],
+        index: Union[int, npt.ArrayLike],
         column: Optional[str] = None,
     ) -> Union[str, npt.NDArray[np.str_]]:
         r"""
@@ -381,7 +381,7 @@ class BIOSCAN1M(VisionDataset):
 
         Parameters
         ----------
-        index : int or Iterable[int]
+        index : int or array_like[int]
             The integer index or indices to map to labels.
         column : str, default=same as ``self.target_type``
             The dataset column name to map.
