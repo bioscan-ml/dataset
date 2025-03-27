@@ -28,7 +28,7 @@ Added
     (`#10 <https://github.com/bioscan-ml/dataset/pull/10>`__).
     Thanks to `@xl-huo <https://github.com/xl-huo>`_ for contributing this.
 
--   Added ``index2label`` and ``label2index`` properties to the dataset class to map between class indices and taxonomic labels
+-   Added ``index2label`` and ``label2index`` methods to the dataset class to map between class indices and taxonomic labels
     (`#12 <https://github.com/bioscan-ml/dataset/pull/12>`__,
     `#23 <https://github.com/bioscan-ml/dataset/pull/23>`__).
 
@@ -47,7 +47,7 @@ Added
 Documentation
 ~~~~~~~~~~~~~
 
--   Changed color scheme to match `bioscan-browser <https://bioscan-browser.netlify.app/style-guide_>`_
+-   Changed color scheme to match `bioscan-browser <https://bioscan-browser.netlify.app/style-guide>`_
     (`#4 <https://github.com/bioscan-ml/dataset/pull/4>`__).
     Thanks to `@annavik <https://github.com/annavik>`_ for contributing to this.
 
