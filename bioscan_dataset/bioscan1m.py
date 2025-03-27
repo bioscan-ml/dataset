@@ -452,9 +452,15 @@ class BIOSCAN1M(VisionDataset):
             # Single index
             if label == "":
                 return -1
-            return self.metadata[column].cat.categories.get_loc(label)
+            try:
+                return self.metadata[column].cat.categories.get_loc(label)
+            except KeyError:
+                raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
         labels = label
-        out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
+        try:
+            out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
+        except KeyError:
+            raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
         out = np.asarray(out)
         return out
 
