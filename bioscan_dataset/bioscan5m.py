@@ -10,7 +10,7 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
-from typing import Any, Iterable, Tuple, Union
+from typing import Any, Iterable, Optional, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -416,7 +416,11 @@ class BIOSCAN5M(VisionDataset):
 
         self._load_metadata()
 
-    def index2label(self, column: str, index: Union[int, Iterable[int]]) -> Union[str, npt.NDArray[np.str_]]:
+    def index2label(
+        self,
+        index: Union[int, Iterable[int]],
+        column: Optional[str] = None,
+    ) -> Union[str, npt.NDArray[np.str_]]:
         r"""
         Convert target's integer index to text label.
 
@@ -424,10 +428,13 @@ class BIOSCAN5M(VisionDataset):
 
         Parameters
         ----------
-        column : str
-            The dataset column name to map. This is the same as the ``target_type``.
         index : int or Iterable[int]
             The integer index or indices to map to labels.
+        column : str, default=same as ``self.target_type``
+            The dataset column name to map.
+            This should be one of the possible values for ``target_type``.
+            By default, the column name is the ``target_type`` used for the class,
+            provided it is a single value.
 
         Returns
         -------
@@ -439,11 +446,17 @@ class BIOSCAN5M(VisionDataset):
 
         Examples
         --------
-        >>> dataset.index2label("order", [4])
+        >>> dataset.index2label([4], "order")
         'Diptera'
-        >>> dataset.index2label("order", [4, 9, -1, 4])
+        >>> dataset.index2label([4, 9, -1, 4], "order")
         array(['Diptera', 'Lepidoptera', '', 'Diptera'], dtype=object)
         """
+        if column is not None:
+            pass
+        elif len(self.target_type) == 1:
+            column = self.target_type[0]
+        else:
+            raise ValueError("column must be specified if there isn't a single target_type")
         if not hasattr(index, "__len__"):
             # Single index
             if index < 0:
@@ -455,7 +468,11 @@ class BIOSCAN5M(VisionDataset):
         out[index < 0] = ""
         return out
 
-    def label2index(self, column: str, label: Union[str, Iterable[str]]) -> Union[int, npt.NDArray[np.int_]]:
+    def label2index(
+        self,
+        label: Union[str, Iterable[str]],
+        column: Optional[str] = None,
+    ) -> Union[int, npt.NDArray[np.int_]]:
         r"""
         Convert target's text label to integer index.
 
@@ -463,10 +480,13 @@ class BIOSCAN5M(VisionDataset):
 
         Parameters
         ----------
-        column : str
-            The dataset column name to map. This is the same as the ``target_type``.
         label : str or Iterable[str]
             The text label or labels to map to integer indices.
+        column : str, default=same as ``self.target_type``
+            The dataset column name to map.
+            This should be one of the possible values for ``target_type``.
+            By default, the column name is the ``target_type`` used for the class,
+            provided it is a single value.
 
         Returns
         -------
@@ -478,11 +498,17 @@ class BIOSCAN5M(VisionDataset):
 
         Examples
         --------
-        >>> dataset.label2index("order", "Diptera")
+        >>> dataset.label2index("Diptera", "order")
         4
-        >>> dataset.label2index("order", ["Diptera", "Lepidoptera", "", "Diptera"])
+        >>> dataset.label2index(["Diptera", "Lepidoptera", "", "Diptera"], "order")
         array([4, 9, -1, 4])
         """
+        if column is not None:
+            pass
+        elif len(self.target_type) == 1:
+            column = self.target_type[0]
+        else:
+            raise ValueError("column must be specified if there isn't a single target_type")
         if isinstance(label, str):
             # Single index
             if label == "":

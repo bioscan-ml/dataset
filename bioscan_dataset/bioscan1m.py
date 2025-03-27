@@ -11,7 +11,7 @@ BIOSCAN-1M PyTorch dataset.
 import os
 import warnings
 from enum import Enum
-from typing import Any, Iterable, Tuple, Union
+from typing import Any, Iterable, Optional, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -369,7 +369,11 @@ class BIOSCAN1M(VisionDataset):
 
         self._load_metadata()
 
-    def index2label(self, column: str, index: Union[int, Iterable[int]]) -> Union[str, npt.NDArray[np.str_]]:
+    def index2label(
+        self,
+        index: Union[int, Iterable[int]],
+        column: Optional[str] = None,
+    ) -> Union[str, npt.NDArray[np.str_]]:
         r"""
         Convert target's integer index to text label.
 
@@ -377,10 +381,13 @@ class BIOSCAN1M(VisionDataset):
 
         Parameters
         ----------
-        column : str
-            The dataset column name to map. This is the same as the ``target_type``.
         index : int or Iterable[int]
             The integer index or indices to map to labels.
+        column : str, default=same as ``self.target_type``
+            The dataset column name to map.
+            This should be one of the possible values for ``target_type``.
+            By default, the column name is the ``target_type`` used for the class,
+            provided it is a single value.
 
         Returns
         -------
@@ -390,6 +397,12 @@ class BIOSCAN1M(VisionDataset):
             Entries containing missing values, indicated by negative indices, are mapped
             to an empty string.
         """
+        if column is not None:
+            pass
+        elif len(self.target_type) == 1:
+            column = self.target_type[0]
+        else:
+            raise ValueError("column must be specified if there isn't a single target_type")
         if not hasattr(index, "__len__"):
             # Single index
             if index < 0:
@@ -401,7 +414,11 @@ class BIOSCAN1M(VisionDataset):
         out[index < 0] = ""
         return out
 
-    def label2index(self, column: str, label: Union[str, Iterable[str]]) -> Union[int, npt.NDArray[np.int_]]:
+    def label2index(
+        self,
+        label: Union[str, Iterable[str]],
+        column: Optional[str] = None,
+    ) -> Union[int, npt.NDArray[np.int_]]:
         r"""
         Convert target's text label to integer index.
 
@@ -409,10 +426,13 @@ class BIOSCAN1M(VisionDataset):
 
         Parameters
         ----------
-        column : str
-            The dataset column name to map. This is the same as the ``target_type``.
         label : str or Iterable[str]
             The text label or labels to map to integer indices.
+        column : str, default=same as ``self.target_type``
+            The dataset column name to map.
+            This should be one of the possible values for ``target_type``.
+            By default, the column name is the ``target_type`` used for the class,
+            provided it is a single value.
 
         Returns
         -------
@@ -422,6 +442,12 @@ class BIOSCAN1M(VisionDataset):
             Entries containing missing values, indicated by empty strings, are mapped
             to ``-1``.
         """
+        if column is not None:
+            pass
+        elif len(self.target_type) == 1:
+            column = self.target_type[0]
+        else:
+            raise ValueError("column must be specified if there isn't a single target_type")
         if isinstance(label, str):
             # Single index
             if label == "":
