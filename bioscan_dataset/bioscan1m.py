@@ -174,6 +174,9 @@ def load_bioscan1m_metadata(
         <https://arxiv.org/abs/2405.17537>`__, whilst the other partitions were
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
+        To use the CLIBD partitioning, download and extract the partition files from
+        `here <https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__.
+
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
 
@@ -188,7 +191,7 @@ def load_bioscan1m_metadata(
     -------
     df : pandas.DataFrame
         The metadata DataFrame.
-    """
+    """  # noqa: E501
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
@@ -327,6 +330,10 @@ class BIOSCAN1M(VisionDataset):
         <https://arxiv.org/abs/2405.17537>`__, whilst the other partitions were
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
+        To use the CLIBD partitioning, download and extract the partition files from
+        `here <https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
+        into the ``root`` directory.
+
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
 
@@ -388,7 +395,7 @@ class BIOSCAN1M(VisionDataset):
 
     target_transform : Callable, default=None
         Label transformation pipeline.
-    """
+    """  # noqa: E501
 
     def __init__(
         self,
