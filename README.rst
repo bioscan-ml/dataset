@@ -321,6 +321,24 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
       url={https://proceedings.neurips.cc/paper_files/paper/2023/file/87dbbdc3a685a97ad28489a1d57c45c1-Paper-Datasets_and_Benchmarks.pdf},
    }
 
+If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider citing the `CLIBD paper <https://arxiv.org/abs/2405.17537>`_.
+
+.. code-block:: bibtex
+
+   @article{clibd,
+      title={{CLIBD}: Bridging Vision and Genomics for Biodiversity Monitoring at Scale},
+      author={Gong, ZeMing and Wang, Austin T. and Huo, Xiaoliang
+         and Haurum, Joakim Bruslund and Lowe, Scott C. and Taylor, Graham W.
+         and Chang, Angel X.
+      },
+      journal={arXiv preprint arXiv:2405.17537},
+      year={2024},
+      eprint={2405.17537},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      doi={10.48550/arxiv.2405.17537},
+   }
+
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
 .. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
