@@ -78,9 +78,22 @@ USECOLS = [
     "chunk_number",
 ]
 
+OWNERSHIPCOLS = [
+    "copyright_license",
+    "copyright_holder",
+    "copyright_institution",
+    "copyright_contact",
+    "photographer",
+    "author",
+]
+
 
 class MetadataDtype(Enum):
     DEFAULT = "BIOSCAN1M_default_dtypes"
+
+
+class MetadataUsecols(Enum):
+    DEFAULT = "BIOSCAN1M_default_usecols"
 
 
 def load_bioscan1m_metadata(
@@ -90,6 +103,7 @@ def load_bioscan1m_metadata(
     split=None,
     partitioning_version="large_diptera_family",
     dtype=MetadataDtype.DEFAULT,
+    usecols=MetadataUsecols.DEFAULT,
     **kwargs,
 ) -> pandas.DataFrame:
     r"""
@@ -149,7 +163,11 @@ def load_bioscan1m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
+    if usecols != MetadataUsecols.DEFAULT:
+        kwargs["usecols"] = usecols
     df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
+    if usecols == MetadataUsecols.DEFAULT:
+        df.drop(columns=OWNERSHIPCOLS, inplace=True)
     # Taxonomic label column names
     label_cols = [
         "phylum",
