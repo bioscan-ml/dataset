@@ -63,6 +63,16 @@ PARTITIONING_VERSIONS = [
     "small_insect_order",
 ]
 
+CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
+
+CLIBD_PARTITION_ALIASES = {
+    "pretrain": "no_split",
+    "train": "train_seen",
+    "val": "val_seen",
+    "test": "test_seen",
+    "key_unseen": "test_unseen_keys",
+}
+
 USECOLS = [
     "sampleid",
     "uri",
@@ -90,6 +100,7 @@ def load_bioscan1m_metadata(
     reduce_repeated_barcodes=False,
     split=None,
     partitioning_version="large_diptera_family",
+    clibd_partitioning_path=None,
     dtype=MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pandas.DataFrame:
@@ -114,13 +125,31 @@ def load_bioscan1m_metadata(
         If ``False`` (default) no reduction is performed.
 
     split : str, optional
-        The dataset partition, one of:
+        The dataset partition. For the BIOSCAN-1M partitioning versions
+        ({large/meduim/small}_{diptera_family/insect_order}), this
+        should be one of:
 
         - ``"train"``
         - ``"val"``
         - ``"test"``
         - ``"no_split"``
-        - ``"all"``
+
+        For the CLIBD partitioning version, this should be one of:
+
+        - ``"all_keys"`` (the keys are used as a reference set for retreival tasks)
+        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; labels here are not to species level)
+        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"seen_keys"``
+        - ``"single_species"``
+        - ``"test_seen"``
+        - ``"test_unseen"``
+        - ``"test_unseen_keys"``
+        - ``"train_seen"``
+        - ``"val_seen"``
+        - ``"val_unseen"``
+        - ``"val_unseen_keys"``
+        - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
+          aliases for the corresponding CLIBD partitions.
 
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
@@ -138,6 +167,19 @@ def load_bioscan1m_metadata(
         - ``"large_insect_order"``
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
+        - ``"clibd"``
+
+        The ``"clibd"`` partitioning version was introduced by the paper
+        `CLIBD: Bridging Vision and Genomics for Biodiversity Monitoring at Scale
+        <https://arxiv.org/abs/2405.17537>`__, whilst the other partitions were
+        introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
+
+        .. versionchanged:: 1.2.0
+            Added support for CLIBD partitioning.
+
+    clibd_partitioning_path : str, optional
+        Path to the CLIBD_partitioning directory. By default, this is a subdirectory
+        named ``"CLIBD_partitioning"`` in the directory containing ``metadata_path``.
 
     **kwargs
         Additional keyword arguments to pass to :func:`pandas.read_csv`.
@@ -150,6 +192,17 @@ def load_bioscan1m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
+    partitioning_version = partitioning_version.lower()
+    if split and partitioning_version == "clibd":
+        if clibd_partitioning_path is None:
+            clibd_partitioning_path = os.path.join(os.path.dirname(metadata_path), CLIBD_PARTITIONING_DIRNAME)
+        if not os.path.isdir(clibd_partitioning_path):
+            raise EnvironmentError(
+                f"{partitioning_version} partitioning requested, but the corresponding"
+                f" partitioning data could not be found at: {clibd_partitioning_path}"
+            )
+        # Handle BIOSCAN-5M partition names as aliases for CLIBD partitions
+        split = CLIBD_PARTITION_ALIASES.get(split, split)
     df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
     label_cols = [
@@ -200,7 +253,13 @@ def load_bioscan1m_metadata(
         df[c] = df[c].astype("category")
         df[c + "_index"] = df[c].cat.codes
     # Filter to just the split of interest
-    if split is not None and split != "all":
+    if split is None or split == "all":
+        pass
+    elif partitioning_version == "clibd":
+        # Use the order of samples in the CLIBD partitioning files
+        partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
+        df = pandas.merge(partition, df, on="sampleid", how="left")
+    else:
         select = df[partitioning_version] == split
         df = df.loc[select]
     return df
@@ -210,7 +269,7 @@ load_metadata = load_bioscan1m_metadata
 
 
 class BIOSCAN1M(VisionDataset):
-    r"""`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`_ Dataset.
+    r"""`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`__ Dataset.
 
     Parameters
     ----------
@@ -219,12 +278,34 @@ class BIOSCAN1M(VisionDataset):
         the image directory, BIOSCAN-1M.
 
     split : str, default="train"
-        The dataset partition, one of:
+        The dataset partition. For the BIOSCAN-1M partitioning versions
+        ({large/medium/small}_{diptera_family/insect_order}), this
+        should be one of:
 
         - ``"train"``
         - ``"val"``
         - ``"test"``
         - ``"no_split"``
+
+        For the CLIBD partitioning version, this should be one of:
+
+        - ``"all_keys"`` (keys are used as a reference set for retreival tasks)
+        - ``"no_split"`` (similar to pretrain in BIOSCAN-5M, this has incomplete labels)
+        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"seen_keys"``
+        - ``"single_species"``
+        - ``"test_seen"``
+        - ``"test_unseen"``
+        - ``"test_unseen_keys"``
+        - ``"train_seen"``
+        - ``"val_seen"``
+        - ``"val_unseen"``
+        - ``"val_unseen_keys"``
+        - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
+          aliases for the corresponding CLIBD partitions.
+
+        If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
+        partition and the dataframe will contain every sample in the dataset.
 
         Note that the contents of the split depends on the value of ``partitioning_version``.
         If ``partitioning_version`` is changed, the same ``split`` value will yield
@@ -239,6 +320,15 @@ class BIOSCAN1M(VisionDataset):
         - ``"large_insect_order"``
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
+        - ``"clibd"``
+
+        The ``"clibd"`` partitioning version was introduced by the paper
+        `CLIBD: Bridging Vision and Genomics for Biodiversity Monitoring at Scale
+        <https://arxiv.org/abs/2405.17537>`__, whilst the other partitions were
+        introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
+
+        .. versionchanged:: 1.2.0
+            Added support for CLIBD partitioning.
 
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
@@ -328,8 +418,11 @@ class BIOSCAN1M(VisionDataset):
         self.image_package = image_package
         self.image_dir = os.path.join(self.root, "bioscan", "images", self.image_package)
 
-        self.partitioning_version = partitioning_version
-        self.split = split
+        self.partitioning_version = partitioning_version.lower()
+        if self.partitioning_version == "clibd":
+            self.split = CLIBD_PARTITION_ALIASES.get(split, split)
+        else:
+            self.split = split
         self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
@@ -347,7 +440,10 @@ class BIOSCAN1M(VisionDataset):
         self.target_type = ["uri" if t == "dna_bin" else t for t in self.target_type]
 
         # Check that the target_type is compatible with the partitioning version
-        too_fine_ranks = {"subfamily", "tribe", "genus", "species"}
+        if self.partitioning_version == "clibd":
+            too_fine_ranks = {}
+        else:
+            too_fine_ranks = {"subfamily", "tribe", "genus", "species"}
         if self.partitioning_version in {"large_insect_order", "medium_insect_order", "small_insect_order"}:
             too_fine_ranks.add("family")
         bad_ranks = too_fine_ranks.intersection(self.target_type)
