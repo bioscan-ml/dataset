@@ -226,6 +226,10 @@ class BIOSCAN1M(VisionDataset):
         - ``"test"``
         - ``"no_split"``
 
+        Note that the contents of the split depends on the value of ``partitioning_version``.
+        If ``partitioning_version`` is changed, the same ``split`` value will yield
+        completely different records.
+
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
 
