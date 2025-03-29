@@ -263,6 +263,12 @@ def load_bioscan1m_metadata(
         partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
         df = pandas.merge(partition, df, on="sampleid", how="left")
     else:
+        VALID_SPLITS = [None, "all", "train", "val", "test", "no_split"]
+        if split not in VALID_SPLITS:
+            raise ValueError(
+                f"Invalid split value: {split}. Valid splits for partitioning"
+                f" {partitioning_version} are: {VALID_SPLITS}"
+            )
         select = df[partitioning_version] == split
         df = df.loc[select]
     return df
