@@ -77,6 +77,7 @@ PARTITIONING_VERSIONS = [
     "large_insect_order",
     "medium_insect_order",
     "small_insect_order",
+    "clibd",
 ]
 
 VALID_SPLITS = ["train", "val", "test", "no_split"]
@@ -288,7 +289,15 @@ def load_bioscan1m_metadata(
         # Use the order of samples from the CLIBD partitioning files
         df = pandas.merge(partition, df, on="sampleid", how="left")
     elif split in VALID_SPLITS:
-        select = df[partitioning_version] == split
+        try:
+            select = df[partitioning_version] == split
+        except KeyError:
+            if partitioning_version not in PARTITIONING_VERSIONS:
+                raise ValueError(
+                    f"Invalid partitioning version: '{partitioning_version}'."
+                    f" Valid partitioning versions are: {PARTITIONING_VERSIONS}"
+                ) from None
+            raise
         df = df.loc[select]
     else:
         raise ValueError(
@@ -713,6 +722,6 @@ class BIOSCAN1M(VisionDataset):
             reduce_repeated_barcodes=self.reduce_repeated_barcodes,
             split=self.split,
             partitioning_version=self.partitioning_version,
-            usecols=USECOLS + PARTITIONING_VERSIONS,
+            usecols=USECOLS + [p for p in PARTITIONING_VERSIONS if p != "clibd"],
         )
         return self.metadata
