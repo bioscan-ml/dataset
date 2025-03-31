@@ -54,25 +54,6 @@ COLUMN_DTYPES = {
     "author": "category",
 }
 
-PARTITIONING_VERSIONS = [
-    "large_diptera_family",
-    "medium_diptera_family",
-    "small_diptera_family",
-    "large_insect_order",
-    "medium_insect_order",
-    "small_insect_order",
-]
-
-CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
-
-CLIBD_PARTITION_ALIASES = {
-    "pretrain": "no_split",
-    "train": "train_seen",
-    "val": "val_seen",
-    "test": "test_seen",
-    "key_unseen": "test_unseen_keys",
-}
-
 USECOLS = [
     "sampleid",
     "uri",
@@ -87,6 +68,43 @@ USECOLS = [
     "nucraw",
     "image_file",
     "chunk_number",
+]
+
+PARTITIONING_VERSIONS = [
+    "large_diptera_family",
+    "medium_diptera_family",
+    "small_diptera_family",
+    "large_insect_order",
+    "medium_insect_order",
+    "small_insect_order",
+    "clibd",
+]
+
+VALID_SPLITS = ["train", "val", "test", "no_split"]
+
+CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
+
+CLIBD_PARTITION_ALIASES = {
+    "pretrain": "no_split",
+    "train": "train_seen",
+    "val": "val_seen",
+    "test": "test_seen",
+    "key_unseen": "test_unseen_keys",
+}
+
+CLIBD_VALID_SPLITS = [
+    "all_keys",
+    "no_split",
+    "no_split_and_seen_train",
+    "seen_keys",
+    "single_species",
+    "test_seen",
+    "test_unseen",
+    "test_unseen_keys",
+    "train_seen",
+    "val_seen",
+    "val_unseen",
+    "val_unseen_keys",
 ]
 
 
@@ -259,12 +277,33 @@ def load_bioscan1m_metadata(
     if split is None or split == "all":
         pass
     elif partitioning_version == "clibd":
-        # Use the order of samples in the CLIBD partitioning files
-        partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
+        try:
+            partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
+        except FileNotFoundError:
+            if split not in CLIBD_VALID_SPLITS:
+                raise ValueError(
+                    f"Invalid split value: '{split}'. Valid splits for partitioning version"
+                    f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + CLIBD_VALID_SPLITS)}"
+                ) from None
+            raise
+        # Use the order of samples from the CLIBD partitioning files
         df = pandas.merge(partition, df, on="sampleid", how="left")
-    else:
-        select = df[partitioning_version] == split
+    elif split in VALID_SPLITS:
+        try:
+            select = df[partitioning_version] == split
+        except KeyError:
+            if partitioning_version not in PARTITIONING_VERSIONS:
+                raise ValueError(
+                    f"Invalid partitioning version: '{partitioning_version}'."
+                    f" Valid partitioning versions are: {', '.join(repr(s) for s in PARTITIONING_VERSIONS)}"
+                ) from None
+            raise
         df = df.loc[select]
+    else:
+        raise ValueError(
+            f"Invalid split value: '{split}'. Valid splits for partitioning version"
+            f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + VALID_SPLITS)}"
+        )
     return df
 
 
@@ -683,6 +722,6 @@ class BIOSCAN1M(VisionDataset):
             reduce_repeated_barcodes=self.reduce_repeated_barcodes,
             split=self.split,
             partitioning_version=self.partitioning_version,
-            usecols=USECOLS + PARTITIONING_VERSIONS,
+            usecols=USECOLS + [p for p in PARTITIONING_VERSIONS if p != "clibd"],
         )
         return self.metadata

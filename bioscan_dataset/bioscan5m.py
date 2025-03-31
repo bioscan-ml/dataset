@@ -70,6 +70,7 @@ USECOLS = [
     "split",
 ]
 
+VALID_SPLITS = ["pretrain", "train", "val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
 SEEN_SPLITS = ["train", "val", "test"]
 UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
 
@@ -178,8 +179,13 @@ def load_bioscan5m_metadata(
         df = df[df["split"].isin(SEEN_SPLITS)]
     elif split == "unseen":
         df = df[df["split"].isin(UNSEEN_SPLITS)]
-    else:
+    elif split in VALID_SPLITS:
         df = df[df["split"] == split]
+    else:
+        raise ValueError(
+            f"Unknown split: '{split}'. Must be one of:"
+            f" {', '.join(repr(s) for s in ['all', 'seen', 'unseen'] + VALID_SPLITS)}"
+        )
     # Add index columns to use for targets
     label_cols = [
         "phylum",
