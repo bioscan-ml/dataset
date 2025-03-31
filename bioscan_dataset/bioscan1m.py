@@ -349,7 +349,7 @@ class BIOSCAN1M(VisionDataset):
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
           aliases for the corresponding CLIBD partitions.
 
-        If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
+        If ``split`` is ``None`` or ``"all"``, the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
         Note that the contents of the split depends on the value of ``partitioning_version``.
