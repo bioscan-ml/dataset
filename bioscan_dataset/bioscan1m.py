@@ -296,10 +296,19 @@ def load_bioscan1m_metadata(
     if clibd_partitioning_path is not None and (
         partitioning_version != "clibd" or split is None or split in CLIBD_VALID_METASPLITS
     ):
-        df["clibd_split"] = "ERROR"  # All cells should get overwritten
+        split_data = []
         for p in CLIBD_VALID_SPLITS:
-            select = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{p}.txt"), names=["sampleid"])
-            df.loc[df["sampleid"].isin(select["sampleid"]), "clibd_split"] = p
+            _split = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{p}.txt"), names=["sampleid"])
+            _split["clibd_split"] = p
+            split_data.append(_split)
+        split_data = pandas.concat(split_data)
+        df = pandas.merge(df, split_data, on="sampleid", how="left")
+        # Check that all samples have a clibd_split value
+        if df["clibd_split"].isna().any():
+            raise RuntimeError(
+                "Some samples in the metadata file were not assigned a clibd_split value."
+                " Please check that the partitioning files are present and correctly formatted."
+            )
     # Filter to just the split of interest
     if split is None or split == "all":
         pass
