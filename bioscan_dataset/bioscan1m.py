@@ -448,7 +448,7 @@ class BIOSCAN1M(VisionDataset):
 
         # Check that the target_type is compatible with the partitioning version
         if self.partitioning_version == "clibd":
-            too_fine_ranks = {}
+            too_fine_ranks = set()
         else:
             too_fine_ranks = {"subfamily", "tribe", "genus", "species"}
         if self.partitioning_version in {"large_insect_order", "medium_insect_order", "small_insect_order"}:
