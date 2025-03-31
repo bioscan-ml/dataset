@@ -283,7 +283,7 @@ def load_bioscan1m_metadata(
             if split not in CLIBD_VALID_SPLITS:
                 raise ValueError(
                     f"Invalid split value: '{split}'. Valid splits for partitioning version"
-                    f" '{partitioning_version}' are: {['all'] + CLIBD_VALID_SPLITS}"
+                    f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + CLIBD_VALID_SPLITS)}"
                 ) from None
             raise
         # Use the order of samples from the CLIBD partitioning files
@@ -295,14 +295,14 @@ def load_bioscan1m_metadata(
             if partitioning_version not in PARTITIONING_VERSIONS:
                 raise ValueError(
                     f"Invalid partitioning version: '{partitioning_version}'."
-                    f" Valid partitioning versions are: {PARTITIONING_VERSIONS}"
+                    f" Valid partitioning versions are: {', '.join(repr(s) for s in PARTITIONING_VERSIONS)}"
                 ) from None
             raise
         df = df.loc[select]
     else:
         raise ValueError(
             f"Invalid split value: '{split}'. Valid splits for partitioning version"
-            f" '{partitioning_version}' are: {['all'] + VALID_SPLITS}"
+            f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + VALID_SPLITS)}"
         )
     return df
 

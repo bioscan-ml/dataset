@@ -182,7 +182,10 @@ def load_bioscan5m_metadata(
     elif split in VALID_SPLITS:
         df = df[df["split"] == split]
     else:
-        raise ValueError(f"Unknown split: '{split}'. Must be one of: {['all', 'seen', 'unseen'] + VALID_SPLITS}")
+        raise ValueError(
+            f"Unknown split: '{split}'. Must be one of:"
+            f" {', '.join(repr(s) for s in ['all', 'seen', 'unseen'] + VALID_SPLITS)}"
+        )
     # Add index columns to use for targets
     label_cols = [
         "phylum",
