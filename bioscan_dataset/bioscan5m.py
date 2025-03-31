@@ -200,7 +200,9 @@ def load_bioscan5m_metadata(
     for c in label_cols:
         df[c + "_index"] = df[c].cat.codes
     # Add path to image file
-    df["image_path"] = df.apply(get_image_path, axis=1)
+    maybe_chunk = df["chunk"].astype(str) + os.path.sep
+    maybe_chunk.where(df["chunk"].notna(), "", inplace=True)
+    df["image_path"] = df["split"] + os.path.sep + maybe_chunk + df["processid"] + ".jpg"
     return df
 
 
