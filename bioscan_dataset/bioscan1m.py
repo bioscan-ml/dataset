@@ -81,6 +81,7 @@ PARTITIONING_VERSIONS = [
 ]
 
 VALID_SPLITS = ["train", "val", "test", "no_split"]
+VALID_METASPLITS = ["all"]
 
 CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
@@ -91,11 +92,8 @@ CLIBD_PARTITION_ALIASES = {
     "test": "test_seen",
     "key_unseen": "test_unseen_keys",
 }
-
 CLIBD_VALID_SPLITS = [
-    "all_keys",
     "no_split",
-    "no_split_and_seen_train",
     "seen_keys",
     "single_species",
     "test_seen",
@@ -105,6 +103,11 @@ CLIBD_VALID_SPLITS = [
     "val_seen",
     "val_unseen",
     "val_unseen_keys",
+]
+CLIBD_VALID_METASPLITS = [
+    "all",
+    "all_keys",
+    "no_split_and_seen_train",
 ]
 
 
@@ -280,10 +283,10 @@ def load_bioscan1m_metadata(
         try:
             partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
         except FileNotFoundError:
-            if split not in CLIBD_VALID_SPLITS:
+            if split not in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS:
                 raise ValueError(
-                    f"Invalid split value: '{split}'. Valid splits for partitioning version"
-                    f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + CLIBD_VALID_SPLITS)}"
+                    f"Invalid split value: '{split}'. Valid splits for partitioning version '{partitioning_version}'"
+                    f" are: {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
                 ) from None
             raise
         # Use the order of samples from the CLIBD partitioning files
@@ -302,7 +305,7 @@ def load_bioscan1m_metadata(
     else:
         raise ValueError(
             f"Invalid split value: '{split}'. Valid splits for partitioning version"
-            f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + VALID_SPLITS)}"
+            f" '{partitioning_version}' are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
         )
     return df
 
