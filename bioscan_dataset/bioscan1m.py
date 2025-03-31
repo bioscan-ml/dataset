@@ -81,6 +81,7 @@ PARTITIONING_VERSIONS = [
 ]
 
 VALID_SPLITS = ["train", "val", "test", "no_split"]
+VALID_METASPLITS = ["all"]
 
 CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
@@ -91,11 +92,8 @@ CLIBD_PARTITION_ALIASES = {
     "test": "test_seen",
     "key_unseen": "test_unseen_keys",
 }
-
 CLIBD_VALID_SPLITS = [
-    "all_keys",
     "no_split",
-    "no_split_and_seen_train",
     "seen_keys",
     "single_species",
     "test_seen",
@@ -105,6 +103,11 @@ CLIBD_VALID_SPLITS = [
     "val_seen",
     "val_unseen",
     "val_unseen_keys",
+]
+CLIBD_VALID_METASPLITS = [
+    "all",
+    "all_keys",
+    "no_split_and_seen_train",
 ]
 
 
@@ -209,21 +212,37 @@ def load_bioscan1m_metadata(
     -------
     df : pandas.DataFrame
         The metadata DataFrame.
+        If the CLIBD partitioning files are present, the DataFrame will contain an
+        additional column named ``"clibd_split"`` which indicates the CLIBD split for
+        each sample.
     """  # noqa: E501
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
     partitioning_version = partitioning_version.lower()
-    if split and partitioning_version == "clibd":
-        if clibd_partitioning_path is None:
-            clibd_partitioning_path = os.path.join(os.path.dirname(metadata_path), CLIBD_PARTITIONING_DIRNAME)
-        if not os.path.isdir(clibd_partitioning_path):
-            raise EnvironmentError(
-                f"{partitioning_version} partitioning requested, but the corresponding"
-                f" partitioning data could not be found at: {clibd_partitioning_path}"
-            )
+
+    # Handle CLIBD partitioning path
+    explicit_clibd_partitioning_path = clibd_partitioning_path is not None
+    if clibd_partitioning_path is None:
+        clibd_partitioning_path = os.path.join(os.path.dirname(metadata_path), CLIBD_PARTITIONING_DIRNAME)
+    if os.path.isdir(clibd_partitioning_path):
+        pass
+    elif partitioning_version == "clibd":
+        raise EnvironmentError(
+            f"{partitioning_version} partitioning requested, but the corresponding"
+            f" partitioning data could not be found at: {clibd_partitioning_path}"
+        )
+    elif explicit_clibd_partitioning_path:
+        raise EnvironmentError(
+            f"The CLIBD partitioning data could not be found at the specified path: {clibd_partitioning_path}"
+        )
+    else:
+        clibd_partitioning_path = None
+
+    if partitioning_version == "clibd":
         # Handle BIOSCAN-5M partition names as aliases for CLIBD partitions
         split = CLIBD_PARTITION_ALIASES.get(split, split)
+
     df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
     label_cols = [
@@ -273,6 +292,23 @@ def load_bioscan1m_metadata(
     for c in label_cols:
         df[c] = df[c].astype("category")
         df[c + "_index"] = df[c].cat.codes
+    # Add clibd_split column, indicating splits for CLIBD
+    if clibd_partitioning_path is not None and (
+        partitioning_version != "clibd" or split is None or split in CLIBD_VALID_METASPLITS
+    ):
+        split_data = []
+        for p in CLIBD_VALID_SPLITS:
+            _split = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{p}.txt"), names=["sampleid"])
+            _split["clibd_split"] = p
+            split_data.append(_split)
+        split_data = pandas.concat(split_data)
+        df = pandas.merge(df, split_data, on="sampleid", how="left")
+        # Check that all samples have a clibd_split value
+        if df["clibd_split"].isna().any():
+            raise RuntimeError(
+                "Some samples in the metadata file were not assigned a clibd_split value."
+                " Please check that the partitioning files are present and correctly formatted."
+            )
     # Filter to just the split of interest
     if split is None or split == "all":
         pass
@@ -280,14 +316,18 @@ def load_bioscan1m_metadata(
         try:
             partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
         except FileNotFoundError:
-            if split not in CLIBD_VALID_SPLITS:
+            if split not in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS:
                 raise ValueError(
-                    f"Invalid split value: '{split}'. Valid splits for partitioning version"
-                    f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + CLIBD_VALID_SPLITS)}"
+                    f"Invalid split value: '{split}'. Valid splits for partitioning version '{partitioning_version}'"
+                    f" are: {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
                 ) from None
             raise
         # Use the order of samples from the CLIBD partitioning files
         df = pandas.merge(partition, df, on="sampleid", how="left")
+        if "clibd_split" not in df.columns:
+            # Don't overwrite the clibd_split column if it already exists due to use of a metasplit.
+            # Otherwise, add the clibd_split column now.
+            df["clibd_split"] = split
     elif split in VALID_SPLITS:
         try:
             select = df[partitioning_version] == split
@@ -302,7 +342,7 @@ def load_bioscan1m_metadata(
     else:
         raise ValueError(
             f"Invalid split value: '{split}'. Valid splits for partitioning version"
-            f" '{partitioning_version}' are: {', '.join(repr(s) for s in ['all'] + VALID_SPLITS)}"
+            f" '{partitioning_version}' are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
         )
     return df
 
@@ -346,7 +386,7 @@ class BIOSCAN1M(VisionDataset):
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
           aliases for the corresponding CLIBD partitions.
 
-        If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
+        If ``split`` is ``None`` or ``"all"``, the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
         Note that the contents of the split depends on the value of ``partitioning_version``.
