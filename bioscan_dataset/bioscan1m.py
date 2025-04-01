@@ -85,6 +85,7 @@ PARTITIONING_VERSIONS = [
 
 VALID_SPLITS = ["train", "validation", "test", "no_split"]
 VALID_METASPLITS = ["all"]
+PARTITION_ALIASES = {"val": "validation"}
 
 CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
@@ -247,6 +248,9 @@ def load_bioscan1m_metadata(
     if partitioning_version == "clibd":
         # Handle BIOSCAN-5M partition names as aliases for CLIBD partitions
         split = CLIBD_PARTITION_ALIASES.get(split, split)
+    else:
+        # Handle BIOSCAN-5M partition names as aliases for BIOSCAN-1M partitions
+        split = PARTITION_ALIASES.get(split, split)
 
     df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
@@ -636,7 +640,7 @@ class BIOSCAN1M(VisionDataset):
         if self.partitioning_version == "clibd":
             self.split = CLIBD_PARTITION_ALIASES.get(split, split)
         else:
-            self.split = split
+            self.split = PARTITION_ALIASES.get(split, split)
         self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
