@@ -71,7 +71,7 @@ USECOLS = [
 ]
 
 VALID_SPLITS = ["pretrain", "train", "val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
-PARTITION_ALIASES = {"validation": "val"}
+SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
 SEEN_SPLITS = ["train", "val", "test"]
 UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
@@ -160,7 +160,7 @@ def load_bioscan5m_metadata(
         # Use our default column data types
         dtype = COLUMN_DTYPES
     # Handle BIOSCAN-1M partition names as aliases for BIOSCAN-5M partitions
-    split = PARTITION_ALIASES.get(split, split)
+    split = SPLIT_ALIASES.get(split, split)
     # Read the metadata CSV file
     df = pandas.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
@@ -398,7 +398,7 @@ class BIOSCAN5M(VisionDataset):
         self.image_dir = os.path.join(self.root, self.base_folder, "images", self.image_package)
         self.metadata_path = os.path.join(self.root, self.base_folder, self.meta["filename"])
 
-        self.split = PARTITION_ALIASES.get(split, split)
+        self.split = SPLIT_ALIASES.get(split, split)
         self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
