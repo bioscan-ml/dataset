@@ -947,7 +947,7 @@ class BIOSCAN1M(VisionDataset):
                 " Please manually download and extract the zip files."
             )
         data = self.zip_files[self.image_package]
-        filename = os.path.basename(data["url"])
+        filename = "BIOSCAN_1M_" + os.path.basename(data["url"])
         download_url(data["url"], self.root, filename=filename, md5=data.get("md5"))
         archive = os.path.join(self.root, filename)
         extract_zip_without_prefix(
