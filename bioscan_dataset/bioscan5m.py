@@ -292,7 +292,7 @@ class BIOSCAN5M(VisionDataset):
         Label transformation pipeline.
 
     download : bool, default=False
-        If true, downloads the dataset from the internet and puts it in root directory.
+        If ``True``, downloads the dataset from the internet and puts it in root directory.
         If dataset is already downloaded, it is not downloaded again.
         Images are only downloaded if the ``"image"`` modality is requested.
         Note that only ``image_package=cropped_256`` is supported for automatic image download.
