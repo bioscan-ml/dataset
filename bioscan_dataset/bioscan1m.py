@@ -9,7 +9,9 @@ BIOSCAN-1M PyTorch dataset.
 """
 
 import os
+import pathlib
 import warnings
+import zipfile
 from enum import Enum
 from typing import Any, Iterable, Optional, Tuple, Union
 
@@ -18,6 +20,7 @@ import numpy.typing as npt
 import pandas
 import PIL
 import torch
+from torchvision.datasets.utils import check_integrity, download_url
 from torchvision.datasets.vision import VisionDataset
 
 RGB_MEAN = torch.tensor([0.72510918, 0.72891550, 0.72956181])
@@ -350,6 +353,53 @@ def load_bioscan1m_metadata(
 load_metadata = load_bioscan1m_metadata
 
 
+def extract_zip_without_prefix(
+    from_path: Union[str, pathlib.Path],
+    to_path: Optional[Union[str, pathlib.Path]] = None,
+    drop_prefix: Optional[str] = None,
+    remove_finished: bool = False,
+):
+    r"""
+    Extract a zip file, optionally modifying the output paths by dropping a parent directory.
+
+    Parameters
+    ----------
+    from_path : str
+        Path to the zip file to be extracted.
+    to_path : str
+        Path to the directory the file will be extracted to.
+        If omitted, the directory of the file is used.
+    drop_prefix : str, optional
+        Removes a prefix from the paths in the zip file.
+    remove_finished : bool, default=False
+        If ``True``, remove the file after the extraction.
+    """
+    if to_path is None:
+        to_path = os.path.dirname(from_path)
+
+    with zipfile.ZipFile(from_path, "r") as h_zip:
+        for member in h_zip.namelist():
+            output_path = member
+            # If drop_prefix is specified, remove it from the output path
+            if drop_prefix is not None and output_path.startswith(drop_prefix):
+                output_path = member[len(drop_prefix) :]
+                output_path = output_path.lstrip(os.sep + r"/")
+            # Construct the full output path
+            output_path = os.path.join(to_path, output_path)
+            # Check if the member is a directory
+            if member.endswith(os.sep) or member.endswith("/"):
+                os.makedirs(output_path, exist_ok=True)
+                continue
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            # Extract the file
+            with h_zip.open(member) as source, open(output_path, "wb") as target:
+                target.write(source.read())
+
+    if remove_finished:
+        os.remove(from_path)
+
+
 class BIOSCAN1M(VisionDataset):
     r"""`BIOSCAN-1M <https://github.com/bioscan-ml/BIOSCAN-1M>`__ Dataset.
 
@@ -474,7 +524,54 @@ class BIOSCAN1M(VisionDataset):
 
     target_transform : Callable, default=None
         Label transformation pipeline.
+
+    download : bool, default=False
+        If ``True``, downloads the dataset from the internet and puts it in root directory.
+        If dataset is already downloaded, it is not downloaded again.
+        Images are only downloaded if the ``"image"`` modality is requested.
+        Note that only ``image_package`` values ``"cropped_256"`` and ``"original_256"``
+        are currently supported for automatic image download.
+
+        .. versionadded:: 1.2.0
     """  # noqa: E501
+
+    base_folder = "bioscan1m"
+    meta = {
+        "urls": [
+            "https://zenodo.org/records/8030065/files/BIOSCAN_Insect_Dataset_metadata.tsv",
+            "https://huggingface.co/datasets/bioscan-ml/BIOSCAN-1M/resolve/33e1f31/BIOSCAN_Insect_Dataset_metadata.tsv",
+        ],
+        "filename": "BIOSCAN_Insect_Dataset_metadata.tsv",
+        "csv_md5": "dec3bb23870a35e2e13bc17a5809c901",
+    }
+    zip_files = {
+        "cropped_256": {
+            "url": "https://zenodo.org/records/8030065/files/cropped_256.zip",
+            "md5": "fe1175815742db14f7372d505345284a",
+        },
+        "original_256": {
+            "url": "https://zenodo.org/records/8030065/files/original_256.zip",
+            "md5": "9729fc1c49d84e7f1bfc6f5a0916d72b",
+        },
+    }
+    image_files = [
+        (
+            "part18/5351601.jpg",
+            {"cropped_256": "f8d7afc0dd02404863d55882d848f5cf", "original_256": "9349153e047725e4623d706a97deec66"},
+        ),
+        (
+            "part93/BIOUG73231-D12.jpg",
+            {"cropped_256": "5b60309d997570052003dc50d4d75105", "original_256": "91f5041d6b9fbacfa9c7a4d4d7250bde"},
+        ),
+        (
+            "part99/BIOUG88809-E11.jpg",
+            {"cropped_256": "a1def67aea11a051c1c7fb8d0cab76c0", "original_256": "17e74a4691e0010b8d3d80a75b9a8bbd"},
+        ),
+        (
+            "part113/BIOUG79013-C04.jpg",
+            {"cropped_256": "b1c1df1b22aee1a52a10ea3bc9ce9d23", "original_256": "0d01d3818610460850396b6dce0fdc2b"},
+        ),
+    ]
 
     def __init__(
         self,
@@ -495,14 +592,20 @@ class BIOSCAN1M(VisionDataset):
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
 
-        if download:
-            raise NotImplementedError("Download functionality not yet implemented.")
-
         self.metadata = None
         self.root = root
-        self.metadata_path = os.path.join(self.root, "BIOSCAN_Insect_Dataset_metadata.tsv")
         self.image_package = image_package
-        self.image_dir = os.path.join(self.root, "bioscan", "images", self.image_package)
+        # New file structure from versions >=1.2.0
+        self.metadata_path = os.path.join(self.root, self.base_folder, self.meta["filename"])
+        if (
+            not os.path.isdir(os.path.join(self.root, self.base_folder))
+            and os.path.isfile(os.path.join(self.root, self.meta["filename"]))
+            and os.path.isdir(os.path.join(self.root, "bioscan"))
+        ):
+            # Old file structure from versions <=1.1.0
+            self.base_folder = "bioscan"
+            self.metadata_path = os.path.join(self.root, self.meta["filename"])
+        self.image_dir = os.path.join(self.root, self.base_folder, "images", self.image_package)
 
         self.partitioning_version = partitioning_version.lower()
         if self.partitioning_version == "clibd":
@@ -550,7 +653,10 @@ class BIOSCAN1M(VisionDataset):
         if self.target_format not in ["index", "text"]:
             raise ValueError(f"Unknown target_format: {self.target_format}")
 
-        if not self._check_exists():
+        if download:
+            self.download()
+
+        if not self._check_integrity():
             raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
 
         self._load_metadata()
@@ -724,12 +830,43 @@ class BIOSCAN1M(VisionDataset):
         values.append(target)
         return tuple(values)
 
-    def _check_exists(self, verbose=0) -> bool:
-        r"""Check if the dataset is already downloaded and extracted.
+    def _check_integrity_metadata(self, verbose=1) -> bool:
+        p = self.metadata_path
+        check = check_integrity(p, self.meta["csv_md5"])
+        if verbose >= 1 and not check:
+            if not os.path.exists(p):
+                print(f"File missing: {p}")
+            else:
+                print(f"File invalid: {p}")
+        if verbose >= 2 and check:
+            print(f"File present: {p}")
+        return check
+
+    def _check_integrity_images(self, verbose=1) -> bool:
+        check_all = True
+        for file, data in self.image_files:
+            file = os.path.join(self.image_dir, file)
+            if self.image_package in data:
+                check = check_integrity(file, data[self.image_package])
+            else:
+                check = os.path.exists(file)
+            if verbose >= 1 and not check:
+                if not os.path.exists(file):
+                    print(f"File missing: {file}")
+                else:
+                    print(f"File invalid: {file}")
+            if verbose >= 2 and check:
+                print(f"File present: {file}")
+            check_all &= check
+        return check_all
+
+    def _check_integrity(self, verbose=1) -> bool:
+        r"""
+        Check if the dataset is already downloaded and extracted.
 
         Parameters
         ----------
-        verbose : int, default=0
+        verbose : int, default=1
             Verbosity level.
 
         Returns
@@ -737,20 +874,54 @@ class BIOSCAN1M(VisionDataset):
         bool
             True if the dataset is already downloaded and extracted, False otherwise.
         """
-        paths_to_check = [
-            self.metadata_path,
-            os.path.join(self.image_dir, "part18", "4900531.jpg"),
-            os.path.join(self.image_dir, "part113", "BIOUG68114-B02.jpg"),
-        ]
-        check_all = True
-        for p in paths_to_check:
-            check = os.path.exists(p)
-            if verbose >= 1 and not check:
-                print(f"File missing: {p}")
-            if verbose >= 2 and check:
-                print(f"File present: {p}")
-            check_all &= check
-        return check_all
+        check = True
+        check &= self._check_integrity_metadata(verbose=verbose)
+        if "image" in self.modality:
+            check &= self._check_integrity_images(verbose=verbose)
+        return check
+
+    def _download_metadata(self, verbose=1) -> None:
+        if self._check_integrity_metadata(verbose=verbose):
+            if verbose >= 1:
+                print("Metadata CSV file already downloaded and verified")
+            return
+        download_url(
+            self.meta["urls"][0],
+            root=os.path.dirname(self.metadata_path),
+            filename=os.path.basename(self.metadata_path),
+            md5=self.meta["csv_md5"],
+        )
+
+    def _download_images(self, remove_finished=False, verbose=1) -> None:
+        if self._check_integrity_images(verbose=verbose):
+            if verbose >= 1:
+                print("Images already downloaded and verified")
+            return
+        if self.image_package not in self.zip_files:
+            raise NotImplementedError(
+                f"Automatic download of image_package='{self.image_package}' is not yet implemented."
+                " Please manually download and extract the zip files."
+            )
+        data = self.zip_files[self.image_package]
+        filename = os.path.basename(data["url"])
+        download_url(data["url"], self.root, filename=filename, md5=data.get("md5"))
+        archive = os.path.join(self.root, filename)
+        extract_zip_without_prefix(
+            archive,
+            os.path.join(self.root, self.base_folder),
+            drop_prefix="bioscan",
+            remove_finished=remove_finished,
+        )
+
+    def download(self) -> None:
+        r"""
+        Download and extract the data.
+
+        .. versionadded:: 1.2.0
+        """
+        self._download_metadata()
+        if "image" in self.modality:
+            self._download_images()
 
     def _load_metadata(self) -> pandas.DataFrame:
         r"""
