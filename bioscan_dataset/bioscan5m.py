@@ -184,7 +184,7 @@ def load_bioscan5m_metadata(
         df = df[df["split"] == split]
     else:
         raise ValueError(
-            f"Unknown split: '{split}'. Must be one of:"
+            f"Unknown split: {repr(split)}. Must be one of:"
             f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
         )
     # Add index columns to use for targets
@@ -415,7 +415,7 @@ class BIOSCAN5M(VisionDataset):
             raise RuntimeError("target_transform is specified but target_type is empty")
 
         if self.target_format not in ["index", "text"]:
-            raise ValueError(f"Unknown target_format: {self.target_format}")
+            raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
 
         if download:
             self.download()
@@ -525,12 +525,12 @@ class BIOSCAN5M(VisionDataset):
             try:
                 return self.metadata[column].cat.categories.get_loc(label)
             except KeyError:
-                raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
+                raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
         labels = label
         try:
             out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
         except KeyError:
-            raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
+            raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
         out = np.asarray(out)
         return out
 
@@ -586,7 +586,7 @@ class BIOSCAN5M(VisionDataset):
             elif modality in self.metadata.columns:
                 X = sample[modality]
             else:
-                raise ValueError(f"Unfamiliar modality: {modality}")
+                raise ValueError(f"Unfamiliar modality: {repr(modality)}")
             values.append(X)
 
         target = []
@@ -596,7 +596,7 @@ class BIOSCAN5M(VisionDataset):
             elif self.target_format == "text":
                 target.append(sample[t])
             else:
-                raise ValueError(f"Unknown target_format: {self.target_format}")
+                raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
@@ -678,7 +678,7 @@ class BIOSCAN5M(VisionDataset):
             image_package = self.image_package
         if image_package not in self.zip_files[partition_set]:
             raise NotImplementedError(
-                f"Automatic download of image_package={image_package} is not yet implemented."
+                f"Automatic download of image_package={repr(image_package)} is not yet implemented."
                 " Please manually download and extract the zip files."
             )
         data = self.zip_files[partition_set][image_package]
