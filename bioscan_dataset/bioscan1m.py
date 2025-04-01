@@ -13,7 +13,7 @@ import pathlib
 import warnings
 import zipfile
 from enum import Enum
-from typing import Any, Iterable, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -688,7 +688,7 @@ class BIOSCAN1M(VisionDataset):
 
     def index2label(
         self,
-        index: Union[int, npt.ArrayLike],
+        index: Union[int, List[int], npt.NDArray[np.int_]],
         column: Optional[str] = None,
     ) -> Union[str, npt.NDArray[np.str_]]:
         r"""
