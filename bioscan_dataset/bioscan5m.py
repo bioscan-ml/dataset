@@ -148,6 +148,10 @@ def load_bioscan5m_metadata(
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
+        The ``split`` parameter can also be specified as collection of partitions
+        joined by ``"+"``. For example, ``"pretrain+train"`` will filter the metadata
+        to samples in either the pretraining or training partitions.
+
     **kwargs
         Additional keyword arguments to pass to :func:`pandas.read_csv`.
 
@@ -178,19 +182,28 @@ def load_bioscan5m_metadata(
         # Re-order the data (reverting the shuffle)
         df = df.sort_index()
     # Filter to just the split of interest
-    if split is None or split == "all":
-        pass
-    elif split == "seen":
-        df = df[df["split"].isin(SEEN_SPLITS)]
-    elif split == "unseen":
-        df = df[df["split"].isin(UNSEEN_SPLITS)]
-    elif split in VALID_SPLITS:
-        df = df[df["split"] == split]
-    else:
-        raise ValueError(
-            f"Unknown split: {repr(split)}. Must be one of:"
-            f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
-        )
+    if split is not None and split != "all":
+        # Split the string by "+" to handle custom metasplits
+        split_list = [s.strip() for s in split.split("+")]
+        split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
+        # Verify these splits are valid, and expand hard-coded metasplits
+        for s in split_list:
+            if s == "all":
+                split_list.extend(VALID_SPLITS)
+            elif s == "seen":
+                split_list.extend(SEEN_SPLITS)
+            elif s == "unseen":
+                split_list.extend(UNSEEN_SPLITS)
+            elif s not in VALID_SPLITS:
+                msg = f"{repr(split)}"
+                if len(split_list) > 1:
+                    msg = f"{repr(s)} within metasplit " + msg
+                raise ValueError(
+                    f"Invalid split name {msg}. Valid split names are:"
+                    f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
+                )
+        # Filter the DataFrame to just the requested splits
+        df = df.loc[df["split"].isin(split_list)]
     # Add index columns to use for targets
     label_cols = [
         "phylum",
@@ -240,6 +253,10 @@ class BIOSCAN5M(VisionDataset):
         - ``"unseen"``, which is the union of {key_unseen, val_unseen, test_unseen}
 
         Set to ``"all"`` to include all splits.
+
+        The ``split`` parameter can also be specified as collection of partitions
+        joined by ``"+"``. For example, ``split="pretrain+train"`` will return a dataset
+        comprised of the pretraining and training partitions.
 
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
