@@ -728,3 +728,21 @@ class BIOSCAN5M(VisionDataset):
             usecols=USECOLS,
         )
         return self.metadata
+
+    def extra_repr(self) -> str:
+        xr = ""
+        xr += f"split: {repr(self.split)}\n"
+        xr += f"modality: {repr(self.modality)}\n"
+        if "image" in self.modality:
+            xr += f"image_package: {repr(self.image_package)}\n"
+        if self.reduce_repeated_barcodes:
+            xr += f"reduce_repeated_barcodes: {repr(self.reduce_repeated_barcodes)}\n"
+        has_dna_modality = any(m in self.modality for m in ["dna", "dna_barcode", "barcode"])
+        if has_dna_modality and self.max_nucleotides != 660:
+            xr += f"max_nucleotides: {repr(self.max_nucleotides)}\n"
+        xr += f"target_type: {repr(self.target_type)}"
+        if len(self.target_type) > 0:
+            xr += f"\ntarget_format: {repr(self.target_format)}"
+        if has_dna_modality and self.dna_transform is not None:
+            xr += f"\ndna_transform: {repr(self.dna_transform)}"
+        return xr
