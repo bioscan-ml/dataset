@@ -577,6 +577,8 @@ class BIOSCAN1M(VisionDataset):
         "url": "https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip",  # noqa: E501
         "md5": "fc08444a47d1533d99a892287e174cc1",
         "files": [
+            ("all_keys.txt", "808644e06aa47c66e0262235dae6bbb0"),
+            ("no_split_and_seen_train.txt", "387fc460fee3e11a5d76971d235dbe17"),
             ("no_split.txt", "52d069b51527919257eeb2f46960b619"),
             ("seen_keys.txt", "d820f90f286233ea5e25162766fa2edc"),
             ("single_species.txt", "7eee9f7f4807da5806bc6d0b912536e0"),
