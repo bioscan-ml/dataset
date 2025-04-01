@@ -235,11 +235,13 @@ def load_bioscan1m_metadata(
             f"{partitioning_version} partitioning requested, but the corresponding"
             f" partitioning data could not be found at: {repr(clibd_partitioning_path)}"
         )
-    elif explicit_clibd_partitioning_path:
-        raise EnvironmentError(
-            f"The CLIBD partitioning data could not be found at the specified path: {repr(clibd_partitioning_path)}"
-        )
     else:
+        if explicit_clibd_partitioning_path:
+            warnings.warn(
+                f"The CLIBD partitioning data was not found at the specified path: {repr(clibd_partitioning_path)}",
+                UserWarning,
+                stacklevel=2,
+            )
         clibd_partitioning_path = None
 
     if partitioning_version == "clibd":
