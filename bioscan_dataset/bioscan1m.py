@@ -199,7 +199,7 @@ def load_bioscan1m_metadata(
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
         To use the CLIBD partitioning, download and extract the partition files from
-        `here <https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__.
+        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
@@ -463,7 +463,7 @@ class BIOSCAN1M(VisionDataset):
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
         To use the CLIBD partitioning, download and extract the partition files from
-        `here <https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
+        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
         into the ``root`` directory.
 
         .. versionchanged:: 1.2.0
@@ -576,7 +576,7 @@ class BIOSCAN1M(VisionDataset):
         ),
     ]
     clibd_partitioning_files = {
-        "url": "https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip",  # noqa: E501
+        "url": "https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip",  # noqa: E501
         "md5": "fc08444a47d1533d99a892287e174cc1",
         "files": [
             ("all_keys.txt", "808644e06aa47c66e0262235dae6bbb0"),
