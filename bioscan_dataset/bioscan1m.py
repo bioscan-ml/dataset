@@ -93,6 +93,7 @@ CLIBD_PARTITION_ALIASES = {
     "pretrain": "no_split",
     "train": "train_seen",
     "val": "val_seen",
+    "validation": "val_seen",
     "test": "test_seen",
     "key_unseen": "test_unseen_keys",
 }
