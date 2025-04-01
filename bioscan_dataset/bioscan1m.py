@@ -83,7 +83,7 @@ PARTITIONING_VERSIONS = [
     "clibd",
 ]
 
-VALID_SPLITS = ["train", "val", "test", "no_split"]
+VALID_SPLITS = ["train", "validation", "test", "no_split"]
 VALID_METASPLITS = ["all"]
 
 CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
@@ -154,7 +154,7 @@ def load_bioscan1m_metadata(
         should be one of:
 
         - ``"train"``
-        - ``"val"``
+        - ``"validation"``
         - ``"test"``
         - ``"no_split"``
 
@@ -418,7 +418,7 @@ class BIOSCAN1M(VisionDataset):
         should be one of:
 
         - ``"train"``
-        - ``"val"``
+        - ``"validation"``
         - ``"test"``
         - ``"no_split"``
 
