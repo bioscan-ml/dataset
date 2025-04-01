@@ -91,15 +91,15 @@ CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
 CLIBD_VALID_SPLITS = [
     "no_split",
+    "train_seen",
     "seen_keys",
     "single_species",
-    "test_seen",
-    "test_unseen",
-    "test_unseen_keys",
-    "train_seen",
     "val_seen",
     "val_unseen",
     "val_unseen_keys",
+    "test_seen",
+    "test_unseen",
+    "test_unseen_keys",
 ]
 CLIBD_SPLIT_ALIASES = {
     "pretrain": "no_split",
