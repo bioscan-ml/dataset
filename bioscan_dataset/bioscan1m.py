@@ -233,11 +233,11 @@ def load_bioscan1m_metadata(
     elif partitioning_version == "clibd":
         raise EnvironmentError(
             f"{partitioning_version} partitioning requested, but the corresponding"
-            f" partitioning data could not be found at: {clibd_partitioning_path}"
+            f" partitioning data could not be found at: {repr(clibd_partitioning_path)}"
         )
     elif explicit_clibd_partitioning_path:
         raise EnvironmentError(
-            f"The CLIBD partitioning data could not be found at the specified path: {clibd_partitioning_path}"
+            f"The CLIBD partitioning data could not be found at the specified path: {repr(clibd_partitioning_path)}"
         )
     else:
         clibd_partitioning_path = None
@@ -321,8 +321,9 @@ def load_bioscan1m_metadata(
         except FileNotFoundError:
             if split not in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS:
                 raise ValueError(
-                    f"Invalid split value: '{split}'. Valid splits for partitioning version '{partitioning_version}'"
-                    f" are: {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
+                    f"Invalid split value: {repr(split)}. Valid splits for partitioning version"
+                    f" {repr(partitioning_version)} are:"
+                    f" {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
                 ) from None
             raise
         # Use the order of samples from the CLIBD partitioning files
@@ -337,15 +338,15 @@ def load_bioscan1m_metadata(
         except KeyError:
             if partitioning_version not in PARTITIONING_VERSIONS:
                 raise ValueError(
-                    f"Invalid partitioning version: '{partitioning_version}'."
+                    f"Invalid partitioning version: {repr(partitioning_version)}."
                     f" Valid partitioning versions are: {', '.join(repr(s) for s in PARTITIONING_VERSIONS)}"
                 ) from None
             raise
         df = df.loc[select]
     else:
         raise ValueError(
-            f"Invalid split value: '{split}'. Valid splits for partitioning version"
-            f" '{partitioning_version}' are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
+            f"Invalid split value: {repr(split)}. Valid splits for partitioning version"
+            f" {repr(partitioning_version)} are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
         )
     return df
 
@@ -651,7 +652,7 @@ class BIOSCAN1M(VisionDataset):
             raise RuntimeError("target_transform is specified but target_type is empty")
 
         if self.target_format not in ["index", "text"]:
-            raise ValueError(f"Unknown target_format: {self.target_format}")
+            raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
 
         if download:
             self.download()
@@ -747,12 +748,12 @@ class BIOSCAN1M(VisionDataset):
             try:
                 return self.metadata[column].cat.categories.get_loc(label)
             except KeyError:
-                raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
+                raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
         labels = label
         try:
             out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
         except KeyError:
-            raise KeyError(f"Label '{label}' not found in metadata column '{column}'") from None
+            raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
         out = np.asarray(out)
         return out
 
@@ -808,7 +809,7 @@ class BIOSCAN1M(VisionDataset):
             elif modality in self.metadata.columns:
                 X = sample[modality]
             else:
-                raise ValueError(f"Unfamiliar modality: {modality}")
+                raise ValueError(f"Unfamiliar modality: {repr(modality)}")
             values.append(X)
 
         target = []
@@ -818,7 +819,7 @@ class BIOSCAN1M(VisionDataset):
             elif self.target_format == "text":
                 target.append(sample[t])
             else:
-                raise ValueError(f"Unknown target_format: {self.target_format}")
+                raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
@@ -899,7 +900,7 @@ class BIOSCAN1M(VisionDataset):
             return
         if self.image_package not in self.zip_files:
             raise NotImplementedError(
-                f"Automatic download of image_package='{self.image_package}' is not yet implemented."
+                f"Automatic download of image_package={repr(self.image_package)} is not yet implemented."
                 " Please manually download and extract the zip files."
             )
         data = self.zip_files[self.image_package]
