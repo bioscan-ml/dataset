@@ -573,6 +573,22 @@ class BIOSCAN1M(VisionDataset):
             {"cropped_256": "b1c1df1b22aee1a52a10ea3bc9ce9d23", "original_256": "0d01d3818610460850396b6dce0fdc2b"},
         ),
     ]
+    clibd_partitioning_files = {
+        "url": "https://huggingface.co/datasets/bioscan-ml/bioscan-clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip",  # noqa: E501
+        "md5": "fc08444a47d1533d99a892287e174cc1",
+        "files": [
+            ("no_split.txt", "52d069b51527919257eeb2f46960b619"),
+            ("seen_keys.txt", "d820f90f286233ea5e25162766fa2edc"),
+            ("single_species.txt", "7eee9f7f4807da5806bc6d0b912536e0"),
+            ("test_seen.txt", "7886d39cb093499143fe1be7c2656b0c"),
+            ("test_unseen.txt", "da7641e34fe5132613de9ab9af38adcb"),
+            ("test_unseen_keys.txt", "cd84043b8bb857a762c7e366ab25ad32"),
+            ("train_seen.txt", "3d7df41542e836d640d98bf856eb528f"),
+            ("val_seen.txt", "ec07aa20a9f96c779eba78fc91bbe824"),
+            ("val_unseen.txt", "8fcacf5992f2d7dbe7953bf13546f345"),
+            ("val_unseen_keys.txt", "185061829fa0b395095af06d761de1d3"),
+        ],
+    }
 
     def __init__(
         self,
@@ -609,6 +625,10 @@ class BIOSCAN1M(VisionDataset):
         self.image_dir = os.path.join(self.root, self.base_folder, "images", self.image_package)
 
         self.partitioning_version = partitioning_version.lower()
+        self.clibd_partitioning_path = os.path.join(self.root, self.base_folder, CLIBD_PARTITIONING_DIRNAME)
+        if not os.path.isdir(self.clibd_partitioning_path) and self.partitioning_version != "clibd":
+            self.clibd_partitioning_path = None
+
         if self.partitioning_version == "clibd":
             self.split = CLIBD_PARTITION_ALIASES.get(split, split)
         else:
@@ -861,6 +881,23 @@ class BIOSCAN1M(VisionDataset):
             check_all &= check
         return check_all
 
+    def _check_integrity_clibd_partitioning(self, verbose=1) -> bool:
+        check_all = os.path.isdir(self.clibd_partitioning_path)
+        if verbose >= 1 and not check_all:
+            print(f"Directory missing: {self.clibd_partitioning_path}")
+        for p, md5 in self.clibd_partitioning_files["files"]:
+            file = os.path.join(self.clibd_partitioning_path, p)
+            check = check_integrity(file, md5)
+            if verbose >= 1 and not check:
+                if not os.path.exists(file):
+                    print(f"File missing: {file}")
+                else:
+                    print(f"File invalid: {file}")
+            if verbose >= 2 and check:
+                print(f"File present: {file}")
+            check_all &= check
+        return check_all
+
     def _check_integrity(self, verbose=1) -> bool:
         r"""
         Check if the dataset is already downloaded and extracted.
@@ -879,6 +916,8 @@ class BIOSCAN1M(VisionDataset):
         check &= self._check_integrity_metadata(verbose=verbose)
         if "image" in self.modality:
             check &= self._check_integrity_images(verbose=verbose)
+        if self.partitioning_version == "clibd":
+            check &= self._check_integrity_clibd_partitioning(verbose=verbose)
         return check
 
     def _download_metadata(self, verbose=1) -> None:
@@ -914,6 +953,21 @@ class BIOSCAN1M(VisionDataset):
             remove_finished=remove_finished,
         )
 
+    def _download_clibd_partitioning(self, remove_finished=False, verbose=1) -> None:
+        if self._check_integrity_clibd_partitioning(verbose=verbose):
+            if verbose >= 1:
+                print("CLIBD partitioning already downloaded and verified")
+            return
+        data = self.clibd_partitioning_files
+        filename = os.path.basename(data["url"])
+        download_url(data["url"], self.root, filename=filename, md5=data.get("md5"))
+        archive = os.path.join(self.root, filename)
+        extract_zip_without_prefix(
+            archive,
+            os.path.join(self.root, self.base_folder),
+            remove_finished=remove_finished,
+        )
+
     def download(self) -> None:
         r"""
         Download and extract the data.
@@ -923,6 +977,8 @@ class BIOSCAN1M(VisionDataset):
         self._download_metadata()
         if "image" in self.modality:
             self._download_images()
+        if self.partitioning_version == "clibd":
+            self._download_clibd_partitioning()
 
     def _load_metadata(self) -> pandas.DataFrame:
         r"""
@@ -934,6 +990,7 @@ class BIOSCAN1M(VisionDataset):
             reduce_repeated_barcodes=self.reduce_repeated_barcodes,
             split=self.split,
             partitioning_version=self.partitioning_version,
+            clibd_partitioning_path=self.clibd_partitioning_path,
             usecols=USECOLS + [p for p in PARTITIONING_VERSIONS if p != "clibd"],
         )
         return self.metadata
