@@ -681,27 +681,23 @@ class BIOSCAN5M(VisionDataset):
     def _check_integrity_images(self, split=None, verbose=1) -> bool:
         if split is None:
             split = self.split
-        if split == "all":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in self.image_files)
-        if split == "seen":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in SEEN_SPLITS)
-        if split == "unseen":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in UNSEEN_SPLITS)
+        split_set = explode_metasplit(split, verify=True)
         check_all = True
-        for file, data in self.image_files[split]:
-            file = os.path.join(self.image_dir, file)
-            if self.image_package in data:
-                check = check_integrity(file, data[self.image_package])
-            else:
-                check = os.path.exists(file)
-            if verbose >= 1 and not check:
-                if not os.path.exists(file):
-                    print(f"File missing: {file}")
+        for s in split_set:
+            for file, data in self.image_files[s]:
+                file = os.path.join(self.image_dir, file)
+                if self.image_package in data:
+                    check = check_integrity(file, data[self.image_package])
                 else:
-                    print(f"File invalid: {file}")
-            if verbose >= 2 and check:
-                print(f"File present: {file}")
-            check_all &= check
+                    check = os.path.exists(file)
+                if verbose >= 1 and not check:
+                    if not os.path.exists(file):
+                        print(f"File missing: {file}")
+                    else:
+                        print(f"File invalid: {file}")
+                if verbose >= 2 and check:
+                    print(f"File present: {file}")
+                check_all &= check
         return check_all
 
     def _check_integrity(self, verbose=1) -> bool:
@@ -747,23 +743,20 @@ class BIOSCAN5M(VisionDataset):
             if verbose >= 1:
                 print("Images already downloaded and verified")
             return
-        if self.split in ("all", "pretrain"):
+        split_set = explode_metasplit(self.split, verify=False)
+        if "pretrain" in split_set:
             self._download_image_zip("pretrain01")
             self._download_image_zip("pretrain02")
-        if self.split in ("all", "train", "seen"):
+        if "train" in split_set:
             self._download_image_zip("train")
-        if self.split in (
-            "all",
-            "eval",
-            "seen",
-            "unseen",
+        if split_set & {
             "val",
             "test",
             "key_unseen",
             "val_unseen",
             "test_unseen",
             "other_heldout",
-        ):
+        }:
             self._download_image_zip("eval")
 
     def download(self) -> None:
