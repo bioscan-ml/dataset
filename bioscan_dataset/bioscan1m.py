@@ -337,7 +337,7 @@ def load_bioscan1m_metadata(
             elif s == "all_keys":
                 split_list.extend(["seen_keys", "val_unseen_keys", "test_unseen_keys"])
             elif s == "no_split_and_seen_train":
-                split_list.extend(["no_split", "seen_train"])
+                split_list.extend(["no_split", "train_seen"])
             elif s not in CLIBD_VALID_SPLITS:
                 msg = f"{repr(split)}"
                 if len(split_list) > 1:
