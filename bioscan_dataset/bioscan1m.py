@@ -91,15 +91,15 @@ CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
 CLIBD_VALID_SPLITS = [
     "no_split",
+    "train_seen",
     "seen_keys",
     "single_species",
-    "test_seen",
-    "test_unseen",
-    "test_unseen_keys",
-    "train_seen",
     "val_seen",
     "val_unseen",
     "val_unseen_keys",
+    "test_seen",
+    "test_unseen",
+    "test_unseen_keys",
 ]
 CLIBD_SPLIT_ALIASES = {
     "pretrain": "no_split",
@@ -179,6 +179,10 @@ def load_bioscan1m_metadata(
 
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
+
+        The ``split`` parameter can also be specified as collection of partitions
+        joined by ``"+"``. For example, ``"train+validation+test"`` will filter the
+        metadata to samples in the training, validation, and test partitions.
 
         Note that the contents of the split depends on the value of ``partitioning_version``.
         If ``partitioning_version`` is changed, the same ``split`` value will yield
@@ -304,7 +308,7 @@ def load_bioscan1m_metadata(
         df[c + "_index"] = df[c].cat.codes
     # Add clibd_split column, indicating splits for CLIBD
     if clibd_partitioning_path is not None and (
-        partitioning_version != "clibd" or split is None or split in CLIBD_VALID_METASPLITS
+        partitioning_version != "clibd" or split is None or split not in CLIBD_VALID_SPLITS
     ):
         split_data = []
         for p in CLIBD_VALID_SPLITS:
@@ -322,6 +326,29 @@ def load_bioscan1m_metadata(
     # Filter to just the split of interest
     if split is None or split == "all":
         pass
+    elif partitioning_version == "clibd" and "+" in split:
+        # Handle split names as aliases for CLIBD partitions
+        split_list = [s.strip() for s in split.split("+")]
+        split_list = [CLIBD_SPLIT_ALIASES.get(s, s) for s in split_list]
+        # Check that all split names are valid
+        for s in split_list:
+            if s == "all":
+                split_list.extend(CLIBD_VALID_SPLITS)
+            elif s == "all_keys":
+                split_list.extend(["seen_keys", "val_unseen_keys", "test_unseen_keys"])
+            elif s == "no_split_and_seen_train":
+                split_list.extend(["no_split", "train_seen"])
+            elif s not in CLIBD_VALID_SPLITS:
+                msg = f"{repr(split)}"
+                if len(split_list) > 1:
+                    msg = f"{repr(s)} within " + msg
+                raise ValueError(
+                    f"Invalid split value {msg}. Valid splits for partitioning version"
+                    f" {repr(partitioning_version)} are:"
+                    f" {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
+                )
+        # Filter to just the selected splits
+        df = df[df["clibd_split"].isin(split_list)]
     elif partitioning_version == "clibd":
         try:
             partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
@@ -333,15 +360,35 @@ def load_bioscan1m_metadata(
                     f" {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
                 ) from None
             raise
-        # Use the order of samples from the CLIBD partitioning files
+        # Use the order of samples from the CLIBD partitioning files.
+        # Note that this preserves the order of samples in the CLIBD paper, but means
+        # ``split="no_split_and_seen_train"`` will produce a dataset that has samples in
+        # a different order from ``split="no_split+seen_train"``.
         df = pandas.merge(partition, df, on="sampleid", how="left")
         if "clibd_split" not in df.columns:
             # Don't overwrite the clibd_split column if it already exists due to use of a metasplit.
             # Otherwise, add the clibd_split column now.
             df["clibd_split"] = split
-    elif split in VALID_SPLITS:
+    else:
+        # Split the string by "+" to handle custom metasplits
+        split_list = [s.strip() for s in split.split("+")]
+        split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
+        # Check that all split names are valid
+        for s in split_list:
+            if s == "all":
+                split_list.extend(VALID_SPLITS)
+            elif s not in VALID_SPLITS:
+                msg = f"{repr(split)}"
+                if len(split_list) > 1:
+                    msg = f"{repr(s)} within metasplit " + msg
+                raise ValueError(
+                    f"Invalid split name {msg}. Valid splits for partitioning version"
+                    f" {repr(partitioning_version)} are:"
+                    f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
+                )
+        # Filter to just the selected splits
         try:
-            select = df[partitioning_version] == split
+            select = df[partitioning_version].isin(split_list)
         except KeyError:
             if partitioning_version not in PARTITIONING_VERSIONS:
                 raise ValueError(
@@ -350,11 +397,6 @@ def load_bioscan1m_metadata(
                 ) from None
             raise
         df = df.loc[select]
-    else:
-        raise ValueError(
-            f"Invalid split value: {repr(split)}. Valid splits for partitioning version"
-            f" {repr(partitioning_version)} are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
-        )
     return df
 
 
@@ -446,6 +488,10 @@ class BIOSCAN1M(VisionDataset):
 
         If ``split`` is ``None`` or ``"all"``, the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
+
+        The ``split`` parameter can also be specified as collection of partitions
+        joined by ``"+"``. For example, ``split="train+validation+test"`` will return
+        a dataset comprised of samples in the training, validation, and test partitions.
 
         Note that the contents of the split depends on the value of ``partitioning_version``.
         If ``partitioning_version`` is changed, the same ``split`` value will yield
