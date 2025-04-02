@@ -10,7 +10,7 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -75,6 +75,62 @@ SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
 SEEN_SPLITS = ["train", "val", "test"]
 UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
+
+
+def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
+    """
+    Convert a metasplit string into its set of constituent splits.
+
+    Parameters
+    ----------
+    metasplit : str
+        The metasplit to explode.
+    verify : bool, default=False
+        If ``True``, verify that the constitutent splits are valid.
+
+    Returns
+    -------
+    set of str
+        The canonical splits within the metasplit.
+
+    Examples
+    --------
+    >>> explode_metasplit("pretrain+train")
+    {'pretrain', 'train'}
+    >>> explode_metasplit("seen")
+    {'train', 'val', 'test'}
+    >>> explode_metasplit("train")
+    {'train'}
+    >>> explode_metasplit("validation")
+    {'val'}
+    """
+    split_list = [s.strip() for s in metasplit.split("+")]
+    split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
+    split_set = set(split_list)
+    if "all" in split_list:
+        split_set.remove("all")
+        split_set |= set(VALID_SPLITS)
+    if "seen" in split_list:
+        split_set.remove("seen")
+        split_set |= set(SEEN_SPLITS)
+    if "unseen" in split_list:
+        split_set.remove("unseen")
+        split_set |= set(UNSEEN_SPLITS)
+
+    if verify:
+        # Verify the constituent splits are valid
+        invalid_splits = split_set - set(VALID_SPLITS)
+        if invalid_splits:
+            msg_valid_names = f"Valid split names are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}."
+            if split_set == {metasplit}:
+                raise ValueError(f"Invalid split name {repr(metasplit)}. {msg_valid_names}")
+            plural = "s" if len(invalid_splits) > 1 else ""
+            raise ValueError(
+                f"Invalid split name{plural} {', '.join(repr(s) for s in invalid_splits)} within requested metasplit"
+                f" {repr(metasplit)}. {msg_valid_names}"
+            )
+
+    return split_set
 
 
 def get_image_path(row):
@@ -163,8 +219,6 @@ def load_bioscan5m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
-    # Handle BIOSCAN-1M partition names as aliases for BIOSCAN-5M partitions
-    split = SPLIT_ALIASES.get(split, split)
     # Read the metadata CSV file
     df = pandas.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
@@ -184,26 +238,9 @@ def load_bioscan5m_metadata(
     # Filter to just the split of interest
     if split is not None and split != "all":
         # Split the string by "+" to handle custom metasplits
-        split_list = [s.strip() for s in split.split("+")]
-        split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
-        # Verify these splits are valid, and expand hard-coded metasplits
-        for s in split_list:
-            if s == "all":
-                split_list.extend(VALID_SPLITS)
-            elif s == "seen":
-                split_list.extend(SEEN_SPLITS)
-            elif s == "unseen":
-                split_list.extend(UNSEEN_SPLITS)
-            elif s not in VALID_SPLITS:
-                msg = f"{repr(split)}"
-                if len(split_list) > 1:
-                    msg = f"{repr(s)} within metasplit " + msg
-                raise ValueError(
-                    f"Invalid split name {msg}. Valid split names are:"
-                    f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
-                )
+        split_set = explode_metasplit(split, verify=True)
         # Filter the DataFrame to just the requested splits
-        df = df.loc[df["split"].isin(split_list)]
+        df = df.loc[df["split"].isin(split_set)]
     # Add index columns to use for targets
     label_cols = [
         "phylum",
