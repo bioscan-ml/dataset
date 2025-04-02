@@ -80,14 +80,24 @@ For these reasons, we recommend new projects use the BIOSCAN-5M dataset over BIO
 Dataset download
 ~~~~~~~~~~~~~~~~
 
-For BIOSCAN-5M, the dataset class supports automatically downloading the ``cropped_256`` image package (which is the default package).
-This can be performed by setting the argument ``download=True``:
+The dataset files can be automatically downloaded by setting the argument ``download=True`` when instantiating the dataset class:
 
 .. code-block:: python
 
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", download=True)
 
-To use a different image package, follow the download instructions given in the `BIOSCAN-5M repository <https://github.com/bioscan-ml/BIOSCAN-5M?tab=readme-ov-file#dataset-access>`__, then set the argument ``image_package`` to the desired package name, e.g.
+When using the automatic download option, resources are downloaded only as needed.
+The metadata is always downloaded, but the images are only downloaded if the ``"image"`` modality is selected (which it is by default, for more details see `Input modality selection`_).
+Furthermore, the BIOSCAN-5M images are downloaded in a lazy manner, with splits only downloaded when they are first used.
+Since 90% of the data is in the pretrain split, this means only a small fraction of the images are downloaded if this split is not used.
+
+The BIOSCAN-1M and BIOSCAN-5M datasets both offer images in multiple versions, referred to as image packages.
+The default image package is ``cropped_256``, where the images have been cropped to a bounding box around the insect, and then resized so the shorter side is 256 pixels.
+Other image packages are ``cropped_full`` (cropped to a bounding box but not resized), ``original_full`` (original images at the highest resolution we provide), and ``original_256`` (uncropped images resized to 256 pixels on the shorter side).
+
+Both `BIOSCAN1M <BS1M-class_>`_ and `BIOSCAN5M <BS5M-class_>`_ support automatically downloading the ``cropped_256`` image package, and `BIOSCAN1M <BS1M-class_>`_ additionally supports automatic download of the ``original_256`` image package.
+For the other image packages, please follow the download instructions given in the `BIOSCAN-1M repository <https://github.com/bioscan-ml/BIOSCAN-1M?tab=readme-ov-file#-dataset-access>`__ and `BIOSCAN-5M repository <https://github.com/bioscan-ml/BIOSCAN-5M?tab=readme-ov-file#dataset-access>`__, respectively.
+You can then set the argument ``image_package`` to work with the desired version of the images:
 
 .. code-block:: python
 
@@ -96,9 +106,6 @@ To use a different image package, follow the download instructions given in the 
    # and unzip the 5 zip files into ~/Datasets/bioscan/bioscan5m/images/original_full/
    # Then load the dataset as follows:
    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", image_package="original_full")
-
-For `BIOSCAN1M <BS1M-class_>`_, automatic dataset download is not supported and so the dataset must be manually downloaded.
-See the `BIOSCAN-1M repository <https://github.com/bioscan-ml/BIOSCAN-1M?tab=readme-ov-file#-dataset-access>`__ for download instructions.
 
 
 Partition/split selection
