@@ -226,16 +226,16 @@ def load_bioscan1m_metadata(
 
         For the CLIBD partitioning version, this should be one of:
 
-        - ``"all_keys"`` (the keys are used as a reference set for retreival tasks)
-        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; labels here are not to species level)
-        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
+        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; these samples are not labelled to species level)
+        - ``"no_split_and_seen_train"`` (used for CLIBD model training; equivalent to using ``"pretrain+train"`` in BIOSCAN-5M)
         - ``"seen_keys"``
         - ``"single_species"``
-        - ``"test_seen"``
+        - ``"test_seen"`` (similar to ``"test"`` in BIOSCAN-5M)
         - ``"test_unseen"``
-        - ``"test_unseen_keys"``
-        - ``"train_seen"``
-        - ``"val_seen"``
+        - ``"test_unseen_keys"`` (similar to ``"key_unseen"`` in BIOSCAN-5M)
+        - ``"train_seen"`` (similar to ``"train"`` in BIOSCAN-5M)
+        - ``"val_seen"`` (similar to ``"val"`` in BIOSCAN-5M)
         - ``"val_unseen"``
         - ``"val_unseen_keys"``
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
@@ -503,16 +503,16 @@ class BIOSCAN1M(VisionDataset):
 
         For the CLIBD partitioning version, this should be one of:
 
-        - ``"all_keys"`` (keys are used as a reference set for retreival tasks)
-        - ``"no_split"`` (similar to pretrain in BIOSCAN-5M, this has incomplete labels)
-        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
+        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; these samples are not labelled to species level)
+        - ``"no_split_and_seen_train"`` (used for CLIBD model training; equivalent to using ``"pretrain+train"`` in BIOSCAN-5M)
         - ``"seen_keys"``
         - ``"single_species"``
-        - ``"test_seen"``
+        - ``"test_seen"`` (similar to ``"test"`` in BIOSCAN-5M)
         - ``"test_unseen"``
-        - ``"test_unseen_keys"``
-        - ``"train_seen"``
-        - ``"val_seen"``
+        - ``"test_unseen_keys"`` (similar to ``"key_unseen"`` in BIOSCAN-5M)
+        - ``"train_seen"`` (similar to ``"train"`` in BIOSCAN-5M)
+        - ``"val_seen"`` (similar to ``"val"`` in BIOSCAN-5M)
         - ``"val_unseen"``
         - ``"val_unseen_keys"``
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
