@@ -83,18 +83,12 @@ PARTITIONING_VERSIONS = [
     "clibd",
 ]
 
-VALID_SPLITS = ["train", "val", "test", "no_split"]
+VALID_SPLITS = ["train", "validation", "test", "no_split"]
+SPLIT_ALIASES = {"val": "validation"}
 VALID_METASPLITS = ["all"]
 
 CLIBD_PARTITIONING_DIRNAME = "CLIBD_partitioning"
 
-CLIBD_PARTITION_ALIASES = {
-    "pretrain": "no_split",
-    "train": "train_seen",
-    "val": "val_seen",
-    "test": "test_seen",
-    "key_unseen": "test_unseen_keys",
-}
 CLIBD_VALID_SPLITS = [
     "no_split",
     "seen_keys",
@@ -107,6 +101,14 @@ CLIBD_VALID_SPLITS = [
     "val_unseen",
     "val_unseen_keys",
 ]
+CLIBD_SPLIT_ALIASES = {
+    "pretrain": "no_split",
+    "train": "train_seen",
+    "val": "val_seen",
+    "validation": "val_seen",
+    "test": "test_seen",
+    "key_unseen": "test_unseen_keys",
+}
 CLIBD_VALID_METASPLITS = [
     "all",
     "all_keys",
@@ -154,7 +156,7 @@ def load_bioscan1m_metadata(
         should be one of:
 
         - ``"train"``
-        - ``"val"``
+        - ``"validation"``
         - ``"test"``
         - ``"no_split"``
 
@@ -246,7 +248,10 @@ def load_bioscan1m_metadata(
 
     if partitioning_version == "clibd":
         # Handle BIOSCAN-5M partition names as aliases for CLIBD partitions
-        split = CLIBD_PARTITION_ALIASES.get(split, split)
+        split = CLIBD_SPLIT_ALIASES.get(split, split)
+    else:
+        # Handle BIOSCAN-5M partition names as aliases for BIOSCAN-1M partitions
+        split = SPLIT_ALIASES.get(split, split)
 
     df = pandas.read_csv(metadata_path, sep="\t", dtype=dtype, **kwargs)
     # Taxonomic label column names
@@ -418,7 +423,7 @@ class BIOSCAN1M(VisionDataset):
         should be one of:
 
         - ``"train"``
-        - ``"val"``
+        - ``"validation"``
         - ``"test"``
         - ``"no_split"``
 
@@ -634,9 +639,9 @@ class BIOSCAN1M(VisionDataset):
             self.clibd_partitioning_path = None
 
         if self.partitioning_version == "clibd":
-            self.split = CLIBD_PARTITION_ALIASES.get(split, split)
+            self.split = CLIBD_SPLIT_ALIASES.get(split, split)
         else:
-            self.split = split
+            self.split = SPLIT_ALIASES.get(split, split)
         self.target_format = target_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
