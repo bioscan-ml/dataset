@@ -144,6 +144,14 @@ This partition can be used for training a novelty detector, without exposing the
 
 For more details about the BIOSCAN-5M partitioning, please see the `BIOSCAN-5M paper`_.
 
+The dataset class also supports loading samples from multiple splits at once.
+This can be done by passing a single string containing multiple split names joined with ``"+"``.
+For example, to load the pretraining and training splits together:
+
+.. code-block:: python
+
+   dataset = BIOSCAN5M(root="~/Datasets/bioscan/", split="pretrain+train")
+
 
 Input modality selection
 ~~~~~~~~~~~~~~~~~~~~~~~~
