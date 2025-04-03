@@ -13,7 +13,7 @@ import pathlib
 import warnings
 import zipfile
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -191,12 +191,12 @@ class MetadataDtype(Enum):
 
 def load_bioscan1m_metadata(
     metadata_path,
-    max_nucleotides=660,
-    reduce_repeated_barcodes=False,
-    split=None,
-    partitioning_version="large_diptera_family",
-    clibd_partitioning_path=None,
-    dtype=MetadataDtype.DEFAULT,
+    max_nucleotides: Union[int, None] = 660,
+    reduce_repeated_barcodes: bool = False,
+    split: Optional[str] = None,
+    partitioning_version: str = "large_diptera_family",
+    clibd_partitioning_path: Optional[str] = None,
+    dtype: Union[str, dict, None] = MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pandas.DataFrame:
     r"""
@@ -715,18 +715,18 @@ class BIOSCAN1M(VisionDataset):
     def __init__(
         self,
         root,
-        split="train",
-        partitioning_version="large_diptera_family",
-        modality=("image", "dna"),
-        image_package="cropped_256",
-        reduce_repeated_barcodes=False,
-        max_nucleotides=660,
-        target_type="family",
-        target_format="index",
-        transform=None,
-        dna_transform=None,
-        target_transform=None,
-        download=False,
+        split: str = "train",
+        partitioning_version: str = "large_diptera_family",
+        modality: Union[str, Iterable[str]] = ("image", "dna"),
+        image_package: str = "cropped_256",
+        reduce_repeated_barcodes: bool = False,
+        max_nucleotides: Union[int, None] = 660,
+        target_type: Union[str, Iterable[str]] = "family",
+        target_format: str = "index",
+        transform: Optional[Callable] = None,
+        dna_transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        download: bool = False,
     ) -> None:
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
