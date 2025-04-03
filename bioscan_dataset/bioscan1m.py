@@ -611,7 +611,7 @@ class BIOSCAN1M(VisionDataset):
             If you don't know much about DNA barcodes, you probably shouldn't
             change this parameter.
 
-    target_type : str or Iterable[str], default="family"
+    target_type : str or Iterable[str], default=depends on ``partitioning_version``
         Type of target to use. One of, or a list of:
 
         - ``"phylum"``
@@ -626,6 +626,16 @@ class BIOSCAN1M(VisionDataset):
           `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
         Where ``"uri"`` corresponds to the BIN cluster label.
+
+        The default value ``target_type`` is the most fine-grained taxonomic
+        rank supported by partitioning version.
+        For ``"clibd"`` this is ``"species"``,
+        for ``"{size}_diptera_family"`` this is ``"family"``,
+        and for ``"{size}_insect_order"`` this is ``"order"``.
+
+        .. versionchanged:: 2.0.0
+            Default changed from ``"family"`` to dynamically selected based on
+            the ``partitioning_version``.
 
     target_format : str, default="index"
         Format in which the targets will be returned. One of:
@@ -730,7 +740,7 @@ class BIOSCAN1M(VisionDataset):
         image_package: str = "cropped_256",
         reduce_repeated_barcodes: bool = False,
         max_nucleotides: Union[int, None] = 660,
-        target_type: Union[str, Iterable[str]] = "family",
+        target_type: Optional[Union[str, Iterable[str]]] = None,
         target_format: str = "index",
         transform: Optional[Callable] = None,
         dna_transform: Optional[Callable] = None,
@@ -774,10 +784,17 @@ class BIOSCAN1M(VisionDataset):
         else:
             self.modality = list(modality)
 
-        if isinstance(target_type, str):
-            self.target_type = [target_type]
+        if target_type is not None:
+            self.target_type = target_type
+        elif self.partitioning_version == "clibd":
+            self.target_type = "species"
         else:
-            self.target_type = list(target_type)
+            # Use the rank the partitioning version was made for, either family or order
+            self.target_type = self.partitioning_version.split("_")[-1]
+        if isinstance(self.target_type, str):
+            self.target_type = [self.target_type]
+        else:
+            self.target_type = list(self.target_type)
         self.target_type = ["uri" if t == "dna_bin" else t for t in self.target_type]
 
         # Check that the target_type is compatible with the partitioning version
