@@ -110,6 +110,8 @@ def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
     >>> explode_metasplit("validation")
     {'val'}
     """
+    if metasplit is None:
+        metasplit = "all"
     split_list = [s.strip() for s in metasplit.split("+")]
     split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
     split_set = set(split_list)
@@ -467,7 +469,7 @@ class BIOSCAN5M(VisionDataset):
     def __init__(
         self,
         root,
-        split: Union[str, None] = "train",
+        split: str = "train",
         modality: Union[str, Iterable[str]] = ("image", "dna"),
         image_package: str = "cropped_256",
         reduce_repeated_barcodes: bool = False,
