@@ -469,7 +469,7 @@ class BIOSCAN5M(VisionDataset):
     def __init__(
         self,
         root,
-        split: Union[str, None] = "train",
+        split: str = "train",
         modality: Union[str, Iterable[str]] = ("image", "dna"),
         image_package: str = "cropped_256",
         reduce_repeated_barcodes: bool = False,
