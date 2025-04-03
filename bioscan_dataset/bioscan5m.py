@@ -300,6 +300,10 @@ class BIOSCAN5M(VisionDataset):
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
         ``"image"``, ``"dna"``, or any column name in the metadata CSV file.
+        Examples of column names which may be of interest are
+        ``"coord-lat"`` (latitude of collection location),
+        ``"coord-lon"`` (longitude of collection location),
+        and ``"image_measurement_value"`` (specimen size, in pixels).
 
         .. versionchanged:: 1.1.0
             Added support for arbitrary modalities.
