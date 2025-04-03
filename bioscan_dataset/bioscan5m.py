@@ -184,12 +184,16 @@ def load_bioscan5m_metadata(
         Set to ``None`` to keep the original data without truncation.
 
         .. note::
-            Insect COI DNA barcodes should only be 660 base pairs long.
-            Although the dataset contains longer sequences, characters after the
-            first 660 base pairs are likely to be inaccurate reads, and certainly
-            not part of the DNA barcode. Hence we recommend limiting the DNA barcode
-            to the first 660 nucleotides. If you don't know much about DNA barcodes,
-            you probably shouldn't change this parameter.
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-5M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -330,12 +334,16 @@ class BIOSCAN5M(VisionDataset):
         Set to ``None`` to keep the original data without truncation.
 
         .. note::
-            Insect COI DNA barcodes should only be 660 base pairs long.
-            Although the dataset contains longer sequences, characters after the
-            first 660 base pairs are likely to be inaccurate reads, and certainly
-            not part of the DNA barcode. Hence we recommend limiting the DNA barcode
-            to the first 660 nucleotides. If you don't know much about DNA barcodes,
-            you probably shouldn't change this parameter.
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-5M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     target_type : str or Iterable[str], default="species"
         Type of target to use. One of, or a list of:
@@ -347,7 +355,7 @@ class BIOSCAN5M(VisionDataset):
         - ``"subfamily"``
         - ``"genus"``
         - ``"species"``
-        - ``"dna_bin"``
+        - ``"dna_bin"`` (a species-level label derived from `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
     target_format : str, default="index"
         Format in which the targets will be returned. One of:
