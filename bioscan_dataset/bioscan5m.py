@@ -640,6 +640,7 @@ class BIOSCAN5M(VisionDataset):
             Any other modalities requested, as specified in the ``modality`` parameter.
             The data is extracted from the appropriate column in the metadata CSV file,
             without any transformations.
+            Missing values will be filled with NaN.
 
             .. versionadded:: 1.1.0
 
