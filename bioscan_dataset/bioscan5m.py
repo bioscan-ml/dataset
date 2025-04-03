@@ -181,7 +181,7 @@ def load_bioscan5m_metadata(
 
     max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
-        Set to ``None`` to keep the original data without truncation (default).
+        Set to ``None`` to keep the original data without truncation.
         Note that the barcode should only be 660 base pairs long.
         Characters beyond this length are unlikely to be accurate.
 
