@@ -69,6 +69,8 @@ USECOLS = [
     "coord-lat",
     "coord-lon",
     "image_measurement_value",
+    "area_fraction",
+    "scale_factor",
     "split",
 ]
 

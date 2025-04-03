@@ -60,6 +60,7 @@ COLUMN_DTYPES = {
 }
 
 USECOLS = [
+    "processid",
     "sampleid",
     "uri",
     "phylum",
