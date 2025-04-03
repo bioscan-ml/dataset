@@ -557,7 +557,7 @@ class BIOSCAN1M(VisionDataset):
 
         To use the CLIBD partitioning, download and extract the partition files from
         `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
-        into the ``"{root}/bioscan5m/"`` directory.
+        into the ``"{root}/bioscan1m/"`` directory.
         These files are automatically downloaded if ``download=True``.
 
         .. attention::
