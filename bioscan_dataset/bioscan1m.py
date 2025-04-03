@@ -599,7 +599,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"tribe"``
         - ``"genus"``
         - ``"species"``
-        - ``"uri"``
+        - ``"uri"`` (equivalent to ``"dna_bin"``)
 
         Where ``"uri"`` corresponds to the BIN cluster label.
 
