@@ -739,25 +739,25 @@ class BIOSCAN5M(VisionDataset):
         download_and_extract_archive(data["url"], self.root, md5=data.get("md5"))
 
     def _download_images(self, verbose=1) -> None:
-        if self._check_integrity_images(verbose=verbose):
-            if verbose >= 1:
-                print("Images already downloaded and verified")
-            return
+        any_missing = False
         split_set = explode_metasplit(self.split, verify=False)
-        if "pretrain" in split_set:
+
+        if "pretrain" in split_set and not self._check_integrity_images("pretrain", verbose=verbose):
+            any_missing = True
             self._download_image_zip("pretrain01")
             self._download_image_zip("pretrain02")
-        if "train" in split_set:
+
+        if "train" in split_set and not self._check_integrity_images("train", verbose=verbose):
+            any_missing = True
             self._download_image_zip("train")
-        if split_set & {
-            "val",
-            "test",
-            "key_unseen",
-            "val_unseen",
-            "test_unseen",
-            "other_heldout",
-        }:
+
+        eval_partitions = ["val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
+        if any(s in split_set and not self._check_integrity_images(s, verbose=verbose) for s in eval_partitions):
+            any_missing = True
             self._download_image_zip("eval")
+
+        if verbose >= 1 and not any_missing:
+            print("Images already downloaded and verified")
 
     def download(self) -> None:
         r"""
