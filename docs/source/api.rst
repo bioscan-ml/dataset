@@ -7,9 +7,9 @@ These classes are subclasses of :class:`torch.utils.data.Dataset` and are design
 General usage instructions for :class:`~bioscan_dataset.BIOSCAN1M` and :class:`~bioscan_dataset.BIOSCAN5M` are provided in our :doc:`usage <index>` guide.
 
 .. tip::
-   For new projects, we recommend using :class:`~bioscan_dataset.BIOSCAN5M` instead of :class:`~bioscan_dataset.BIOSCAN1M` since the newer dataset has cleaner labels and images.
-   For larger scale projects, :class:`~bioscan_dataset.BIOSCAN5M` is a superset of :class:`~bioscan_dataset.BIOSCAN1M` and will provide five times more samples to train on.
-   On the other hand, if 5M samples is too much to handle, you can ignore the ``"pretrain"`` partition (train using the ``"train"`` partition only), which reduces the dataset to less than 400k samples.
+    For new projects, we recommend using :class:`~bioscan_dataset.BIOSCAN5M` instead of :class:`~bioscan_dataset.BIOSCAN1M` since the newer dataset has cleaner labels and images.
+    For larger scale projects, :class:`~bioscan_dataset.BIOSCAN5M` is a superset of :class:`~bioscan_dataset.BIOSCAN1M` and will provide five times more samples to train on.
+    On the other hand, if 5M samples is too much to handle, you can ignore the ``"pretrain"`` partition (train using the ``"train"`` partition only), which reduces the dataset to less than 400k samples.
 
 The accompanying functions :func:`~bioscan_dataset.load_bioscan1m_metadata` and :func:`~bioscan_dataset.load_bioscan5m_metadata` can be used to load the metadata from the CSV files.
 This produces a :class:`~pandas.DataFrame` in the same format as is used for model training.
@@ -23,9 +23,9 @@ BIOSCAN-1M Dataset
 ------------------
 
 .. autoclass:: bioscan_dataset.BIOSCAN1M
-   :members:
-   :special-members: __getitem__
-   :show-inheritance:
+    :members:
+    :special-members: __getitem__
+    :show-inheritance:
 
 .. autofunction:: bioscan_dataset.load_bioscan1m_metadata
 
@@ -33,8 +33,8 @@ BIOSCAN-5M Dataset
 ------------------
 
 .. autoclass:: bioscan_dataset.BIOSCAN5M
-   :members:
-   :special-members: __getitem__
-   :show-inheritance:
+    :members:
+    :special-members: __getitem__
+    :show-inheritance:
 
 .. autofunction:: bioscan_dataset.load_bioscan5m_metadata
