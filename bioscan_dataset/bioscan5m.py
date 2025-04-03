@@ -20,6 +20,8 @@ import torch
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
 from torchvision.datasets.vision import VisionDataset
 
+__all__ = ["BIOSCAN5M", "load_bioscan5m_metadata"]
+
 RGB_MEAN = torch.tensor([0.76281859, 0.76503749, 0.76373138])
 RGB_STDEV = torch.tensor([0.14205404, 0.15642502, 0.17309470])
 
