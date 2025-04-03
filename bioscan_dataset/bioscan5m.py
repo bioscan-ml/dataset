@@ -342,13 +342,13 @@ class BIOSCAN5M(VisionDataset):
 
         .. versionadded:: 1.1.0
 
-    transform : Callable, default=None
+    transform : Callable, optional
         Image transformation pipeline.
 
-    dna_transform : Callable, default=None
+    dna_transform : Callable, optional
         DNA barcode transformation pipeline.
 
-    target_transform : Callable, default=None
+    target_transform : Callable, optional
         Label transformation pipeline.
 
     download : bool, default=False
