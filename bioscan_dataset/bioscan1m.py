@@ -227,7 +227,7 @@ def load_bioscan1m_metadata(
         - ``"train"``
         - ``"validation"``
         - ``"test"``
-        - ``"no_split"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
 
         For the CLIBD partitioning version, this should be one of:
 
@@ -508,7 +508,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"train"``
         - ``"validation"``
         - ``"test"``
-        - ``"no_split"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
 
         For the CLIBD partitioning version, this should be one of:
 
