@@ -10,7 +10,7 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -75,6 +75,62 @@ SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
 SEEN_SPLITS = ["train", "val", "test"]
 UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
+
+
+def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
+    """
+    Convert a metasplit string into its set of constituent splits.
+
+    Parameters
+    ----------
+    metasplit : str
+        The metasplit to explode.
+    verify : bool, default=False
+        If ``True``, verify that the constitutent splits are valid.
+
+    Returns
+    -------
+    set of str
+        The canonical splits within the metasplit.
+
+    Examples
+    --------
+    >>> explode_metasplit("pretrain+train")
+    {'pretrain', 'train'}
+    >>> explode_metasplit("seen")
+    {'train', 'val', 'test'}
+    >>> explode_metasplit("train")
+    {'train'}
+    >>> explode_metasplit("validation")
+    {'val'}
+    """
+    split_list = [s.strip() for s in metasplit.split("+")]
+    split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
+    split_set = set(split_list)
+    if "all" in split_list:
+        split_set.remove("all")
+        split_set |= set(VALID_SPLITS)
+    if "seen" in split_list:
+        split_set.remove("seen")
+        split_set |= set(SEEN_SPLITS)
+    if "unseen" in split_list:
+        split_set.remove("unseen")
+        split_set |= set(UNSEEN_SPLITS)
+
+    if verify:
+        # Verify the constituent splits are valid
+        invalid_splits = split_set - set(VALID_SPLITS)
+        if invalid_splits:
+            msg_valid_names = f"Valid split names are: {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}."
+            if split_set == {metasplit}:
+                raise ValueError(f"Invalid split name {repr(metasplit)}. {msg_valid_names}")
+            plural = "s" if len(invalid_splits) > 1 else ""
+            raise ValueError(
+                f"Invalid split name{plural} {', '.join(repr(s) for s in invalid_splits)} within requested metasplit"
+                f" {repr(metasplit)}. {msg_valid_names}"
+            )
+
+    return split_set
 
 
 def get_image_path(row):
@@ -163,8 +219,6 @@ def load_bioscan5m_metadata(
     if dtype == MetadataDtype.DEFAULT:
         # Use our default column data types
         dtype = COLUMN_DTYPES
-    # Handle BIOSCAN-1M partition names as aliases for BIOSCAN-5M partitions
-    split = SPLIT_ALIASES.get(split, split)
     # Read the metadata CSV file
     df = pandas.read_csv(metadata_path, dtype=dtype, **kwargs)
     # Truncate the DNA barcodes to the specified length
@@ -184,26 +238,9 @@ def load_bioscan5m_metadata(
     # Filter to just the split of interest
     if split is not None and split != "all":
         # Split the string by "+" to handle custom metasplits
-        split_list = [s.strip() for s in split.split("+")]
-        split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
-        # Verify these splits are valid, and expand hard-coded metasplits
-        for s in split_list:
-            if s == "all":
-                split_list.extend(VALID_SPLITS)
-            elif s == "seen":
-                split_list.extend(SEEN_SPLITS)
-            elif s == "unseen":
-                split_list.extend(UNSEEN_SPLITS)
-            elif s not in VALID_SPLITS:
-                msg = f"{repr(split)}"
-                if len(split_list) > 1:
-                    msg = f"{repr(s)} within metasplit " + msg
-                raise ValueError(
-                    f"Invalid split name {msg}. Valid split names are:"
-                    f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
-                )
+        split_set = explode_metasplit(split, verify=True)
         # Filter the DataFrame to just the requested splits
-        df = df.loc[df["split"].isin(split_list)]
+        df = df.loc[df["split"].isin(split_set)]
     # Add index columns to use for targets
     label_cols = [
         "phylum",
@@ -644,27 +681,23 @@ class BIOSCAN5M(VisionDataset):
     def _check_integrity_images(self, split=None, verbose=1) -> bool:
         if split is None:
             split = self.split
-        if split == "all":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in self.image_files)
-        if split == "seen":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in SEEN_SPLITS)
-        if split == "unseen":
-            return all(self._check_integrity_images(split=s, verbose=verbose) for s in UNSEEN_SPLITS)
+        split_set = explode_metasplit(split, verify=True)
         check_all = True
-        for file, data in self.image_files[split]:
-            file = os.path.join(self.image_dir, file)
-            if self.image_package in data:
-                check = check_integrity(file, data[self.image_package])
-            else:
-                check = os.path.exists(file)
-            if verbose >= 1 and not check:
-                if not os.path.exists(file):
-                    print(f"File missing: {file}")
+        for s in split_set:
+            for file, data in self.image_files[s]:
+                file = os.path.join(self.image_dir, file)
+                if self.image_package in data:
+                    check = check_integrity(file, data[self.image_package])
                 else:
-                    print(f"File invalid: {file}")
-            if verbose >= 2 and check:
-                print(f"File present: {file}")
-            check_all &= check
+                    check = os.path.exists(file)
+                if verbose >= 1 and not check:
+                    if not os.path.exists(file):
+                        print(f"File missing: {file}")
+                    else:
+                        print(f"File invalid: {file}")
+                if verbose >= 2 and check:
+                    print(f"File present: {file}")
+                check_all &= check
         return check_all
 
     def _check_integrity(self, verbose=1) -> bool:
@@ -706,28 +739,25 @@ class BIOSCAN5M(VisionDataset):
         download_and_extract_archive(data["url"], self.root, md5=data.get("md5"))
 
     def _download_images(self, verbose=1) -> None:
-        if self._check_integrity_images(verbose=verbose):
-            if verbose >= 1:
-                print("Images already downloaded and verified")
-            return
-        if self.split in ("all", "pretrain"):
+        any_missing = False
+        split_set = explode_metasplit(self.split, verify=False)
+
+        if "pretrain" in split_set and not self._check_integrity_images("pretrain", verbose=verbose):
+            any_missing = True
             self._download_image_zip("pretrain01")
             self._download_image_zip("pretrain02")
-        if self.split in ("all", "train", "seen"):
+
+        if "train" in split_set and not self._check_integrity_images("train", verbose=verbose):
+            any_missing = True
             self._download_image_zip("train")
-        if self.split in (
-            "all",
-            "eval",
-            "seen",
-            "unseen",
-            "val",
-            "test",
-            "key_unseen",
-            "val_unseen",
-            "test_unseen",
-            "other_heldout",
-        ):
+
+        eval_partitions = ["val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
+        if any(s in split_set and not self._check_integrity_images(s, verbose=verbose) for s in eval_partitions):
+            any_missing = True
             self._download_image_zip("eval")
+
+        if verbose >= 1 and not any_missing:
+            print("Images already downloaded and verified")
 
     def download(self) -> None:
         r"""

@@ -13,7 +13,7 @@ import pathlib
 import warnings
 import zipfile
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -114,6 +114,70 @@ CLIBD_VALID_METASPLITS = [
     "all_keys",
     "no_split_and_seen_train",
 ]
+
+
+def explode_metasplit(metasplit: str, partitioning_version: str, verify: bool = False) -> Set[str]:
+    """
+    Convert a metasplit string into its set of constituent splits.
+
+    Parameters
+    ----------
+    metasplit : str
+        The metasplit to explode.
+    partitioning_version : str
+        The partitioning version to parse the metasplit for.
+    verify : bool, default=False
+        If ``True``, verify that the constitutent splits are valid splits.
+
+    Returns
+    -------
+    set of str
+        The canonical splits within the metasplit.
+
+    Examples
+    --------
+    >>> explode_metasplit("train+validation", partitioning_version="large_diptera_family")
+    {'train', 'validation'}
+    >>> explode_metasplit("pretrain+train", partitioning_version="clibd")
+    {'train_seen', 'no_split'}
+    >>> explode_metasplit("val", partitioning_version="large_diptera_family")
+    {'validation'}
+    >>> explode_metasplit("val", partitioning_version="clibd")
+    {'val_seen'}
+    """
+    if partitioning_version == "clibd":
+        _split_aliases = CLIBD_SPLIT_ALIASES
+        _valid_splits = CLIBD_VALID_SPLITS
+        _valid_metasplits = CLIBD_VALID_METASPLITS
+    else:
+        _split_aliases = SPLIT_ALIASES
+        _valid_splits = VALID_SPLITS
+        _valid_metasplits = VALID_METASPLITS
+
+    split_list = [s.strip() for s in metasplit.split("+")]
+    split_list = [_split_aliases.get(s, s) for s in split_list]
+    split_set = set(split_list)
+    if "all" in split_list:
+        split_set.remove("all")
+        split_set |= set(_valid_splits)
+
+    if verify:
+        # Verify the constituent splits are valid
+        invalid_splits = split_set - set(_valid_splits) - set(_valid_metasplits)
+        if invalid_splits:
+            msg_valid_names = (
+                f"For {repr(partitioning_version)} partitioning, valid split names are:"
+                f" {', '.join(repr(s) for s in _valid_metasplits + _valid_splits)}."
+            )
+            if split_set == {metasplit}:
+                raise ValueError(f"Invalid split name {repr(metasplit)}. {msg_valid_names}")
+            plural = "s" if len(invalid_splits) > 1 else ""
+            raise ValueError(
+                f"Invalid split name{plural} {', '.join(repr(s) for s in invalid_splits)} within requested metasplit"
+                f" {repr(metasplit)}. {msg_valid_names}"
+            )
+
+    return split_set
 
 
 class MetadataDtype(Enum):
@@ -328,27 +392,9 @@ def load_bioscan1m_metadata(
         pass
     elif partitioning_version == "clibd" and "+" in split:
         # Handle split names as aliases for CLIBD partitions
-        split_list = [s.strip() for s in split.split("+")]
-        split_list = [CLIBD_SPLIT_ALIASES.get(s, s) for s in split_list]
-        # Check that all split names are valid
-        for s in split_list:
-            if s == "all":
-                split_list.extend(CLIBD_VALID_SPLITS)
-            elif s == "all_keys":
-                split_list.extend(["seen_keys", "val_unseen_keys", "test_unseen_keys"])
-            elif s == "no_split_and_seen_train":
-                split_list.extend(["no_split", "train_seen"])
-            elif s not in CLIBD_VALID_SPLITS:
-                msg = f"{repr(split)}"
-                if len(split_list) > 1:
-                    msg = f"{repr(s)} within " + msg
-                raise ValueError(
-                    f"Invalid split value {msg}. Valid splits for partitioning version"
-                    f" {repr(partitioning_version)} are:"
-                    f" {', '.join(repr(s) for s in CLIBD_VALID_METASPLITS + CLIBD_VALID_SPLITS)}"
-                )
+        split_set = explode_metasplit(split, partitioning_version, verify=True)
         # Filter to just the selected splits
-        df = df[df["clibd_split"].isin(split_list)]
+        df = df[df["clibd_split"].isin(split_set)]
     elif partitioning_version == "clibd":
         try:
             partition = pandas.read_csv(os.path.join(clibd_partitioning_path, f"{split}.txt"), names=["sampleid"])
@@ -371,24 +417,10 @@ def load_bioscan1m_metadata(
             df["clibd_split"] = split
     else:
         # Split the string by "+" to handle custom metasplits
-        split_list = [s.strip() for s in split.split("+")]
-        split_list = [SPLIT_ALIASES.get(s, s) for s in split_list]
-        # Check that all split names are valid
-        for s in split_list:
-            if s == "all":
-                split_list.extend(VALID_SPLITS)
-            elif s not in VALID_SPLITS:
-                msg = f"{repr(split)}"
-                if len(split_list) > 1:
-                    msg = f"{repr(s)} within metasplit " + msg
-                raise ValueError(
-                    f"Invalid split name {msg}. Valid splits for partitioning version"
-                    f" {repr(partitioning_version)} are:"
-                    f" {', '.join(repr(s) for s in VALID_METASPLITS + VALID_SPLITS)}"
-                )
+        split_set = explode_metasplit(split, partitioning_version, verify=True)
         # Filter to just the selected splits
         try:
-            select = df[partitioning_version].isin(split_list)
+            select = df[partitioning_version].isin(split_set)
         except KeyError:
             if partitioning_version not in PARTITIONING_VERSIONS:
                 raise ValueError(
