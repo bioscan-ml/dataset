@@ -250,9 +250,10 @@ def load_bioscan1m_metadata(
         joined by ``"+"``. For example, ``"train+validation+test"`` will filter the
         metadata to samples in the training, validation, and test partitions.
 
-        Note that the contents of the split depends on the value of ``partitioning_version``.
-        If ``partitioning_version`` is changed, the same ``split`` value will yield
-        completely different records.
+        .. warning::
+            The contents of the split depends on the value of ``partitioning_version``.
+            If ``partitioning_version`` is changed, the same ``split`` value will yield
+            completely different records.
 
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
@@ -530,9 +531,10 @@ class BIOSCAN1M(VisionDataset):
         joined by ``"+"``. For example, ``split="train+validation+test"`` will return
         a dataset comprised of samples in the training, validation, and test partitions.
 
-        Note that the contents of the split depends on the value of ``partitioning_version``.
-        If ``partitioning_version`` is changed, the same ``split`` value will yield
-        completely different records.
+        .. warning::
+            The contents of the split depends on the value of ``partitioning_version``.
+            If ``partitioning_version`` is changed, the same ``split`` value will yield
+            completely different records.
 
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
@@ -554,6 +556,12 @@ class BIOSCAN1M(VisionDataset):
         `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
         into the ``"{root}/bioscan5m/"`` directory.
         These files are automatically downloaded if ``download=True``.
+
+        .. attention::
+            The original BIOSCAN-1M partitioning versions only support ``target_type``
+            up to family and order level, respectively.
+            For more fine-grained taxonomic labels, we recommend using the CLIBD
+            partitioning, which supports ``target_type`` up to species level.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
