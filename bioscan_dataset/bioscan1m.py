@@ -648,6 +648,12 @@ class BIOSCAN1M(VisionDataset):
         are currently supported for automatic image download.
 
         .. versionadded:: 1.2.0
+
+    Attributes
+    ----------
+    metadata : pandas.DataFrame
+        The metadata associated with the samples in the select split, loaded using
+        :func:`load_bioscan1m_metadata`.
     """  # noqa: E501
 
     base_folder = "bioscan1m"

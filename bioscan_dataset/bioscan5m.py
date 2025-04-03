@@ -376,6 +376,12 @@ class BIOSCAN5M(VisionDataset):
         If dataset is already downloaded, it is not downloaded again.
         Images are only downloaded if the ``"image"`` modality is requested.
         Note that only ``image_package=cropped_256`` is supported for automatic image download.
+
+    Attributes
+    ----------
+    metadata : pandas.DataFrame
+        The metadata associated with the samples in the select split, loaded using
+        :func:`load_bioscan5m_metadata`.
     """
 
     base_folder = "bioscan5m"
