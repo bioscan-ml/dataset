@@ -11,6 +11,74 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Categories for changes are: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 
+Version `1.2.0 <https://github.com/bioscan-ml/dataset/tree/v1.2.0>`__
+---------------------------------------------------------------------
+
+Release date: 2025-04-03.
+`Full commit changelog <https://github.com/bioscan-ml/dataset/compare/v1.1.0...v1.2.0>`__.
+
+This is a minor release adding some new features.
+In particular, CLIBD partitioning of BIOSCAN-1M is now supported, automatic download of BIOSCAN-1M is now supported, and multiple splits can be loaded at once by joining them with ``"+"`` such as ``"pretrain+train"``.
+
+.. _v1.2.0 Changed:
+
+Fixed
+~~~~~
+
+-   Sped up BIOSCAN5M load times by vectorizing the image path generation process
+    (`#28 <https://github.com/bioscan-ml/dataset/pull/28>`__).
+
+-   Avoid re-download and re-extraction of splits which were already correctly present, which previously could be triggered by other splits needing to be downloaded, for example when using metasplit ``"seen"`` or ``"all"`` when some (but not all) splits were already downloaded
+    (`#40 <https://github.com/bioscan-ml/dataset/pull/40>`__).
+
+.. _v1.2.0 Added:
+
+Added
+~~~~~
+
+-   Added support for `CLIBD <https://openreview.net/forum?id=d5HUnyByAI>`__ partitioning of BIOSCAN-1M, using argument ``partitioning_version="clibd"`` to BIOSCAN1M
+    (`#25 <https://github.com/bioscan-ml/dataset/pull/25>`__,
+    `#26 <https://github.com/bioscan-ml/dataset/pull/26>`__,
+    `#30 <https://github.com/bioscan-ml/dataset/pull/30>`__,
+    `#35 <https://github.com/bioscan-ml/dataset/pull/35>`__).
+
+-   Added automatic download support to BIOSCAN1M.
+    This includes both the metadata CSV and the image files (`#31 <https://github.com/bioscan-ml/dataset/pull/31>`__, `#37 <https://github.com/bioscan-ml/dataset/pull/37>`__), and the CLIBD partitioning data (`#33 <https://github.com/bioscan-ml/dataset/pull/33>`__).
+    As with BIOSCAN5M, data is lazily downloaded, so only additional files needed for the current dataset request are downloaded.
+
+-   Added support for combinations of splits being specified joined with ``"+"`` such as ``split="pretrain+train"``
+    (`#39 <https://github.com/bioscan-ml/dataset/pull/39>`__,
+    `#40 <https://github.com/bioscan-ml/dataset/pull/40>`__).
+
+-   Added aliasing between ``"val"`` (BIOSCAN-5M) and ``"validation"`` (BIOSCAN-1M) split names
+    (`#38 <https://github.com/bioscan-ml/dataset/pull/38>`__).
+
+-   Added ``__all__`` to better support ``from bioscan_dataset import *``
+    (`#41 <https://github.com/bioscan-ml/dataset/pull/41>`__).
+
+-   Added type hinting
+    (`#44 <https://github.com/bioscan-ml/dataset/pull/44>`__).
+
+-   Added access to columns ``"processid"`` in ``BIOSCAN1M.metadata`` and both ``"area_fraction"`` and ``"scale_factor"`` in ``BIOSCAN5M.metadata``
+    (`#43 <https://github.com/bioscan-ml/dataset/pull/43>`__).
+
+-   Added more detailed ``__repr__`` information, which is shown when printing the dataset object
+    (`#34 <https://github.com/bioscan-ml/dataset/pull/34>`__).
+
+-   Improved error messages for bad split values or partitioning versions
+    (`#27 <https://github.com/bioscan-ml/dataset/pull/27>`__,
+    `#32 <https://github.com/bioscan-ml/dataset/pull/32>`__).
+
+.. _v1.2.0 Documentation:
+
+Documentation
+~~~~~~~~~~~~~
+
+-   General documentation improvements
+    (`#42 <https://github.com/bioscan-ml/dataset/pull/42>`__,
+    `#44 <https://github.com/bioscan-ml/dataset/pull/44>`__).
+
+
 Version `1.1.0 <https://github.com/bioscan-ml/dataset/tree/v1.1.0>`__
 ---------------------------------------------------------------------
 
