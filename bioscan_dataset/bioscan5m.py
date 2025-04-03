@@ -182,8 +182,14 @@ def load_bioscan5m_metadata(
     max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
         Set to ``None`` to keep the original data without truncation.
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+
+        .. note::
+            Insect COI DNA barcodes should only be 660 base pairs long.
+            Although the dataset contains longer sequences, characters after the
+            first 660 base pairs are likely to be inaccurate reads, and certainly
+            not part of the DNA barcode. Hence we recommend limiting the DNA barcode
+            to the first 660 nucleotides. If you don't know much about DNA barcodes,
+            you probably shouldn't change this parameter.
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -322,8 +328,14 @@ class BIOSCAN5M(VisionDataset):
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
         Set to ``None`` to keep the original data without truncation.
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+
+        .. note::
+            Insect COI DNA barcodes should only be 660 base pairs long.
+            Although the dataset contains longer sequences, characters after the
+            first 660 base pairs are likely to be inaccurate reads, and certainly
+            not part of the DNA barcode. Hence we recommend limiting the DNA barcode
+            to the first 660 nucleotides. If you don't know much about DNA barcodes,
+            you probably shouldn't change this parameter.
 
     target_type : str or Iterable[str], default="species"
         Type of target to use. One of, or a list of:
