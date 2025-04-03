@@ -10,7 +10,7 @@ BIOSCAN-5M PyTorch Dataset.
 
 import os
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -165,10 +165,10 @@ class MetadataDtype(Enum):
 
 def load_bioscan5m_metadata(
     metadata_path,
-    max_nucleotides=660,
-    reduce_repeated_barcodes=False,
-    split=None,
-    dtype=MetadataDtype.DEFAULT,
+    max_nucleotides: Union[int, None] = 660,
+    reduce_repeated_barcodes: bool = False,
+    split: Optional[str] = None,
+    dtype: Union[str, dict, None] = MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pandas.DataFrame:
     r"""
@@ -181,9 +181,19 @@ def load_bioscan5m_metadata(
 
     max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
-        Set to ``None`` to keep the original data without truncation (default).
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+        Set to ``None`` to keep the original data without truncation.
+
+        .. note::
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-5M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -322,8 +332,18 @@ class BIOSCAN5M(VisionDataset):
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
         Set to ``None`` to keep the original data without truncation.
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+
+        .. note::
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-5M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     target_type : str or Iterable[str], default="species"
         Type of target to use. One of, or a list of:
@@ -335,7 +355,7 @@ class BIOSCAN5M(VisionDataset):
         - ``"subfamily"``
         - ``"genus"``
         - ``"species"``
-        - ``"dna_bin"``
+        - ``"dna_bin"`` (a species-level label derived from `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
     target_format : str, default="index"
         Format in which the targets will be returned. One of:
@@ -364,6 +384,12 @@ class BIOSCAN5M(VisionDataset):
         If dataset is already downloaded, it is not downloaded again.
         Images are only downloaded if the ``"image"`` modality is requested.
         Note that only ``image_package=cropped_256`` is supported for automatic image download.
+
+    Attributes
+    ----------
+    metadata : pandas.DataFrame
+        The metadata associated with the samples in the select split, loaded using
+        :func:`load_bioscan5m_metadata`.
     """
 
     base_folder = "bioscan5m"
@@ -441,17 +467,17 @@ class BIOSCAN5M(VisionDataset):
     def __init__(
         self,
         root,
-        split="train",
-        modality=("image", "dna"),
-        image_package="cropped_256",
-        reduce_repeated_barcodes=False,
-        max_nucleotides=660,
-        target_type="species",
-        target_format="index",
-        transform=None,
-        dna_transform=None,
-        target_transform=None,
-        download=False,
+        split: Union[str, None] = "train",
+        modality: Union[str, Iterable[str]] = ("image", "dna"),
+        image_package: str = "cropped_256",
+        reduce_repeated_barcodes: bool = False,
+        max_nucleotides: Union[int, None] = 660,
+        target_type: Union[str, Iterable[str]] = "species",
+        target_format: str = "index",
+        transform: Optional[Callable] = None,
+        dna_transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        download: bool = False,
     ) -> None:
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
@@ -628,6 +654,7 @@ class BIOSCAN5M(VisionDataset):
             Any other modalities requested, as specified in the ``modality`` parameter.
             The data is extracted from the appropriate column in the metadata CSV file,
             without any transformations.
+            Missing values will be filled with NaN.
 
             .. versionadded:: 1.1.0
 

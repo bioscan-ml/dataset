@@ -13,7 +13,7 @@ import pathlib
 import warnings
 import zipfile
 from enum import Enum
-from typing import Any, Iterable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -191,12 +191,12 @@ class MetadataDtype(Enum):
 
 def load_bioscan1m_metadata(
     metadata_path,
-    max_nucleotides=660,
-    reduce_repeated_barcodes=False,
-    split=None,
-    partitioning_version="large_diptera_family",
-    clibd_partitioning_path=None,
-    dtype=MetadataDtype.DEFAULT,
+    max_nucleotides: Union[int, None] = 660,
+    reduce_repeated_barcodes: bool = False,
+    split: Optional[str] = None,
+    partitioning_version: str = "large_diptera_family",
+    clibd_partitioning_path: Optional[str] = None,
+    dtype: Union[str, dict, None] = MetadataDtype.DEFAULT,
     **kwargs,
 ) -> pandas.DataFrame:
     r"""
@@ -210,8 +210,18 @@ def load_bioscan1m_metadata(
     max_nucleotides : int, default=660
         Maximum nucleotide sequence length to keep for the DNA barcodes.
         Set to ``None`` to keep the original data without truncation.
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+
+        .. note::
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-1M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     reduce_repeated_barcodes : str or bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -227,7 +237,7 @@ def load_bioscan1m_metadata(
         - ``"train"``
         - ``"validation"``
         - ``"test"``
-        - ``"no_split"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
 
         For the CLIBD partitioning version, this should be one of:
 
@@ -508,7 +518,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"train"``
         - ``"validation"``
         - ``"test"``
-        - ``"no_split"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
 
         For the CLIBD partitioning version, this should be one of:
 
@@ -587,9 +597,19 @@ class BIOSCAN1M(VisionDataset):
 
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
-        Set to ``None`` to keep the original data without truncation (default).
-        Note that the barcode should only be 660 base pairs long.
-        Characters beyond this length are unlikely to be accurate.
+        Set to ``None`` to keep the original data without truncation.
+
+        .. note::
+            COI DNA barcodes are typically 658 base pairs long for insects
+            (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
+            and an additional two base pairs are included as a buffer for the
+            primer sequence.
+            Although the BIOSCAN-1M dataset itself contains longer sequences,
+            characters after the first 660 base pairs are likely to be inaccurate
+            reads, and not part of the DNA barcode.
+            Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
+            If you don't know much about DNA barcodes, you probably shouldn't
+            change this parameter.
 
     target_type : str or Iterable[str], default="family"
         Type of target to use. One of, or a list of:
@@ -602,7 +622,8 @@ class BIOSCAN1M(VisionDataset):
         - ``"tribe"``
         - ``"genus"``
         - ``"species"``
-        - ``"uri"`` (equivalent to ``"dna_bin"``)
+        - ``"uri"`` (equivalent to ``"dna_bin"``; a species-level label derived from
+          `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
         Where ``"uri"`` corresponds to the BIN cluster label.
 
@@ -636,6 +657,12 @@ class BIOSCAN1M(VisionDataset):
         are currently supported for automatic image download.
 
         .. versionadded:: 1.2.0
+
+    Attributes
+    ----------
+    metadata : pandas.DataFrame
+        The metadata associated with the samples in the select split, loaded using
+        :func:`load_bioscan1m_metadata`.
     """  # noqa: E501
 
     base_folder = "bioscan1m"
@@ -697,18 +724,18 @@ class BIOSCAN1M(VisionDataset):
     def __init__(
         self,
         root,
-        split="train",
-        partitioning_version="large_diptera_family",
-        modality=("image", "dna"),
-        image_package="cropped_256",
-        reduce_repeated_barcodes=False,
-        max_nucleotides=660,
-        target_type="family",
-        target_format="index",
-        transform=None,
-        dna_transform=None,
-        target_transform=None,
-        download=False,
+        split: str = "train",
+        partitioning_version: str = "large_diptera_family",
+        modality: Union[str, Iterable[str]] = ("image", "dna"),
+        image_package: str = "cropped_256",
+        reduce_repeated_barcodes: bool = False,
+        max_nucleotides: Union[int, None] = 660,
+        target_type: Union[str, Iterable[str]] = "family",
+        target_format: str = "index",
+        transform: Optional[Callable] = None,
+        dna_transform: Optional[Callable] = None,
+        target_transform: Optional[Callable] = None,
+        download: bool = False,
     ) -> None:
         root = os.path.expanduser(root)
         super().__init__(root, transform=transform, target_transform=target_transform)
@@ -907,6 +934,7 @@ class BIOSCAN1M(VisionDataset):
             Any other modalities requested, as specified in the ``modality`` parameter.
             The data is extracted from the appropriate column in the metadata TSV file,
             without any transformations.
+            Missing values will be filled with NaN.
 
             .. versionadded:: 1.1.0
 
