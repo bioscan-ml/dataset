@@ -150,6 +150,9 @@ def explode_metasplit(metasplit: str, partitioning_version: str, verify: bool = 
     >>> explode_metasplit("val", partitioning_version="clibd")
     {'val_seen'}
     """
+    if metasplit is None:
+        metasplit = "all"
+
     if partitioning_version == "clibd":
         _split_aliases = CLIBD_SPLIT_ALIASES
         _valid_splits = CLIBD_VALID_SPLITS
