@@ -120,6 +120,8 @@ def explode_metasplit(metasplit: str, partitioning_version: str, verify: bool = 
     """
     Convert a metasplit string into its set of constituent splits.
 
+    .. versionadded:: 1.2.0
+
     Parameters
     ----------
     metasplit : str
@@ -443,6 +445,8 @@ def extract_zip_without_prefix(
 ):
     r"""
     Extract a zip file, optionally modifying the output paths by dropping a parent directory.
+
+    .. versionadded:: 1.2.0
 
     Parameters
     ----------

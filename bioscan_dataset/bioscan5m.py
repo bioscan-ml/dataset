@@ -81,6 +81,8 @@ def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
     """
     Convert a metasplit string into its set of constituent splits.
 
+    .. versionadded:: 1.2.0
+
     Parameters
     ----------
     metasplit : str
