@@ -357,7 +357,8 @@ class BIOSCAN5M(VisionDataset):
         - ``"subfamily"``
         - ``"genus"``
         - ``"species"``
-        - ``"dna_bin"`` (a species-level label derived from `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
+        - ``"dna_bin"`` (a species-level label derived from
+          `DNA barcode clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
     target_format : str, default="index"
         Format in which the targets will be returned. One of:

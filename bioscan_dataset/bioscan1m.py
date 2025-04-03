@@ -626,7 +626,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"genus"``
         - ``"species"``
         - ``"uri"`` (equivalent to ``"dna_bin"``; a species-level label derived from
-          `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
+          `DNA barcode clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
         Where ``"uri"`` corresponds to the BIN cluster label.
 
