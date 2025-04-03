@@ -141,14 +141,14 @@ def explode_metasplit(metasplit: str, partitioning_version: str, verify: bool = 
 
     Examples
     --------
-    >>> explode_metasplit("train+validation", partitioning_version="large_diptera_family")
-    {'train', 'validation'}
     >>> explode_metasplit("pretrain+train", partitioning_version="clibd")
     {'train_seen', 'no_split'}
-    >>> explode_metasplit("val", partitioning_version="large_diptera_family")
-    {'validation'}
+    >>> explode_metasplit("train+validation", partitioning_version="large_diptera_family")
+    {'train', 'validation'}
     >>> explode_metasplit("val", partitioning_version="clibd")
     {'val_seen'}
+    >>> explode_metasplit("val", partitioning_version="large_diptera_family")
+    {'validation'}
     """
     if partitioning_version == "clibd":
         _split_aliases = CLIBD_SPLIT_ALIASES
@@ -194,7 +194,7 @@ def load_bioscan1m_metadata(
     max_nucleotides: Union[int, None] = 660,
     reduce_repeated_barcodes: bool = False,
     split: Optional[str] = None,
-    partitioning_version: str = "large_diptera_family",
+    partitioning_version: str = "clibd",
     clibd_partitioning_path: Optional[str] = None,
     dtype: Union[str, dict, None] = MetadataDtype.DEFAULT,
     **kwargs,
@@ -230,15 +230,7 @@ def load_bioscan1m_metadata(
         If ``False`` (default) no reduction is performed.
 
     split : str, optional
-        The dataset partition. For the BIOSCAN-1M partitioning versions
-        ({large/meduim/small}_{diptera_family/insect_order}), this
-        should be one of:
-
-        - ``"train"``
-        - ``"validation"``
-        - ``"test"``
-        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
-
+        The dataset partition.
         For the CLIBD partitioning version, this should be one of:
 
         - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
@@ -256,6 +248,15 @@ def load_bioscan1m_metadata(
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
           aliases for the corresponding CLIBD partitions.
 
+        For the BIOSCAN-1M partitioning versions
+        ({large/meduim/small}_{diptera_family/insect_order}), this
+        should be one of:
+
+        - ``"train"``
+        - ``"validation"``
+        - ``"test"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
+
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
@@ -268,16 +269,16 @@ def load_bioscan1m_metadata(
             If ``partitioning_version`` is changed, the same ``split`` value will yield
             completely different records.
 
-    partitioning_version : str, default="large_diptera_family"
+    partitioning_version : str, default="clibd"
         The dataset partitioning version, one of:
 
+        - ``"clibd"``
         - ``"large_diptera_family"``
         - ``"medium_diptera_family"``
         - ``"small_diptera_family"``
         - ``"large_insect_order"``
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
-        - ``"clibd"``
 
         The ``"clibd"`` partitioning version was introduced by the paper
         `CLIBD: Bridging Vision and Genomics for Biodiversity Monitoring at Scale
@@ -288,8 +289,8 @@ def load_bioscan1m_metadata(
         `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
         into the same directory as the metadata TSV file.
 
-        .. versionchanged:: 1.2.0
-            Added support for CLIBD partitioning.
+        .. versionchanged:: 2.0.0
+            Default changed to ``"clibd"``.
 
     clibd_partitioning_path : str, optional
         Path to the CLIBD_partitioning directory. By default, this is a subdirectory
@@ -318,10 +319,15 @@ def load_bioscan1m_metadata(
     if os.path.isdir(clibd_partitioning_path):
         pass
     elif partitioning_version == "clibd":
-        raise EnvironmentError(
-            f"{partitioning_version} partitioning requested, but the corresponding"
-            f" partitioning data could not be found at: {repr(clibd_partitioning_path)}"
-        )
+        if not explicit_clibd_partitioning_path and (split is not None or split == "all"):
+            # This is just the default settings, so it's okay if there's no CLIBD
+            # partitioning data. Just show the metadata without CLIBD splits.
+            clibd_partitioning_path = None
+        else:
+            raise EnvironmentError(
+                f"{partitioning_version} partitioning requested, but the corresponding"
+                f" partitioning data could not be found at: {repr(clibd_partitioning_path)}"
+            )
     else:
         if explicit_clibd_partitioning_path:
             warnings.warn(
@@ -511,15 +517,7 @@ class BIOSCAN1M(VisionDataset):
         the image directory, BIOSCAN-1M.
 
     split : str, default="train"
-        The dataset partition. For the BIOSCAN-1M partitioning versions
-        ({large/medium/small}_{diptera_family/insect_order}), this
-        should be one of:
-
-        - ``"train"``
-        - ``"validation"``
-        - ``"test"``
-        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
-
+        The dataset partition.
         For the CLIBD partitioning version, this should be one of:
 
         - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
@@ -537,6 +535,15 @@ class BIOSCAN1M(VisionDataset):
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
           aliases for the corresponding CLIBD partitions.
 
+        For the BIOSCAN-1M partitioning versions
+        ({large/medium/small}_{diptera_family/insect_order}), this
+        should be one of:
+
+        - ``"train"``
+        - ``"validation"``
+        - ``"test"``
+        - ``"no_split"`` (unused by experiments in BIOSCAN-1M paper)
+
         If ``split`` is ``None`` or ``"all"``, the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
 
@@ -549,16 +556,16 @@ class BIOSCAN1M(VisionDataset):
             If ``partitioning_version`` is changed, the same ``split`` value will yield
             completely different records.
 
-    partitioning_version : str, default="large_diptera_family"
+    partitioning_version : str, default="clibd"
         The dataset partitioning version, one of:
 
+        - ``"clibd"``
         - ``"large_diptera_family"``
         - ``"medium_diptera_family"``
         - ``"small_diptera_family"``
         - ``"large_insect_order"``
         - ``"medium_insect_order"``
         - ``"small_insect_order"``
-        - ``"clibd"``
 
         The ``"clibd"`` partitioning version was introduced by the paper
         `CLIBD: Bridging Vision and Genomics for Biodiversity Monitoring at Scale
@@ -576,8 +583,8 @@ class BIOSCAN1M(VisionDataset):
             For more fine-grained taxonomic labels, we recommend using the CLIBD
             partitioning, which supports ``target_type`` up to species level.
 
-        .. versionchanged:: 1.2.0
-            Added support for CLIBD partitioning.
+        .. versionchanged:: 2.0.0
+            Default changed to ``"clibd"``.
 
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
@@ -735,7 +742,7 @@ class BIOSCAN1M(VisionDataset):
         self,
         root,
         split: str = "train",
-        partitioning_version: str = "large_diptera_family",
+        partitioning_version: Optional[str] = None,
         modality: Union[str, Iterable[str]] = ("image", "dna"),
         image_package: str = "cropped_256",
         reduce_repeated_barcodes: bool = False,
@@ -765,6 +772,15 @@ class BIOSCAN1M(VisionDataset):
             self.metadata_path = os.path.join(self.root, self.meta["filename"])
         self.image_dir = os.path.join(self.root, self.base_folder, "images", self.image_package)
 
+        if partitioning_version is not None:
+            pass
+        elif split is None or split == "all":
+            # We're not partitioning the data, so we don't need to worry about
+            # access to CLIBD partitioning files.
+            partitioning_version = ""
+        else:
+            # Default to clibd partitioning version
+            partitioning_version = "clibd"
         self.partitioning_version = partitioning_version.lower()
         self.clibd_partitioning_path = os.path.join(self.root, self.base_folder, CLIBD_PARTITIONING_DIRNAME)
         if not os.path.isdir(self.clibd_partitioning_path) and self.partitioning_version != "clibd":
@@ -786,7 +802,7 @@ class BIOSCAN1M(VisionDataset):
 
         if target_type is not None:
             self.target_type = target_type
-        elif self.partitioning_version == "clibd":
+        elif self.partitioning_version == "clibd" or self.partitioning_version == "":
             self.target_type = "species"
         else:
             # Use the rank the partitioning version was made for, either family or order
@@ -798,7 +814,7 @@ class BIOSCAN1M(VisionDataset):
         self.target_type = ["uri" if t == "dna_bin" else t for t in self.target_type]
 
         # Check that the target_type is compatible with the partitioning version
-        if self.partitioning_version == "clibd":
+        if self.partitioning_version == "clibd" or self.partitioning_version == "":
             too_fine_ranks = set()
         else:
             too_fine_ranks = {"subfamily", "tribe", "genus", "species"}
