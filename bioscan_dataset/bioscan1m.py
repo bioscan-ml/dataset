@@ -271,7 +271,8 @@ def load_bioscan1m_metadata(
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
         To use the CLIBD partitioning, download and extract the partition files from
-        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__.
+        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
+        into the same directory as the metadata TSV file.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
@@ -551,7 +552,8 @@ class BIOSCAN1M(VisionDataset):
 
         To use the CLIBD partitioning, download and extract the partition files from
         `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
-        into the ``root`` directory.
+        into the ``"{root}/bioscan5m/"`` directory.
+        These files are automatically downloaded if ``download=True``.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
