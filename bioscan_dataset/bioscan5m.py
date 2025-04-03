@@ -83,6 +83,8 @@ def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
     """
     Convert a metasplit string into its set of constituent splits.
 
+    .. versionadded:: 1.2.0
+
     Parameters
     ----------
     metasplit : str
@@ -300,6 +302,10 @@ class BIOSCAN5M(VisionDataset):
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
         ``"image"``, ``"dna"``, or any column name in the metadata CSV file.
+        Examples of column names which may be of interest are
+        ``"coord-lat"`` (latitude of collection location),
+        ``"coord-lon"`` (longitude of collection location),
+        and ``"image_measurement_value"`` (specimen size, in pixels).
 
         .. versionchanged:: 1.1.0
             Added support for arbitrary modalities.
@@ -342,13 +348,13 @@ class BIOSCAN5M(VisionDataset):
 
         .. versionadded:: 1.1.0
 
-    transform : Callable, default=None
+    transform : Callable, optional
         Image transformation pipeline.
 
-    dna_transform : Callable, default=None
+    dna_transform : Callable, optional
         DNA barcode transformation pipeline.
 
-    target_transform : Callable, default=None
+    target_transform : Callable, optional
         Label transformation pipeline.
 
     download : bool, default=False

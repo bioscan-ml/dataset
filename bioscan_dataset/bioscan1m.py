@@ -122,6 +122,8 @@ def explode_metasplit(metasplit: str, partitioning_version: str, verify: bool = 
     """
     Convert a metasplit string into its set of constituent splits.
 
+    .. versionadded:: 1.2.0
+
     Parameters
     ----------
     metasplit : str
@@ -228,16 +230,16 @@ def load_bioscan1m_metadata(
 
         For the CLIBD partitioning version, this should be one of:
 
-        - ``"all_keys"`` (the keys are used as a reference set for retreival tasks)
-        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; labels here are not to species level)
-        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
+        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; these samples are not labelled to species level)
+        - ``"no_split_and_seen_train"`` (used for CLIBD model training; equivalent to using ``"pretrain+train"`` in BIOSCAN-5M)
         - ``"seen_keys"``
         - ``"single_species"``
-        - ``"test_seen"``
+        - ``"test_seen"`` (similar to ``"test"`` in BIOSCAN-5M)
         - ``"test_unseen"``
-        - ``"test_unseen_keys"``
-        - ``"train_seen"``
-        - ``"val_seen"``
+        - ``"test_unseen_keys"`` (similar to ``"key_unseen"`` in BIOSCAN-5M)
+        - ``"train_seen"`` (similar to ``"train"`` in BIOSCAN-5M)
+        - ``"val_seen"`` (similar to ``"val"`` in BIOSCAN-5M)
         - ``"val_unseen"``
         - ``"val_unseen_keys"``
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
@@ -250,9 +252,10 @@ def load_bioscan1m_metadata(
         joined by ``"+"``. For example, ``"train+validation+test"`` will filter the
         metadata to samples in the training, validation, and test partitions.
 
-        Note that the contents of the split depends on the value of ``partitioning_version``.
-        If ``partitioning_version`` is changed, the same ``split`` value will yield
-        completely different records.
+        .. warning::
+            The contents of the split depends on the value of ``partitioning_version``.
+            If ``partitioning_version`` is changed, the same ``split`` value will yield
+            completely different records.
 
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
@@ -271,7 +274,8 @@ def load_bioscan1m_metadata(
         introduced in the `BIOSCAN-1M paper <https://arxiv.org/abs/2307.10455>`__.
 
         To use the CLIBD partitioning, download and extract the partition files from
-        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__.
+        `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
+        into the same directory as the metadata TSV file.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
@@ -446,6 +450,8 @@ def extract_zip_without_prefix(
     r"""
     Extract a zip file, optionally modifying the output paths by dropping a parent directory.
 
+    .. versionadded:: 1.2.0
+
     Parameters
     ----------
     from_path : str
@@ -505,16 +511,16 @@ class BIOSCAN1M(VisionDataset):
 
         For the CLIBD partitioning version, this should be one of:
 
-        - ``"all_keys"`` (keys are used as a reference set for retreival tasks)
-        - ``"no_split"`` (similar to pretrain in BIOSCAN-5M, this has incomplete labels)
-        - ``"no_split_and_seen_train"`` (used for model training)
+        - ``"all_keys"`` (the keys are used as a reference set for retrieval tasks)
+        - ``"no_split"`` (equivalent to ``"pretrain"`` in BIOSCAN-5M; these samples are not labelled to species level)
+        - ``"no_split_and_seen_train"`` (used for CLIBD model training; equivalent to using ``"pretrain+train"`` in BIOSCAN-5M)
         - ``"seen_keys"``
         - ``"single_species"``
-        - ``"test_seen"``
+        - ``"test_seen"`` (similar to ``"test"`` in BIOSCAN-5M)
         - ``"test_unseen"``
-        - ``"test_unseen_keys"``
-        - ``"train_seen"``
-        - ``"val_seen"``
+        - ``"test_unseen_keys"`` (similar to ``"key_unseen"`` in BIOSCAN-5M)
+        - ``"train_seen"`` (similar to ``"train"`` in BIOSCAN-5M)
+        - ``"val_seen"`` (similar to ``"val"`` in BIOSCAN-5M)
         - ``"val_unseen"``
         - ``"val_unseen_keys"``
         - Additionally, :class:`~bioscan_dataset.BIOSCAN5M` split names are accepted as
@@ -527,9 +533,10 @@ class BIOSCAN1M(VisionDataset):
         joined by ``"+"``. For example, ``split="train+validation+test"`` will return
         a dataset comprised of samples in the training, validation, and test partitions.
 
-        Note that the contents of the split depends on the value of ``partitioning_version``.
-        If ``partitioning_version`` is changed, the same ``split`` value will yield
-        completely different records.
+        .. warning::
+            The contents of the split depends on the value of ``partitioning_version``.
+            If ``partitioning_version`` is changed, the same ``split`` value will yield
+            completely different records.
 
     partitioning_version : str, default="large_diptera_family"
         The dataset partitioning version, one of:
@@ -549,7 +556,14 @@ class BIOSCAN1M(VisionDataset):
 
         To use the CLIBD partitioning, download and extract the partition files from
         `here <https://huggingface.co/datasets/bioscan-ml/clibd/resolve/335f24b/data/BIOSCAN_1M/CLIBD_partitioning.zip>`__
-        into the ``root`` directory.
+        into the ``"{root}/bioscan5m/"`` directory.
+        These files are automatically downloaded if ``download=True``.
+
+        .. attention::
+            The original BIOSCAN-1M partitioning versions only support ``target_type``
+            up to family and order level, respectively.
+            For more fine-grained taxonomic labels, we recommend using the CLIBD
+            partitioning, which supports ``target_type`` up to species level.
 
         .. versionchanged:: 1.2.0
             Added support for CLIBD partitioning.
@@ -587,7 +601,7 @@ class BIOSCAN1M(VisionDataset):
         - ``"tribe"``
         - ``"genus"``
         - ``"species"``
-        - ``"uri"``
+        - ``"uri"`` (equivalent to ``"dna_bin"``)
 
         Where ``"uri"`` corresponds to the BIN cluster label.
 
@@ -604,13 +618,13 @@ class BIOSCAN1M(VisionDataset):
 
         .. versionadded:: 1.1.0
 
-    transform : Callable, default=None
+    transform : Callable, optional
         Image transformation pipeline.
 
-    dna_transform : Callable, default=None
+    dna_transform : Callable, optional
         DNA barcode transformation pipeline.
 
-    target_transform : Callable, default=None
+    target_transform : Callable, optional
         Label transformation pipeline.
 
     download : bool, default=False

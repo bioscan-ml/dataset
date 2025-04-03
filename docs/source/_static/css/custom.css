@@ -82,6 +82,7 @@ footer {
   background: var(--color-white);
   border-right: 1px solid var(--color-gray-200);
   overflow: auto;
+  max-width: 825px;
 }
 
 .wy-nav-content-wrap {
