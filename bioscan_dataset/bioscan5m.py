@@ -525,7 +525,7 @@ class BIOSCAN5M(VisionDataset):
             self.download()
 
         if not self._check_integrity():
-            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
+            raise EnvironmentError(f"{type(self).__name__} dataset not found, incomplete, or corrupted: {self.root}.")
 
         self._load_metadata()
 
