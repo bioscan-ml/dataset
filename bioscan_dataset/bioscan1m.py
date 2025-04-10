@@ -1010,16 +1010,20 @@ class BIOSCAN1M(VisionDataset):
                 check = check_integrity(file, data[self.image_package])
             else:
                 check = os.path.exists(file)
+            check_all &= check
             if verbose >= 1 and not check:
-                if not os.path.exists(os.path.dirname(file)):
+                if not os.path.exists(os.path.dirname(os.path.dirname(file))):
+                    print(f"Directory missing: {os.path.dirname(os.path.dirname(file))}")
+                    return False
+                elif not os.path.exists(os.path.dirname(file)):
                     print(f"Directory missing: {os.path.dirname(file)}")
+                    return False
                 elif not os.path.exists(file):
                     print(f"File missing: {file}")
                 else:
                     print(f"File invalid: {file}")
             if verbose >= 2 and check:
                 print(f"File present: {file}")
-            check_all &= check
         return check_all
 
     def _check_integrity_clibd_partitioning(self, verbose=1) -> bool:
