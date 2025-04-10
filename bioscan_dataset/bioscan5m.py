@@ -313,6 +313,13 @@ class BIOSCAN5M(VisionDataset):
         joined by ``"+"``. For example, ``split="pretrain+train"`` will return a dataset
         comprised of the pretraining and training partitions.
 
+        .. note::
+            There is distributional shift between the partitions, which means the
+            validation and test accuracy are not directly comparable, and the
+            accuracy for the seen and unseen splits are not directly comparable.
+            For more details, please see Appendix R.3 of the
+            `BIOSCAN-5M paper <https://arxiv.org/abs/2406.12723>`_.
+
     modality : str or Iterable[str], default=("image", "dna")
         Which data modalities to use. One of, or a list of:
         ``"image"``, ``"dna"``, or any column name in the metadata CSV file.
@@ -357,7 +364,8 @@ class BIOSCAN5M(VisionDataset):
         - ``"subfamily"``
         - ``"genus"``
         - ``"species"``
-        - ``"dna_bin"`` (a species-level label derived from `clustering by BOLD <https://portal.boldsystems.org/bin>`_)
+        - ``"dna_bin"`` (a species-level label derived from
+          `DNA barcode clustering by BOLD <https://portal.boldsystems.org/bin>`_)
 
     target_format : str, default="index"
         Format in which the targets will be returned. One of:

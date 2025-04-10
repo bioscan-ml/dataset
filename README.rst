@@ -45,19 +45,7 @@ Usage
 -----
 
 The datasets can be used in the same way as PyTorch's `torchvision datasets <https://pytorch.org/vision/main/datasets.html#built-in-datasets>`__.
-For example, to load the BIOSCAN-1M dataset:
-
-.. code-block:: python
-
-    from bioscan_dataset import BIOSCAN1M
-
-    dataset = BIOSCAN1M(root="~/Datasets/bioscan/")
-
-    for image, dna_barcode, label in dataset:
-        # Do something with the image, dna_barcode, and label
-        pass
-
-To load the BIOSCAN-5M dataset:
+For example, to load the BIOSCAN-5M dataset:
 
 .. code-block:: python
 
@@ -69,10 +57,21 @@ To load the BIOSCAN-5M dataset:
         # Do something with the image, dna_barcode, and label
         pass
 
+To load the BIOSCAN-1M dataset:
+
+.. code-block:: python
+
+    from bioscan_dataset import BIOSCAN1M
+
+    dataset = BIOSCAN1M(root="~/Datasets/bioscan/")
+
+    for image, dna_barcode, label in dataset:
+        # Do something with the image, dna_barcode, and label
+        pass
 
 Note that although BIOSCAN-5M is a superset of BIOSCAN-1M, the repeated data samples are not identical between the two due to data cleaning and processing differences.
+For details, please see Appendix Q of the `BIOSCAN-5M paper`_.
 Additionally, note that the splits are incompatible between the two datasets.
-For details, see the `BIOSCAN-5M paper`_.
 
 For these reasons, we recommend new projects use the BIOSCAN-5M dataset over BIOSCAN-1M.
 
@@ -149,7 +148,7 @@ This partition can be used for training a novelty detector, without exposing the
 | heldout     | other_heldout       | novelty detector training         |      76,590 |     41,250 |     9,862 |
 +-------------+---------------------+-----------------------------------+-------------+------------+-----------+
 
-For more details about the BIOSCAN-5M partitioning, please see the `BIOSCAN-5M paper`_.
+For more details about the BIOSCAN-5M partitioning, please see Section 4.1 of the `BIOSCAN-5M paper`_.
 
 The dataset class also supports loading samples from multiple splits at once.
 This can be done by passing a single string containing multiple split names joined with ``"+"``.
