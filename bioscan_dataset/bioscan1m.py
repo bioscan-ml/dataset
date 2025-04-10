@@ -999,6 +999,10 @@ class BIOSCAN1M(VisionDataset):
         return check
 
     def _check_integrity_images(self, verbose=1) -> bool:
+        if not os.path.isdir(self.image_dir):
+            if verbose >= 1:
+                print(f"Image directory missing: {self.image_dir}")
+            return False
         check_all = True
         for file, data in self.image_files:
             file = os.path.join(self.image_dir, file)
@@ -1007,7 +1011,9 @@ class BIOSCAN1M(VisionDataset):
             else:
                 check = os.path.exists(file)
             if verbose >= 1 and not check:
-                if not os.path.exists(file):
+                if not os.path.exists(os.path.dirname(file)):
+                    print(f"Directory missing: {os.path.dirname(file)}")
+                elif not os.path.exists(file):
                     print(f"File missing: {file}")
                 else:
                     print(f"File invalid: {file}")
