@@ -398,7 +398,7 @@ class BIOSCAN5M(VisionDataset):
     meta = {
         "urls": [
             "https://zenodo.org/records/11973457/files/BIOSCAN_5M_Insect_Dataset_metadata_MultiTypes.zip",
-            "https://huggingface.co/datasets/Gharaee/BIOSCAN-5M/resolve/main/BIOSCAN_5M_Insect_Dataset_metadata_MultiTypes.zip",  # noqa: E501
+            "https://huggingface.co/datasets/bioscan-ml/BIOSCAN-5M/resolve/eeefb30/BIOSCAN_5M_Insect_Dataset_metadata_MultiTypes.zip",  # noqa: E501
         ],
         "filename": os.path.join("metadata", "csv", "BIOSCAN_5M_Insect_Dataset_metadata.csv"),
         "archive_md5": "ac381b69fafdbaedc2f9cfb89e3571f7",
