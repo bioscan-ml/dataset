@@ -1059,6 +1059,8 @@ class BIOSCAN1M(VisionDataset):
             check &= self._check_integrity_images(verbose=verbose)
         if self.partitioning_version == "clibd":
             check &= self._check_integrity_clibd_partitioning(verbose=verbose)
+        if not check and verbose >= 1:
+            print(f"{type(self).__name__} dataset not found, incomplete, or corrupted.")
         return check
 
     def _download_metadata(self, verbose=1) -> None:

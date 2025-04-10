@@ -771,6 +771,8 @@ class BIOSCAN5M(VisionDataset):
         check &= self._check_integrity_metadata(verbose=verbose)
         if "image" in self.modality:
             check &= self._check_integrity_images(verbose=verbose)
+        if not check and verbose >= 1:
+            print(f"{type(self).__name__} dataset not found, incomplete, or corrupted.")
         return check
 
     def _download_metadata(self, verbose=1) -> None:
