@@ -339,18 +339,14 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
 
 .. code-block:: bibtex
 
-    @article{clibd,
+    @inproceedings{clibd,
         title={{CLIBD}: Bridging Vision and Genomics for Biodiversity Monitoring at Scale},
-        author={Gong, ZeMing and Wang, Austin T. and Huo, Xiaoliang
-            and Haurum, Joakim Bruslund and Lowe, Scott C. and Taylor, Graham W.
-            and Chang, Angel X.
+        author={ZeMing Gong and Austin Wang and Xiaoliang Huo and Joakim Bruslund Haurum
+            and Scott C. Lowe and Graham W. Taylor and Angel X Chang
         },
-        journal={arXiv preprint arXiv:2405.17537},
-        year={2024},
-        eprint={2405.17537},
-        archivePrefix={arXiv},
-        primaryClass={cs.AI},
-        doi={10.48550/arxiv.2405.17537},
+        booktitle={The Thirteenth International Conference on Learning Representations},
+        year={2025},
+        url={https://openreview.net/forum?id=d5HUnyByAI},
     }
 
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
