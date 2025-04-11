@@ -335,7 +335,7 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
         url={https://proceedings.neurips.cc/paper_files/paper/2023/file/87dbbdc3a685a97ad28489a1d57c45c1-Paper-Datasets_and_Benchmarks.pdf},
     }
 
-If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider citing the `CLIBD paper <https://arxiv.org/abs/2405.17537>`_.
+If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider citing the `CLIBD paper`_.
 
 .. code-block:: bibtex
 
@@ -354,6 +354,7 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
 .. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
 .. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
+.. _CLIBD paper: https://arxiv.org/abs/2405.17537
 .. _our repo: https://github.com/bioscan-ml/dataset
 .. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
