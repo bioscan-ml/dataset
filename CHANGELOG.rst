@@ -20,7 +20,7 @@ Release date: 2025-04-03.
 This is a minor release adding some new features.
 In particular, CLIBD partitioning of BIOSCAN-1M is now supported, automatic download of BIOSCAN-1M is now supported, and multiple splits can be loaded at once by joining their names with ``"+"``, such as ``"pretrain+train"``.
 
-.. _v1.2.0 Changed:
+.. _v1.2.0 Fixed:
 
 Fixed
 ~~~~~
