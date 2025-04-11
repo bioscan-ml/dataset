@@ -525,7 +525,7 @@ class BIOSCAN5M(VisionDataset):
             self.download()
 
         if not self._check_integrity():
-            raise EnvironmentError(f"{type(self).__name__} dataset not found in {self.root}.")
+            raise EnvironmentError(f"{type(self).__name__} dataset not found, incomplete, or corrupted: {self.root}.")
 
         self._load_metadata()
 
@@ -726,6 +726,10 @@ class BIOSCAN5M(VisionDataset):
         return check
 
     def _check_integrity_images(self, split=None, verbose=1) -> bool:
+        if not os.path.isdir(self.image_dir):
+            if verbose >= 1:
+                print(f"Image directory missing: {self.image_dir}")
+            return False
         if split is None:
             split = self.split
         split_set = explode_metasplit(split, verify=True)
@@ -737,14 +741,20 @@ class BIOSCAN5M(VisionDataset):
                     check = check_integrity(file, data[self.image_package])
                 else:
                     check = os.path.exists(file)
+                check_all &= check
                 if verbose >= 1 and not check:
-                    if not os.path.exists(file):
+                    if not os.path.exists(os.path.dirname(os.path.dirname(file))):
+                        print(f"Directory missing: {os.path.dirname(os.path.dirname(file))}")
+                        break
+                    elif not os.path.exists(os.path.dirname(file)):
+                        print(f"Directory missing: {os.path.dirname(file)}")
+                        break
+                    elif not os.path.exists(file):
                         print(f"File missing: {file}")
                     else:
                         print(f"File invalid: {file}")
                 if verbose >= 2 and check:
                     print(f"File present: {file}")
-                check_all &= check
         return check_all
 
     def _check_integrity(self, verbose=1) -> bool:
@@ -765,6 +775,8 @@ class BIOSCAN5M(VisionDataset):
         check &= self._check_integrity_metadata(verbose=verbose)
         if "image" in self.modality:
             check &= self._check_integrity_images(verbose=verbose)
+        if not check and verbose >= 1:
+            print(f"{type(self).__name__} dataset not found, incomplete, or corrupted.")
         return check
 
     def _download_metadata(self, verbose=1) -> None:
