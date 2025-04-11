@@ -510,8 +510,8 @@ class BIOSCAN1M(VisionDataset):
     Parameters
     ----------
     root : str
-        The root directory, to contain the downloaded tarball file, and
-        the image directory, BIOSCAN-1M.
+        The root directory, to contain the downloaded tarball files, and bioscan1m
+        data directory.
 
     split : str, default="train"
         The dataset partition. For the BIOSCAN-1M partitioning versions
