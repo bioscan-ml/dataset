@@ -3,7 +3,7 @@
     <p style="margin: 0;">
         <a href="https://pypi.org/project/bioscan-dataset/"><img alt="Latest PyPI release" src="https://img.shields.io/pypi/v/bioscan-dataset.svg" style="max-width: 100%;"></a>
         <a href="https://raw.githubusercontent.com/bioscan-ml/dataset/master/LICENSE"><img alt="MIT License" src="https://img.shields.io/pypi/l/bioscan-dataset" style="max-width: 100%;"></a>
-        <a href="https://bioscan-dataset.readthedocs.io"><img alt="Documentation" src="https://img.shields.io/badge/docs-readthedocs-blue" style="max-width: 100%;"></a>
+        <a href="https://bioscan-dataset.readthedocs.io/en/v1.2.1/"><img alt="Documentation" src="https://img.shields.io/badge/docs-readthedocs-blue" style="max-width: 100%;"></a>
         <a href="https://github.com/psf/black"><img alt="black" src="https://img.shields.io/badge/code%20style-black-000000.svg" style="max-width: 100%;"></a>
         <a href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit enabled" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&amp;logoColor=white" style="max-width: 100%;"></a>
         <a href="https://www.doi.org/10.48550/arxiv.2406.12723"><img alt="DOI" src="https://img.shields.io/badge/DOI-10.48550/arxiv.2406.12723-blue.svg" style="max-width: 100%;"></a>
@@ -356,11 +356,11 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
 .. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
-.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
-.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
+.. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/v1.2.1/api.html#bioscan_dataset.BIOSCAN1M
+.. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/v1.2.1/api.html#bioscan_dataset.BIOSCAN5M
 .. _our repo: https://github.com/bioscan-ml/dataset
 .. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
-.. _readthedocs: https://bioscan-dataset.readthedocs.io
+.. _readthedocs: https://bioscan-dataset.readthedocs.io/en/v1.2.1/
 .. _what-is-DNA-barcoding: https://www.ibol.org/phase1/about-us/what-is-dna-barcoding/
 .. _what-is-DNA-BIN: https://portal.boldsystems.org/bin
