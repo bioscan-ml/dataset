@@ -11,6 +11,36 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Categories for changes are: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 
+Version `1.2.1 <https://github.com/bioscan-ml/dataset/tree/v1.2.1>`__
+---------------------------------------------------------------------
+
+Release date: 2025-04-11.
+`Full commit changelog <https://github.com/bioscan-ml/dataset/compare/v1.2.0...v1.2.1>`__.
+
+This is a bugfix release which fixes minor issues.
+
+.. _v1.2.1 Fixed:
+
+Fixed
+~~~~~
+
+-   Fix handling of ``BIOSCAN5M(... split=None)``, which was indicated as supported in the type hint but didn't work any more due to updates in 1.2.0
+    (`#46 <https://github.com/bioscan-ml/dataset/pull/46>`__).
+    Now it actually does work, but isn't indicated as supported in the type hint anymore.
+
+-   Provide clearer error messages when some or all images are missing
+    (`#50 <https://github.com/bioscan-ml/dataset/pull/50>`__).
+
+.. _v1.2.1 Documentation:
+
+Documentation
+~~~~~~~~~~~~~
+
+-   General documentation improvements
+    (`#49 <https://github.com/bioscan-ml/dataset/pull/49>`__,
+    `#51 <https://github.com/bioscan-ml/dataset/pull/51>`__).
+
+
 Version `1.2.0 <https://github.com/bioscan-ml/dataset/tree/v1.2.0>`__
 ---------------------------------------------------------------------
 
@@ -20,7 +50,7 @@ Release date: 2025-04-03.
 This is a minor release adding some new features.
 In particular, CLIBD partitioning of BIOSCAN-1M is now supported, automatic download of BIOSCAN-1M is now supported, and multiple splits can be loaded at once by joining their names with ``"+"``, such as ``"pretrain+train"``.
 
-.. _v1.2.0 Changed:
+.. _v1.2.0 Fixed:
 
 Fixed
 ~~~~~
