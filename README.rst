@@ -229,13 +229,13 @@ If this is set to ``target_format="text"``, the output will instead be the raw l
     dataset = BIOSCAN5M(
         root="~/Datasets/bioscan/", target_type="species", target_format="index"
     )
-    assert dataset[0][-1] is 240
+    assert dataset[0][-1] == 240
 
     # Using target format "text"
     dataset = BIOSCAN5M(
         root="~/Datasets/bioscan/", target_type="species", target_format="text"
     )
-    assert dataset[0][-1] is "Gnamptogenys sulcata"
+    assert dataset[0][-1] == "Gnamptogenys sulcata"
 
 The default setting is ``target_format="index"``.
 Note that if multiple targets types are given, each label will be returned in the same format.
