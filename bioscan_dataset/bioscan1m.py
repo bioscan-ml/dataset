@@ -643,6 +643,16 @@ class BIOSCAN1M(VisionDataset):
 
         .. versionadded:: 1.1.0
 
+    output_format : str, default="tuple"
+        Format in which :meth:`__getitem__` will be returned. One of:
+        ``"tuple"``, ``"dict"``.
+        If this is set to ``"tuple"`` (default), all modalities and targets will be
+        returned together as a single tuple.
+        If this is set to ``"dict"``, the output will be returned as a dictionary
+        containing the modalities and targets as separate keys.
+
+        .. versionadded:: 1.3.0
+
     transform : Callable, optional
         Image transformation pipeline.
 
@@ -735,6 +745,7 @@ class BIOSCAN1M(VisionDataset):
         max_nucleotides: Union[int, None] = 660,
         target_type: Union[str, Iterable[str]] = "family",
         target_format: str = "index",
+        output_format: str = "tuple",
         transform: Optional[Callable] = None,
         dna_transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
@@ -768,6 +779,7 @@ class BIOSCAN1M(VisionDataset):
         else:
             self.split = SPLIT_ALIASES.get(split, split)
         self.target_format = target_format
+        self.output_format = "dict" if output_format == "dictionary" else output_format
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
         self.dna_transform = dna_transform
@@ -925,29 +937,44 @@ class BIOSCAN1M(VisionDataset):
 
         Returns
         -------
-        image : PIL.Image.Image or Any
-            The image, if the ``"image"`` modality is requested, optionally transformed
-            by the ``transform`` pipeline.
+        tuple or dict
+            If ``output_format="tuple"``, the output will be a tuple containing:
 
-        dna : str or Any
-            The DNA barcode, if the ``"dna"`` modality is requested, optionally
-            transformed by the ``dna_transform`` pipeline.
+            - image : PIL.Image.Image or Any
+                The image, if the ``"image"`` modality is requested, optionally transformed
+                by the ``transform`` pipeline.
+            - dna : str or Any
+                The DNA barcode, if the ``"dna"`` modality is requested, optionally
+                transformed by the ``dna_transform`` pipeline.
+            - \*modalities : Any
+                Any other modalities requested, as specified in the ``modality`` parameter.
+                The data is extracted from the appropriate column in the metadata TSV file,
+                without any transformations. Missing values will be filled with NaN.
+            - target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
+                The target(s), optionally transformed by the ``target_transform`` pipeline.
+                If ``target_format="index"``, the target(s) will be returned as integer
+                indices, with missing values filled with ``-1``.
+                If ``target_format="text"``, the target(s) will be returned as a string.
+                If there are multiple targets, they will be returned as a tuple.
+                If ``target_type`` is an empty list, the output ``target`` will be ``None``.
 
-        *modalities : Any
-            Any other modalities requested, as specified in the ``modality`` parameter.
-            The data is extracted from the appropriate column in the metadata TSV file,
-            without any transformations.
-            Missing values will be filled with NaN.
+            If ``output_format="dict"``, the output will be a dictionary with keys
+            and values as follows:
 
-            .. versionadded:: 1.1.0
+            - keys for each of the modalities specified in the ``modality`` parameter,
+              with corresponding values as described above.
+              The values for the image and DNA barcode modalities are transformed by
+              their respective pipelines if specified.
+            - keys for each of the targets specified in ``target_type``,
+              with corresponding value equal to that target's label
+              (e.g. ``out["family"] == "Gelechiidae"``)
+            - for each of the keys in ``target_type``, the corresponding index column (``{target}_index``),
+              with value equal to that target's index
+              (e.g. ``out["family_index"] == 206``)
+            - the key ``"target"``, whose contents are as described above
 
-        target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
-            The target(s), optionally transformed by the ``target_transform`` pipeline.
-            If ``target_format="index"``, the target(s) will be returned as integer
-            indices, with missing values filled with ``-1``.
-            If ``target_format="text"``, the target(s) will be returned as a string.
-            If there are multiple targets, they will be returned as a tuple.
-            If ``target_type`` is an empty list, the output ``target`` will be ``None``.
+            .. versionchanged:: 1.3.0
+                Added support for ``output_format="dict"``.
         """
         sample = self.metadata.iloc[index]
         img_path = os.path.join(self.image_dir, f"part{sample['chunk_number']}", sample["image_file"])
@@ -965,7 +992,7 @@ class BIOSCAN1M(VisionDataset):
                 X = sample[modality]
             else:
                 raise ValueError(f"Unfamiliar modality: {repr(modality)}")
-            values.append(X)
+            values.append((modality, X))
 
         target = []
         for t in self.target_type:
@@ -975,6 +1002,11 @@ class BIOSCAN1M(VisionDataset):
                 target.append(sample[t])
             else:
                 raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
+            if self.output_format == "dict":
+                values.append((t, sample[t]))
+                key = f"{t}_index"
+                if key in sample:
+                    values.append((key, sample[key]))
 
         if target:
             target = tuple(target) if len(target) > 1 else target[0]
@@ -982,9 +1014,14 @@ class BIOSCAN1M(VisionDataset):
                 target = self.target_transform(target)
         else:
             target = None
+        values.append(("target", target))
 
-        values.append(target)
-        return tuple(values)
+        if self.output_format == "tuple":
+            return tuple(v for _, v in values)
+        elif self.output_format == "dict":
+            return dict(values)
+        else:
+            raise ValueError(f"Unknown output_format: {repr(self.output_format)}")
 
     def _check_integrity_metadata(self, verbose=1) -> bool:
         p = self.metadata_path
@@ -1155,9 +1192,10 @@ class BIOSCAN1M(VisionDataset):
         has_dna_modality = any(m in self.modality for m in ["dna_barcode", "dna", "barcode", "nucraw"])
         if has_dna_modality and self.max_nucleotides != 660:
             xr += f"max_nucleotides: {repr(self.max_nucleotides)}\n"
-        xr += f"target_type: {repr(self.target_type)}"
+        xr += f"target_type: {repr(self.target_type)}\n"
         if len(self.target_type) > 0:
-            xr += f"\ntarget_format: {repr(self.target_format)}"
+            xr += f"target_format: {repr(self.target_format)}\n"
+        xr += f"output_format: {repr(self.output_format)}"
         if has_dna_modality and self.dna_transform is not None:
             xr += f"\ndna_transform: {repr(self.dna_transform)}"
         return xr
