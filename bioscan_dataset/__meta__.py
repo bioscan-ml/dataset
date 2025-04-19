@@ -1,6 +1,6 @@
 name = "bioscan-dataset"
 path = name.lower().replace("-", "_").replace(" ", "_")
-version = "1.3.0"
+version = "1.3.dev0"
 author = "Scott C. Lowe"
 author_email = "scott.code.lowe@gmail.com"
 description = "PyTorch torchvision-style datasets for BIOSCAN-1M and BIOSCAN-5M."
