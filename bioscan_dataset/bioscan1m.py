@@ -891,8 +891,8 @@ class BIOSCAN1M(VisionDataset):
         int or numpy.array[int]
             The integer index or indices corresponding to the text label or labels
             in the specified column.
-            Entries containing missing values, indicated by empty strings, are mapped
-            to ``-1``.
+            Entries containing missing values, indicated by empty strings or NaN values,
+            are mapped to ``-1``.
         """
         if column is not None:
             pass
@@ -900,10 +900,10 @@ class BIOSCAN1M(VisionDataset):
             column = self.target_type[0]
         else:
             raise ValueError("column must be specified if there isn't a single target_type")
-        if isinstance(label, str):
+        if pandas.isna(label) or label == "":
             # Single index
-            if label == "":
-                return -1
+            return -1
+        if isinstance(label, str):
             try:
                 return self.metadata[column].cat.categories.get_loc(label)
             except KeyError:
@@ -915,7 +915,10 @@ class BIOSCAN1M(VisionDataset):
             )
         labels = label
         try:
-            out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
+            out = [
+                -1 if lab == "" or pandas.isna(lab) else self.metadata[column].cat.categories.get_loc(lab)
+                for lab in labels
+            ]
         except KeyError:
             raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
         out = np.asarray(out)
