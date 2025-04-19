@@ -59,6 +59,36 @@ COLUMN_DTYPES = {
     "author": "category",
 }
 
+TEXTUAL_COLS = [
+    "sampleid",
+    "processid",
+    "uri",
+    "name",
+    "phylum",
+    "class",
+    "order",
+    "family",
+    "subfamily",
+    "tribe",
+    "genus",
+    "species",
+    "subspecies",
+    "nucraw",
+    "image_file",
+    "large_diptera_family",
+    "medium_diptera_family",
+    "small_diptera_family",
+    "large_insect_order",
+    "medium_insect_order",
+    "small_insect_order",
+    "copyright_license",
+    "copyright_holder",
+    "copyright_institution",
+    "copyright_contact",
+    "photographer",
+    "author",
+]
+
 USECOLS = [
     "processid",
     "sampleid",
@@ -985,7 +1015,11 @@ class BIOSCAN1M(VisionDataset):
             if self.target_format == "index":
                 target.append(sample[f"{t}_index"])
             elif self.target_format == "text":
-                target.append(sample[t])
+                if t in TEXTUAL_COLS and pandas.isna(sample[t]):
+                    # Fill missing values with empty string for textual columns
+                    target.append("")
+                else:
+                    target.append(sample[t])
             else:
                 raise ValueError(f"Unknown target_format: {repr(self.target_format)}")
 
