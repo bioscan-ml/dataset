@@ -1,7 +1,7 @@
 Changelog
 =========
 
-All notable changes to bioscan_dataset will be documented here.
+All notable changes to bioscan-dataset will be documented here.
 
 The format is based on `Keep a Changelog`_, and this project adheres to `Semantic Versioning`_.
 

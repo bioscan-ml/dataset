@@ -247,7 +247,9 @@ Similarly, the ``label2index`` method can be used to map text labels to indices.
 Data transforms
 ~~~~~~~~~~~~~~~
 
-The dataset class supports the use of data transforms for the image and DNA barcode inputs.
+The dataset class supports the use of data transforms for the image and DNA barcode inputs, and the target labels.
+
+For example, this code will load the BIOSCAN-5M dataset with a transform that resizes the image to 256x256 pixels and normalizes the pixel values, and applies a character-level tokenizer to the DNA barcode with padding to 660 b.p.:
 
 .. code-block:: python
 
@@ -277,6 +279,41 @@ The dataset class supports the use of data transforms for the image and DNA barc
         transform=image_transform,
         dna_transform=dna_transform,
     )
+
+In this example, we apply a transform to the taxonomic labels to convert them to a single string.
+The transform indicates the name of a taxonomic rank and its value for every rank that is labelled for a sample.
+
+.. code-block:: python
+
+    import pandas as pd
+    from bioscan_dataset import BIOSCAN5M
+
+    RANKS = ["class", "order", "family", "subfamily", "genus", "species"]
+
+
+    def taxonomic_transform(labels):
+        # Convert each label to a string, with the rank in title case
+        # Skip any unlabelled ranks
+        labels = [f"{k.title()}: {v}" for k, v in zip(RANKS, labels) if v and pd.notna(v)]
+        # Join the labels into a single human-readable string
+        return ", ".join(labels)
+
+
+    # Load the dataset, using a target transform to join taxonomic labels into a single string
+    ds_train = BIOSCAN5M(
+        root="~/Datasets/bioscan/",
+        split="train",
+        target_type=RANKS,
+        target_format="text",
+        target_transform=taxonomic_transform,
+    )
+    assert (
+        ds_train[0][-1]
+        == "Class: Insecta, Order: Hymenoptera, Family: Formicidae, Subfamily: Ectatomminae, Genus: Gnamptogenys, Species: Gnamptogenys sulcata"
+    )
+    # Note that for the pretrain split, taxonomic labels are incomplete,
+    # and so only some of the ranks will be shown in the processed string, e.g.
+    # ds_pretrain[42][-1] == "Class: Insecta, Order: Diptera, Family: Sciaridae"
 
 
 Other resources
@@ -335,22 +372,18 @@ If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, pleas
         url={https://proceedings.neurips.cc/paper_files/paper/2023/file/87dbbdc3a685a97ad28489a1d57c45c1-Paper-Datasets_and_Benchmarks.pdf},
     }
 
-If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider citing the `CLIBD paper <https://arxiv.org/abs/2405.17537>`_.
+If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider citing the `CLIBD paper`_.
 
 .. code-block:: bibtex
 
-    @article{clibd,
+    @inproceedings{clibd,
         title={{CLIBD}: Bridging Vision and Genomics for Biodiversity Monitoring at Scale},
-        author={Gong, ZeMing and Wang, Austin T. and Huo, Xiaoliang
-            and Haurum, Joakim Bruslund and Lowe, Scott C. and Taylor, Graham W.
-            and Chang, Angel X.
+        author={ZeMing Gong and Austin Wang and Xiaoliang Huo and Joakim Bruslund Haurum
+            and Scott C. Lowe and Graham W. Taylor and Angel X Chang
         },
-        journal={arXiv preprint arXiv:2405.17537},
-        year={2024},
-        eprint={2405.17537},
-        archivePrefix={arXiv},
-        primaryClass={cs.AI},
-        doi={10.48550/arxiv.2405.17537},
+        booktitle={The Thirteenth International Conference on Learning Representations},
+        year={2025},
+        url={https://openreview.net/forum?id=d5HUnyByAI},
     }
 
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
@@ -358,6 +391,7 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
 .. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
 .. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
+.. _CLIBD paper: https://arxiv.org/abs/2405.17537
 .. _our repo: https://github.com/bioscan-ml/dataset
 .. _pip: https://pip.pypa.io/
 .. _PyPI: https://pypi.org/project/bioscan-dataset/
