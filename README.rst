@@ -229,19 +229,41 @@ If this is set to ``target_format="text"``, the output will instead be the raw l
     dataset = BIOSCAN5M(
         root="~/Datasets/bioscan/", target_type="species", target_format="index"
     )
-    assert dataset[0][-1] is 240
+    assert dataset[0][-1] == 240
 
     # Using target format "text"
     dataset = BIOSCAN5M(
         root="~/Datasets/bioscan/", target_type="species", target_format="text"
     )
-    assert dataset[0][-1] is "Gnamptogenys sulcata"
+    assert dataset[0][-1] == "Gnamptogenys sulcata"
 
 The default setting is ``target_format="index"``.
 Note that if multiple targets types are given, each label will be returned in the same format.
 
 To map target indices back to text labels, the dataset class provides the ``index2label`` method.
 Similarly, the ``label2index`` method can be used to map text labels to indices.
+
+
+Dictionary-style access
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The dataset class supports dictionary-style access to the samples by setting the argument ``output_format="dict"`` when instantiating the dataset.
+This allows you to use the keys ``"image"``, ``"dna"``, and ``"target"`` to access the image, DNA barcode, and target label, respectively.
+Additionally, both the indices and labels of each target type are available as keys in the dictionary for each sample.
+The dictionary output format is useful if you want to use the dataset with a dataloader that expects a dictionary input format, or if you want to access the attributes of each sample in a more structured way.
+
+.. code-block:: python
+
+    dataset = BIOSCAN5M(root="~/Datasets/bioscan/", output_format="dict")
+    sample = dataset[0]  # Get the first sample
+    image = sample["image"]
+    dna_barcode = sample["dna"]
+    target = sample["target"]
+    assert sample["species"] == "Gnamptogenys sulcata"
+    assert sample["species_index"] == 240
+    # The target depends on the target_type and target_format. In this case,
+    # using the default arguments, the target is the same as species_index.
+    assert sample["target"] == sample["species_index"]
 
 
 Data transforms
