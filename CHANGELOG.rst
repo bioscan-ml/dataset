@@ -11,6 +11,41 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Categories for changes are: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 
+Version `1.3.0 <https://github.com/bioscan-ml/dataset/tree/v1.3.0>`__
+---------------------------------------------------------------------
+
+Release date: 2025-04-19.
+`Full commit changelog <https://github.com/bioscan-ml/dataset/compare/v1.2.1...v1.3.0>`__.
+
+This is a minor release which adds support for dictionary output format.
+
+.. _v1.3.0 Added:
+
+Added
+~~~~~
+
+-   Add support for dictionary outputs to ``__getitem__``, which is enabled by setting new parameter ``output_format`` to ``"dict"``
+    (`#53 <https://github.com/bioscan-ml/dataset/pull/53>`__).
+    The tuple output format, enabled by setting ``output_format="tuple"``, remains the default behaviour.
+
+.. _v1.3.0 Fixed:
+
+Fixed
+~~~~~
+
+-   Add support for NaN inputs to ``BIOSCAN1M.label2index`` and ``BIOSCAN5M.label2index``
+    (`#55 <https://github.com/bioscan-ml/dataset/pull/55>`__).
+    This addresses the fact that missing labels in the taxonomic columns are returned as NaN, which was not supported in the previous version.
+
+.. _v1.3.0 Documentation:
+
+Documentation
+~~~~~~~~~~~~~
+
+-   Add a usage example for ``target_transform`` to the usage guide
+    (`#56 <https://github.com/bioscan-ml/dataset/pull/56>`__).
+
+
 Version `1.2.1 <https://github.com/bioscan-ml/dataset/tree/v1.2.1>`__
 ---------------------------------------------------------------------
 
