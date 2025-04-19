@@ -855,6 +855,11 @@ class BIOSCAN1M(VisionDataset):
             if index < 0:
                 return ""
             return self.metadata[column].cat.categories[index]
+        if isinstance(index, str):
+            raise TypeError(
+                f"index must be an int or array-like of ints, not a string: {repr(index)}."
+                " Did you mean to call label2index?"
+            )
         index = np.asarray(index)
         out = self.metadata[column].cat.categories[index]
         out = np.asarray(out)
@@ -903,6 +908,11 @@ class BIOSCAN1M(VisionDataset):
                 return self.metadata[column].cat.categories.get_loc(label)
             except KeyError:
                 raise KeyError(f"Label {repr(label)} not found in metadata column {repr(column)}") from None
+        if isinstance(label, (int, np.integer)):
+            raise TypeError(
+                f"label must be a string or list of strings, not an int: {repr(label)}."
+                " Did you mean to call index2label?"
+            )
         labels = label
         try:
             out = [-1 if lab == "" else self.metadata[column].cat.categories.get_loc(lab) for lab in labels]
