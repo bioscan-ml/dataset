@@ -2,6 +2,7 @@
 Canadian Invertebrate 1.5M PyTorch Dataset.
 
 """
+
 # Necessary Libraries
 import os
 from enum import Enum
@@ -12,10 +13,10 @@ import numpy.typing as npt
 import pandas
 import PIL
 import torch
+from torch.utils.data import Dataset  # Imported Dataset from pytorch
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
-from torch.utils.data import Dataset # Imported Dataset from pytorch
 
-# Column Types based on the pretrained meta data, subject to change based on how the data will be organized.  
+# Column Types based on the pretrained meta data, subject to change based on how the data will be organized.
 COLUMN_DTYPES = {
     "processid": str,
     "sampleid": str,
@@ -44,7 +45,7 @@ USECOLS = [
     "seq_len",
 ]
 
-# Alias Names 
+# Alias Names
 VALID_SPLITS = ["pretrain", "train", "val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
 SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
@@ -54,7 +55,6 @@ UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
 
 # Taken Directly from Bioscan5M
 def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
-    
     r"""
     Convert a metasplit string into its set of constituent splits.
 
@@ -113,33 +113,30 @@ def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
 
     return split_set
 
+
 class MetadataDtype(Enum):
-    DEFAULT = "CanadianInvertebrate_default_dtypes" # Take the defaults in the Canadian Invertebrate Database
-    
-    
+    DEFAULT = "CanadianInvertebrate_default_dtypes"  # Take the defaults in the Canadian Invertebrate Database
+
+
 def load_CanadianInvertebrate_metadata(Enum):
     """
     Load Canadian Invertebrate 1.5M data from csv file or the preprocessed data to prepare it for training
-    
+
     This function help with sorting alias when others are inputing the dataset for training
     """
-    
+
     return 0
 
+
 class CanadianInvertebrates(Dataset):
-    
-    r"""
-    
-    
-    """
+    r""" """
+
     base_folder = "CanadianInvertebrates"
-    
+
     meta = {
-        "urls": [
-            ""
-        ],
+        "urls": [""],
         "filename": os.path.join("metadata", "csv", "CanadianInvertebrate1_5M.csv"),
-        "archive_md5": " ", # hash
+        "archive_md5": " ",  # hash
         "csv_md5": " ",
     }
     zip_files = {
@@ -170,40 +167,37 @@ class CanadianInvertebrates(Dataset):
     }
 
     def __init__():
-        
-        """ 
-        Needed to set up dataset, load data from file 
         """
-        
+        Needed to set up dataset, load data from file
+        """
+
     def __len__(self):
         """
         Returns the number of samples
-        
+
         """
-    
+
     def label2index():
-        
+
         return 0
-    
+
     def index2label():
-        
+
         return 0
-    
-    def __getitem__(self,index:int) -> Tuple[Any,...]:
-        
+
+    def __getitem__(self, index: int) -> Tuple[Any, ...]:
         """
         Get a sample from the dataset
-        
+
         """
-        
+
     def _check_integrity_metadata(self, verbose=1) -> bool:
         return 0
-    
+
     def _check_integrity(self, verbose=1) -> bool:
-        
         """
         Used to check if the data is already downloaded and extracted
-        
+
         """
 
     def _download_metadata(self, verbose=1) -> None:
@@ -211,20 +205,16 @@ class CanadianInvertebrates(Dataset):
         Check if metadata is downloaded
         """
 
-    
     def download(self) -> None:
         """
         Download and extract the data.
         """
-    
 
     def _load_metadata(self) -> pandas.DataFrame:
         """
         Load metadata from CSV file and prepare it for training.
         """
-  
 
     def extra_repr(self) -> str:
-        
-        
+
         return 0
