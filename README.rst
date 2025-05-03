@@ -348,6 +348,7 @@ Other resources
 - See the code for the `cropping tool <https://github.com/bioscan-ml/BIOSCAN-5M/tree/main/BIOSCAN_crop_resize>`__ that was applied to the images to create the cropped image package.
 - Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-1M>`__ described in the BIOSCAN-1M paper.
 - Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`__ described in the BIOSCAN-5M paper.
+- Browse `papers which utilize <https://scholar.google.com/scholar?cites=8253258544893701534,17226346429652002282>`__ the BIOSCAN-1M and/or BIOSCAN-5M dataset.
 
 
 Citation
