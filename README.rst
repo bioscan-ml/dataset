@@ -354,7 +354,8 @@ Other resources
 Citation
 --------
 
-If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as appropriate.
+If you find this repository useful in your research, please consider giving it a star ⭐.
+If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as applicable.
 
 `BIOSCAN-5M <BIOSCAN-5M paper_>`_:
 
