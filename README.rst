@@ -344,15 +344,18 @@ Other resources
 - Read the `BIOSCAN-1M paper`_ and `BIOSCAN-5M paper`_.
 - The dataset can be explored through a web interface using our `BIOSCAN Browser`_.
 - Read more about the `International Barcode of Life (iBOL) <https://ibol.org/>`__ and `BIOSCAN <https://ibol.org/bioscan/>`__ initiatives.
+- Read more about concepts behind `DNA barcoding <what-is-DNA-barcoding_>`__ and `DNA BINs <what-is-DNA-BIN_>`__.
 - See the code for the `cropping tool <https://github.com/bioscan-ml/BIOSCAN-5M/tree/main/BIOSCAN_crop_resize>`__ that was applied to the images to create the cropped image package.
 - Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-1M>`__ described in the BIOSCAN-1M paper.
 - Examine the code for the `experiments <https://github.com/bioscan-ml/BIOSCAN-5M>`__ described in the BIOSCAN-5M paper.
+- Browse `papers which utilize <https://scholar.google.com/scholar?cites=8253258544893701534,17226346429652002282>`__ the BIOSCAN-1M and/or BIOSCAN-5M dataset.
 
 
 Citation
 --------
 
-If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as appropriate.
+If you find this repository useful in your research, please consider giving it a star ⭐.
+If you make use of the BIOSCAN-1M or BIOSCAN-5M datasets in your research, please cite the following papers as applicable.
 
 `BIOSCAN-5M <BIOSCAN-5M paper_>`_:
 
