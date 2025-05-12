@@ -13,9 +13,14 @@ import pandas
 import PIL
 import torch
 from torch.utils.data import Dataset
-from torchvision.datasets.utils import check_integrity, download_and_extract_archive
+from torchvision.datasets.utils import (
+    check_integrity,
+    download_and_extract_archive,
+    download_url,
+)
 
-# Column Types based on the pretrained meta data, subject to change based on how the data will be organized.
+__all__ = ["CanadianInvertebrates", "load_CanadianInvertebrates_metadata"]
+
 COLUMN_DTYPES = {
     "processid": str,
     "sampleid": str,
@@ -24,7 +29,6 @@ COLUMN_DTYPES = {
     "class": "category",
     "order": "category",
     "family": "category",
-    "subfamily": "category",
     "genus": "category",
     "species": "category",
     "dna_barcode": str,
@@ -40,11 +44,9 @@ USECOLS = [
     "class",
     "order",
     "family",
-    "subfamily",
     "genus",
     "species",
     "dna_barcode",
-    "sequence_len",
     "split",
 ]
 
@@ -58,8 +60,6 @@ UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
 def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
     r"""
     Convert a metasplit string into its set of constituent splits.
-
-    .. versionadded:: 1.2.0
 
     Parameters
     ----------
@@ -219,14 +219,13 @@ def load_CanadianInvertebrates_metadata(
         "class",
         "order",
         "family",
-        "subfamily",
         "genus",
         "species",
         "dna_bin",
     ]
     for c in label_cols:
+        df[c] = df[c].astype("category")
         df[c + "_index"] = df[c].cat.codes
-
     return df
 
 
@@ -236,7 +235,7 @@ load_metadata = load_CanadianInvertebrates_metadata
 class CanadianInvertebrates(Dataset):
     r"""
 
-    `CanadianInvertebrate <https://github.com/bioscan-ml/BIOSCAN-5M>`_ Dataset.
+    `CanadianInvertebrate <https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv>`_ Dataset.
 
     Parameters
     ----------
@@ -271,11 +270,8 @@ class CanadianInvertebrates(Dataset):
         Which data modalities to use. One of, or a list of:
         ``"dna"``, or any column name in the metadata CSV file.
         Examples of column names which may be of interest are
-        ``"coord-lat"`` (latitude of collection location),
-        ``"coord-lon"`` (longitude of collection location)
-
-        .. versionchanged:: 1.1.0
-            Added support for arbitrary modalities.
+        ``"dna_bin"`` (DNA barcode of the species),
+        ``"genus"`` (Genus name of the species)
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -327,8 +323,6 @@ class CanadianInvertebrates(Dataset):
         If this is set to ``"dict"``, the output will be returned as a dictionary
         containing the modalities and targets as separate keys.
 
-        .. versionadded:: 1.3.0
-
     dna_transform : Callable, optional
         DNA barcode transformation pipeline.
 
@@ -349,15 +343,8 @@ class CanadianInvertebrates(Dataset):
     base_folder = "CanadianInvertebrates"
 
     meta = {
-        "urls": [""],
-        "filename": "",
-    }
-
-    zip_files = {
-        "train": {
-            "url": "",
-            "md5": "",
-        },
+        "urls": ["https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv"],
+        "filename": "CanInv_metadata.csv",
     }
 
     def __init__(
@@ -375,7 +362,6 @@ class CanadianInvertebrates(Dataset):
         download: bool = False,
     ) -> None:
         root = os.path.expanduser(root)
-        super().__init__(root, dna_transform=dna_transform, target_transform=target_transform)
 
         self.metadata = None
         self.root = root
@@ -421,8 +407,6 @@ class CanadianInvertebrates(Dataset):
     ) -> Union[str, npt.NDArray[np.str_]]:
         r"""
         Convert target's integer index to text label.
-
-        .. versionadded:: 1.1.0
 
         Parameters
         ----------
@@ -558,7 +542,7 @@ class CanadianInvertebrates(Dataset):
                 transformed by the ``dna_transform`` pipeline.
             - \*modalities : Any
                 Any other modalities requested, as specified in the ``modality`` parameter.
-                The data is extracted from the appropriate column in the metadata TSV file,
+                The data is extracted from the appropriate column in the metadata csv file,
                 without any transformations. Missing values will be filled with NaN.
             - target : int or Tuple[int, ...] or str or Tuple[str, ...] or None
                 The target(s), optionally transformed by the ``target_transform`` pipeline.
@@ -580,9 +564,6 @@ class CanadianInvertebrates(Dataset):
               with value equal to that target's index
               (e.g. ``out["species_index"] == 240``)
             - the key ``"target"``, whose contents are as described above
-
-            .. versionchanged:: 1.3.0
-                Added support for ``output_format="dict"``.
         """
         sample = self.metadata.iloc[index]
         values = []
@@ -628,7 +609,7 @@ class CanadianInvertebrates(Dataset):
 
     def _check_integrity_metadata(self, verbose=1) -> bool:
         p = self.metadata_path
-        check = check_integrity(p, self.meta["csv_md5"])
+        check = check_integrity(p)
         if verbose >= 1 and not check:
             if not os.path.exists(p):
                 print(f"File missing: {p}")
@@ -663,7 +644,7 @@ class CanadianInvertebrates(Dataset):
             if verbose >= 1:
                 print("Metadata CSV file already downloaded and verified")
             return
-        download_and_extract_archive(self.meta["urls"][0], self.root, md5=self.meta["archive_md5"])
+        download_url(self.meta["urls"][0], self.root, filename="CanInv_metadata.csv")
 
     def download(self) -> None:
         r"""
