@@ -374,6 +374,7 @@ class CanadianInvertebrates(Dataset):
         self.reduce_repeated_barcodes = reduce_repeated_barcodes
         self.max_nucleotides = max_nucleotides
         self.dna_transform = dna_transform
+        self.target_transform = target_transform
 
         if isinstance(modality, str):
             self.modality = [modality]
