@@ -345,6 +345,7 @@ class CanadianInvertebrates(Dataset):
     meta = {
         "urls": ["https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv"],
         "filename": "CanInv_metadata.csv",
+        "csv_md5": "38c1cbd95e59458b65b39f9021dcb7ff",
     }
 
     def __init__(
@@ -609,7 +610,7 @@ class CanadianInvertebrates(Dataset):
 
     def _check_integrity_metadata(self, verbose=1) -> bool:
         p = self.metadata_path
-        check = check_integrity(p)
+        check = check_integrity(p, self.meta["csv_md5"])
         if verbose >= 1 and not check:
             if not os.path.exists(p):
                 print(f"File missing: {p}")
