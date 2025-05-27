@@ -50,6 +50,7 @@ USECOLS = [
     "split",
 ]
 
+COLUMN_ALIASES = {"bin_uri": "dna_bin", "nucleotides": "dna_barcode"}
 VALID_SPLITS = ["pretrain", "train", "val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
 SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
@@ -385,7 +386,7 @@ class CanadianInvertebrates(Dataset):
             self.target_type = [target_type]
         else:
             self.target_type = list(target_type)
-        self.target_type = ["dna_bin" if t == "uri" else t for t in self.target_type]
+        self.target_type = [COLUMN_ALIASES.get(t, t) for t in self.target_type]
 
         if not self.target_type and self.target_transform is not None:
             raise RuntimeError("target_transform is specified but target_type is empty")
