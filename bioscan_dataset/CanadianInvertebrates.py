@@ -342,9 +342,11 @@ class CanadianInvertebrates(Dataset):
     """
 
     base_folder = "CanadianInvertebrates"
-
     meta = {
-        "urls": ["https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv"],
+        "urls": [
+            "https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv",
+            "https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML/blob/main/CanInv_metadata.csv",
+        ],
         "filename": "CanInv_metadata.csv",
         "csv_md5": "38c1cbd95e59458b65b39f9021dcb7ff",
     }
@@ -646,7 +648,9 @@ class CanadianInvertebrates(Dataset):
             if verbose >= 1:
                 print("Metadata CSV file already downloaded and verified")
             return
-        download_url(self.meta["urls"][0], self.root, filename="CanInv_metadata.csv")
+        target_dir = os.path.join(self.root, self.base_folder)
+        os.makedirs(target_dir, exist_ok=True)
+        download_url(self.meta["urls"][0], target_dir, md5=self.meta["csv_md5"])
 
     def download(self) -> None:
         r"""
