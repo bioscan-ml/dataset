@@ -17,7 +17,7 @@ __all__ = ["CanadianInvertebrates", "load_canadian_invertebrates_metadata"]
 COLUMN_DTYPES = {
     "processid": str,
     "sampleid": str,
-    "dna_bin": str,
+    "dna_bin": "category",
     "phylum": "category",
     "class": "category",
     "order": "category",
