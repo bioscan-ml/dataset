@@ -664,5 +664,14 @@ class CanadianInvertebrates(Dataset):
             xr += f"target_format: {repr(self.target_format)}\n"
         xr += f"output_format: {repr(self.output_format)}"
         if has_dna_modality and self.dna_transform is not None:
-            xr += f"\n dna_transform: {repr(self.dna_transform)}"
+            xr += f"\ndna_transform: {repr(self.dna_transform)}"
         return xr
+
+    def __repr__(self) -> str:
+        x = f"{self.__class__.__name__} Dataset\n"
+        x += f"    Number of samples: {self.__len__()}\n"
+        x += f"    Root location: {self.root}\n"
+        xr = self.extra_repr()
+        xr = "\n    ".join(xr.split("\n"))
+        x += f"    {xr}"
+        return x
