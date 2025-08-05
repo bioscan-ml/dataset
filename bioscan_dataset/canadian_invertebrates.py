@@ -130,6 +130,8 @@ def load_canadian_invertebrates_metadata(
     r"""
     Load Canadian Invertebrates dataset metadata from its CSV file and prepare it for training.
 
+    .. versionadded:: 1.4.0
+
     Parameters
     ----------
     metadata_path : str
@@ -241,6 +243,8 @@ load_metadata = load_canadian_invertebrates_metadata
 class CanadianInvertebrates(Dataset):
     r"""
     `Canadian Invertebrates <https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML>`_ Dataset.
+
+    .. versionadded:: 1.4.0
 
     Parameters
     ----------
