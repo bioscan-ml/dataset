@@ -10,14 +10,8 @@ from typing import Any, Callable, Iterable, List, Optional, Set, Tuple, Union
 import numpy as np
 import numpy.typing as npt
 import pandas
-import PIL
-import torch
 from torch.utils.data import Dataset
-from torchvision.datasets.utils import (
-    check_integrity,
-    download_and_extract_archive,
-    download_url,
-)
+from torchvision.datasets.utils import check_integrity, download_url
 
 __all__ = ["CanadianInvertebrates", "load_canadian_invertebrates_metadata"]
 
