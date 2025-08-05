@@ -338,11 +338,10 @@ class CanadianInvertebrates(Dataset):
     base_folder = "CanadianInvertebrates"
     meta = {
         "urls": [
-            "https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv",
-            "https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML/blob/main/CanInv_metadata.csv",
+            "https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML/resolve/a8cb2b5/CanInv_metadata.csv",
         ],
         "filename": "CanInv_metadata.csv",
-        "csv_md5": "38c1cbd95e59458b65b39f9021dcb7ff",
+        "csv_md5": "b93517975176a12f3c07f21be8c37fa5",
     }
 
     def __init__(
