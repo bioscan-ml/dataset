@@ -40,7 +40,7 @@ BIOSCAN-5M Dataset
 
 .. autofunction:: bioscan_dataset.load_bioscan5m_metadata
 
-CANADIAN INVERTEBRATES 1.5M Dataset
+Canadian Invertebrates 1.5M Dataset
 -----------------------------------
 
 .. autoclass:: bioscan_dataset.CanadianInvertebrates
