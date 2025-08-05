@@ -31,7 +31,6 @@ COLUMN_DTYPES = {
 
 USECOLS = [
     "processid",
-    "sampleid",
     "dna_bin",
     "phylum",
     "class",
