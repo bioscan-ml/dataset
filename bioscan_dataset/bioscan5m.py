@@ -289,7 +289,7 @@ class BIOSCAN5M(VisionDataset):
     Parameters
     ----------
     root : str
-        The root directory, to contain the downloaded tarball files, and bioscan5m
+        The root directory, to contain the downloaded tarball files and bioscan5m
         data directory.
 
     split : str, default="train"

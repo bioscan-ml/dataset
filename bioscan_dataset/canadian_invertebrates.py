@@ -1,6 +1,5 @@
-"""
-Canadian Invertebrate 1.5M PyTorch Dataset.
-
+r"""
+Canadian Invertebrates 1.5M PyTorch Dataset.
 """
 
 import os
@@ -229,14 +228,13 @@ load_metadata = load_canadian_invertebrates_metadata
 
 class CanadianInvertebrates(Dataset):
     r"""
-
-    `CanadianInvertebrate <https://vault.cs.uwaterloo.ca/s/9bnzWdb5fCpdRwQ/download/CanInv_metadata.csv>`_ Dataset.
+    `Canadian Invertebrates 1.5M <https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML>`_ Dataset.
 
     Parameters
     ----------
     root : str
-        The root directory, to contain the downloaded tarball files, and CanadianInvertebrates
-        data directory.
+        The root directory, to contain the downloaded tarball files and
+        CanadianInvertebrates data directory.
 
     split : str, default="train"
         The dataset partition.
@@ -265,8 +263,8 @@ class CanadianInvertebrates(Dataset):
         Which data modalities to use. One of, or a list of:
         ``"dna"``, or any column name in the metadata CSV file.
         Examples of column names which may be of interest are
-        ``"dna_bin"`` (DNA barcode of the species),
-        ``"genus"`` (genus name of the species).
+        ``"dna_bin"`` (DNA barcode of the specimen),
+        ``"genus"`` (genus name of the specimen).
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
@@ -307,8 +305,6 @@ class CanadianInvertebrates(Dataset):
         This format is appropriate for use in classification tasks.
         If this is set to ``"text"``, the target(s) will each be returned as a string,
         appropriate for processing with language models.
-
-        .. versionadded:: 1.1.0
 
     output_format : str, default="tuple"
         Format in which :meth:`__getitem__` will be returned. One of:
@@ -425,10 +421,10 @@ class CanadianInvertebrates(Dataset):
 
         Examples
         --------
-        >>> dataset.index2label([4], "order")
+        >>> dataset.index2label(29, "order")
         'Diptera'
         >>> dataset.index2label([4, 9, -1, 4], "order")
-        array(['Diptera', 'Lepidoptera', '', 'Diptera'], dtype=object)
+        array(['Anomopoda', 'Araneae', '', 'Anomopoda'], dtype=object)
         """
         if column is not None:
             pass
@@ -460,8 +456,6 @@ class CanadianInvertebrates(Dataset):
         r"""
         Convert target's text label to integer index.
 
-        .. versionadded:: 1.1.0
-
         Parameters
         ----------
         label : str or Iterable[str]
@@ -483,9 +477,9 @@ class CanadianInvertebrates(Dataset):
         Examples
         --------
         >>> dataset.label2index("Diptera", "order")
-        4
+        29
         >>> dataset.label2index(["Diptera", "Lepidoptera", "", "Diptera"], "order")
-        array([4, 9, -1, 4])
+        array([29, 45, -1, 29])
         """
         if column is not None:
             pass
