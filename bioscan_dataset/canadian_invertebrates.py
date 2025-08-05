@@ -1,5 +1,12 @@
 r"""
 Canadian Invertebrates 1.5M PyTorch Dataset.
+
+:Date: 2025-05-02
+:Authors:
+    - Vivian Phung <vivian.phung17@gmail.com>
+    - Scott C. Lowe <scott.code.lowe@gmail.com>
+:Copyright: 2025, Scott C. Lowe and Vivian Phung
+:License: MIT
 """
 
 import os
