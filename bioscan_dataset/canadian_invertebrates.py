@@ -258,7 +258,6 @@ class CanadianInvertebrates(Dataset):
         joined by ``"+"``. For example, ``split="pretrain+train"`` will return a dataset
         comprised of the pretraining and training partitions.
 
-
     modality : str or Iterable[str], default=("dna")
         Which data modalities to use. One of, or a list of:
         ``"dna"``, or any column name in the metadata CSV file.
