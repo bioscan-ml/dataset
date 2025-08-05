@@ -43,11 +43,11 @@ USECOLS = [
 ]
 
 COLUMN_ALIASES = {"bin_uri": "dna_bin", "nucleotides": "dna_barcode"}
-VALID_SPLITS = ["pretrain", "train", "val", "test", "key_unseen", "val_unseen", "test_unseen", "other_heldout"]
+VALID_SPLITS = ["pretrain", "train", "val", "test", "test_unseen"]
 SPLIT_ALIASES = {"validation": "val"}
 VALID_METASPLITS = ["all", "seen", "unseen"]
 SEEN_SPLITS = ["train", "val", "test"]
-UNSEEN_SPLITS = ["key_unseen", "val_unseen", "test_unseen"]
+UNSEEN_SPLITS = ["test_unseen"]
 
 
 def explode_metasplit(metasplit: str, verify: bool = False) -> Set[str]:
@@ -158,13 +158,10 @@ def load_canadian_invertebrates_metadata(
         - ``"train"``
         - ``"val"``
         - ``"test"``
-        - ``"key_unseen"``
-        - ``"val_unseen"``
         - ``"test_unseen"``
-        - ``"other_heldout"``
         - ``"all"``, which is the union of all splits
         - ``"seen"``, which is the union of {train, val, test}
-        - ``"unseen"``, which is the union of {key_unseen, val_unseen, test_unseen}
+        - ``"unseen"``, which is an alias for ``"test_unseen"``
 
         If ``split`` is ``None`` or ``"all"`` (default), the data is not filtered by
         partition and the dataframe will contain every sample in the dataset.
@@ -243,13 +240,10 @@ class CanadianInvertebrates(Dataset):
         - ``"train"``
         - ``"val"``
         - ``"test"``
-        - ``"key_unseen"``
-        - ``"val_unseen"``
         - ``"test_unseen"``
-        - ``"other_heldout"``
         - ``"all"``, which is the union of all splits
         - ``"seen"``, which is the union of {train, val, test}
-        - ``"unseen"``, which is the union of {key_unseen, val_unseen, test_unseen}
+        - ``"unseen"``, which is an alias for ``"test_unseen"``
 
         Set to ``"all"`` to include all splits.
 
