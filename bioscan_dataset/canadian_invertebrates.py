@@ -272,7 +272,7 @@ class CanadianInvertebrates(Dataset):
         ``"dna"``, or any column name in the metadata CSV file.
         Examples of column names which may be of interest are
         ``"dna_bin"`` (DNA barcode of the species),
-        ``"genus"`` (Genus name of the species)
+        ``"genus"`` (genus name of the species).
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
