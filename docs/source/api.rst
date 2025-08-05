@@ -11,7 +11,7 @@ General usage instructions for :class:`~bioscan_dataset.BIOSCAN1M` , :class:`~bi
     For larger scale projects, :class:`~bioscan_dataset.BIOSCAN5M` is a superset of :class:`~bioscan_dataset.BIOSCAN1M` and will provide five times more samples to train on.
     On the other hand, if 5 million samples is too much to handle, you can ignore the ``"pretrain"`` partition (train using the ``"train"`` partition only), which reduces the dataset to less than 400k samples.
 
-The accompanying functions :func:`~bioscan_dataset.load_bioscan1m_metadata` , :func:`~bioscan_dataset.load_bioscan5m_metadata` and :func:`~bioscan_dataset.load_CanadianInvertebrates_metadata` can be used to load the metadata from the CSV files.
+The accompanying functions :func:`~bioscan_dataset.load_bioscan1m_metadata` , :func:`~bioscan_dataset.load_bioscan5m_metadata` and :func:`~bioscan_dataset.load_canadian_invertebrates_metadata` can be used to load the metadata from the CSV files.
 This produces a :class:`~pandas.DataFrame` in the same format as is used for model training.
 These functions do not need to be manually called when you are using :class:`~bioscan_dataset.BIOSCAN1M` , :class:`~bioscan_dataset.BIOSCAN5M` and :class:`~bioscan_dataset.CanadianInvertebrates` to work with the datasets.
 
@@ -48,4 +48,4 @@ CANADIAN INVERTEBRATES 1.5M Dataset
     :special-members: __getitem__
     :show-inheritance:
 
-.. autofunction:: bioscan_dataset.load_CanadianInvertebrates_metadata
+.. autofunction:: bioscan_dataset.load_canadian_invertebrates_metadata

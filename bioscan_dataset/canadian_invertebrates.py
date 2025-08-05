@@ -19,7 +19,7 @@ from torchvision.datasets.utils import (
     download_url,
 )
 
-__all__ = ["CanadianInvertebrates", "load_CanadianInvertebrates_metadata"]
+__all__ = ["CanadianInvertebrates", "load_canadian_invertebrates_metadata"]
 
 COLUMN_DTYPES = {
     "processid": str,
@@ -120,7 +120,7 @@ class MetadataDtype(Enum):
     DEFAULT = "CanadianInvertebrates_default_dtypes"
 
 
-def load_CanadianInvertebrates_metadata(
+def load_canadian_invertebrates_metadata(
     metadata_path,
     max_nucleotides: Union[int, None] = 660,
     reduce_repeated_barcodes: bool = False,
@@ -230,7 +230,7 @@ def load_CanadianInvertebrates_metadata(
     return df
 
 
-load_metadata = load_CanadianInvertebrates_metadata
+load_metadata = load_canadian_invertebrates_metadata
 
 
 class CanadianInvertebrates(Dataset):
@@ -338,7 +338,7 @@ class CanadianInvertebrates(Dataset):
     ----------
     metadata : pandas.DataFrame
         The metadata associated with the samples in the select split, loaded using
-        :func:`load_CanadianInvertebrates_metadata`.
+        :func:`load_canadian_invertebrates_metadata`.
     """
 
     base_folder = "CanadianInvertebrates"

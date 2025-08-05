@@ -8,12 +8,12 @@ __all__ = [
     "CanadianInvertebrates",
     "load_bioscan1m_metadata",
     "load_bioscan5m_metadata",
-    "load_CanadianInvertebrates_metadata",
+    "load_canadian_invertebrates_metadata",
 ]
 
 from .bioscan1m import BIOSCAN1M, load_bioscan1m_metadata
 from .bioscan5m import BIOSCAN5M, load_bioscan5m_metadata
 from .canadian_invertebrates import (
     CanadianInvertebrates,
-    load_CanadianInvertebrates_metadata,
+    load_canadian_invertebrates_metadata,
 )
