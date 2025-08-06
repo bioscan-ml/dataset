@@ -12,16 +12,16 @@
 BIOSCAN Datasets for PyTorch
 ============================
 
-In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BIOSCAN-1M paper_>`_, `BIOSCAN-5M <BIOSCAN-5M paper_>`_, and `Canadian Invertebrates 1.5M <Canadian Invertebrates 1.5M paper_>`_ datasets.
+In this package, we provide PyTorch/torchvision style dataset classes to load the `BIOSCAN-1M <BIOSCAN-1M paper_>`_, `BIOSCAN-5M <BIOSCAN-5M paper_>`_, and `Canadian Invertebrates <Canadian Invertebrates paper_>`_ datasets.
 
 BIOSCAN-1M and 5M are large multimodal datasets for insect biodiversity monitoring, containing over 1 million and 5 million specimens, respectively.
 The datasets are comprised of RGB microscopy images, `DNA barcodes <what-is-DNA-barcoding_>`_, and fine-grained, hierarchical taxonomic labels.
 Every sample has both an image and a DNA barcode, but the taxonomic labels are incomplete and only extend all the way to the species level for around 9% of the specimens.
 
-The Canadian Invertebrates 1.5M dataset similarly contains DNA barcodes for 1 million specimens, and has hierarchical taxonomic labels, but does not include any images.
+The Canadian Invertebrates dataset similarly contains DNA barcodes for 1 million specimens, and has hierarchical taxonomic labels, but does not include any images.
 Its taxonomic labels are more complete than those of BIOSCAN-1M and 5M, with 40% of the specimens labelled to species level, but the dataset is less geographically diverse, restricted to specimens collected in Canada.
 
-For more details about the datasets, please see the `BIOSCAN-1M paper`_, `BIOSCAN-5M paper`_, and `Canadian Invertebrates 1.5M paper`_ respectively.
+For more details about the datasets, please see the `BIOSCAN-1M paper`_, `BIOSCAN-5M paper`_, and `Canadian Invertebrates paper`_ respectively.
 Documentation about this package, including the full API details, is available online at readthedocs_.
 
 
@@ -77,7 +77,7 @@ For details, please see Appendix Q of the `BIOSCAN-5M paper`_.
 Additionally, note that the splits are incompatible between the two datasets.
 For these reasons, we recommend new projects use the BIOSCAN-5M dataset over BIOSCAN-1M.
 
-To load the Canadian Invertebrates 1.5M dataset:
+To load the Canadian Invertebrates dataset:
 
 .. code-block:: python
 
@@ -355,7 +355,7 @@ The transform indicates the name of a taxonomic rank and its value for every ran
 Other resources
 ---------------
 
-- Read the `BIOSCAN-1M paper`_, `BIOSCAN-5M paper`_, and `Canadian Invertebrates 1.5M paper`_.
+- Read the `BIOSCAN-1M paper`_, `BIOSCAN-5M paper`_, and `Canadian Invertebrates paper`_.
 - The BIOSCAN-5M dataset can be explored through a web interface using our `BIOSCAN Browser`_.
 - Read more about the `International Barcode of Life (iBOL) <https://ibol.org/>`__ and `BIOSCAN <https://ibol.org/bioscan/>`__ initiatives.
 - Read more about concepts behind `DNA barcoding <what-is-DNA-barcoding_>`__ and `DNA BINs <what-is-DNA-BIN_>`__.
@@ -369,7 +369,7 @@ Citation
 --------
 
 If you find this repository useful in your research, please consider giving it a star ⭐.
-If you make use of the BIOSCAN-1M, BIOSCAN-5M, or Canadian Invertebrates 1.5M datasets in your research, please cite the following papers as applicable.
+If you make use of the BIOSCAN-1M, BIOSCAN-5M, or Canadian Invertebrates datasets in your research, please cite the following papers as applicable.
 
 `BIOSCAN-5M <BIOSCAN-5M paper_>`_:
 
@@ -425,7 +425,7 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
         url={https://openreview.net/forum?id=d5HUnyByAI},
     }
 
-For the Canadian Invertebrates dataset, please cite both the original `Canadian Invertebrates 1.5M paper`_, and the `BarcodeBERT paper`_ which introduced the preprocessing pipeline used for the version of the dataset included in this package:
+For the Canadian Invertebrates dataset, please cite both the original `Canadian Invertebrates paper`_, and the `BarcodeBERT paper`_ which introduced the preprocessing pipeline used for the version of the dataset included in this package:
 
 .. code-block:: bibtex
 
@@ -474,7 +474,7 @@ For the Canadian Invertebrates dataset, please cite both the original `Canadian 
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
 .. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
-.. _Canadian Invertebrates 1.5M paper: https://doi.org/10.1038/s41597-019-0320-2
+.. _Canadian Invertebrates paper: https://doi.org/10.1038/s41597-019-0320-2
 .. _BS1M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN1M
 .. _BS5M-class: https://bioscan-dataset.readthedocs.io/en/stable/api.html#bioscan_dataset.BIOSCAN5M
 .. _CLIBD paper: https://arxiv.org/abs/2405.17537

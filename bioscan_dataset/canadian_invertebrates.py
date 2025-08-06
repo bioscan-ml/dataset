@@ -128,7 +128,7 @@ def load_canadian_invertebrates_metadata(
     **kwargs,
 ) -> pandas.DataFrame:
     r"""
-    Load Canadian Invertebrates 1.5M metadata from its CSV file and prepare it for training.
+    Load Canadian Invertebrates dataset metadata from its CSV file and prepare it for training.
 
     Parameters
     ----------
@@ -144,7 +144,7 @@ def load_canadian_invertebrates_metadata(
             (`Elbrecht et al., 2019 <https://doi.org/10.7717/peerj.7745>`_),
             and an additional two base pairs are included as a buffer for the
             primer sequence.
-            Although the Canadian Invertebrates 1.5M dataset itself contains longer sequences,
+            Although the Canadian Invertebrates dataset itself contains longer sequences,
             characters after the first 660 base pairs are likely to be inaccurate
             reads, and not part of the DNA barcode.
             Hence we recommend limiting the DNA barcode to the first 660 nucleotides.
@@ -240,7 +240,7 @@ load_metadata = load_canadian_invertebrates_metadata
 
 class CanadianInvertebrates(Dataset):
     r"""
-    `Canadian Invertebrates 1.5M <https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML>`_ Dataset.
+    `Canadian Invertebrates <https://huggingface.co/datasets/bioscan-ml/CanadianInvertebrates-ML>`_ Dataset.
 
     Parameters
     ----------
