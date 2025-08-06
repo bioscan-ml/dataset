@@ -425,7 +425,7 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
         url={https://openreview.net/forum?id=d5HUnyByAI},
     }
 
-`Canadian Invertebrates 1.5M <Canadian Invertebrates 1.5M paper_>`_:
+For the Canadian Invertebrates dataset, please cite both the original `Canadian Invertebrates 1.5M paper`_, and the `BarcodeBERT paper`_ which introduced the preprocessing pipeline used for the version of the dataset included in this package:
 
 .. code-block:: bibtex
 
@@ -454,6 +454,23 @@ If you use the CLIBD partitioning scheme for BIOSCAN-1M, please also consider ci
         doi={10.1038/s41597-019-0320-2},
     }
 
+    @article{BarcodeBERT,
+        title={{BarcodeBERT}: Transformers for Biodiversity Analysis},
+        author={Pablo Millan~Arias and Niousha Sadjadi and Monireh Safari
+            and ZeMing Gong and Austin T. Wang and Joakim Bruslund Haurum
+            and Iuliia Zarubiieva and Dirk Steinke and Lila Kari and Angel X. Chang
+            and Scott C. Lowe and Graham W. Taylor
+        },
+        journal={arXiv preprint arXiv:2311.02401},
+        year={2023},
+        eprint={2311.02401},
+        archivePrefix={arXiv},
+        primaryClass={cs.LG},
+        doi={10.48550/arXiv.2311.02401},
+        url={https://arxiv.org/abs/2311.02401},
+    }
+
+.. _BarcodeBERT paper: https://arxiv.org/abs/2311.02401
 .. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
 .. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
