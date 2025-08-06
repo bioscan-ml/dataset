@@ -259,11 +259,9 @@ class CanadianInvertebrates(Dataset):
         comprised of the pretraining and training partitions.
 
     modality : str or Iterable[str], default=("dna")
-        Which data modalities to use. One of, or a list of:
-        ``"dna"``, or any column name in the metadata CSV file.
-        Examples of column names which may be of interest are
-        ``"dna_bin"`` (DNA barcode of the specimen),
-        ``"genus"`` (genus name of the specimen).
+        Which data modalities to use. This dataset only has one modality: the
+        DNA barcode. The ``modality`` parameter is only present to provide a consistent
+        interface with the other dataset classes in this package.
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
