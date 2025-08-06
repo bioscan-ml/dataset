@@ -157,6 +157,15 @@ def load_canadian_invertebrates_metadata(
         the length specified by ``max_nucleotides`` and stripping trailing Ns.
         If ``False`` (default) no reduction is performed.
 
+        .. note::
+            This version of the dataset is already reduced to one sample per full-length
+            barcode compared to the original Canadian Invertebrates 1.5M dataset
+            (`deWaard et al., 2019 <https://zenodo.org/records/3497622>`_).
+            Even with the parameter ``reduce_repeated_barcodes=False``, the dataset
+            will have at most 965,289 samples, and not 1.5M.
+            For more details on the dataset preprocessing steps, see
+            `Millan Arias et al. (2024) <https://arxiv.org/abs/2311.02401>`_.
+
     split : str, optional
         The dataset partition to return.
         One of:
@@ -265,6 +274,19 @@ class CanadianInvertebrates(Dataset):
 
     reduce_repeated_barcodes : bool, default=False
         Whether to reduce the dataset to only one sample per barcode.
+        If ``True``, duplicated barcodes are removed after truncating the barcodes to
+        the length specified by ``max_nucleotides`` and stripping trailing Ns.
+        If ``False`` (default) no additional reduction of repeated barcodes is
+        performed.
+
+        .. note::
+            This version of the dataset is already reduced to one sample per full-length
+            barcode compared to the original Canadian Invertebrates 1.5M dataset
+            (`deWaard et al., 2019 <https://zenodo.org/records/3497622>`_).
+            Even with the parameter ``reduce_repeated_barcodes=False``, the dataset
+            will have at most 965,289 samples, and not 1.5M.
+            For more details on the dataset preprocessing steps, see
+            `Millan Arias et al. (2024) <https://arxiv.org/abs/2311.02401>`_.
 
     max_nucleotides : int, default=660
         Maximum number of nucleotides to keep in the DNA barcode.
