@@ -1,7 +1,7 @@
 API Reference
 =============
 
-We provide :class:`~bioscan_dataset.BIOSCAN1M`, :class:`~bioscan_dataset.BIOSCAN5M`, and :class:`~bioscan_dataset.CanadianInvertebrates` classes to load the respective `BIOSCAN-1M <BIOSCAN-1M paper_>`_, `BIOSCAN-5M <BIOSCAN-5M paper_>`_, and `Canadian Invertebrates 1.5M <Canadian Invertebrates 1.5M paper_>`_ datasets for use within PyTorch.
+We provide :class:`~bioscan_dataset.BIOSCAN1M`, :class:`~bioscan_dataset.BIOSCAN5M`, and :class:`~bioscan_dataset.CanadianInvertebrates` classes to load the respective `BIOSCAN-1M <BIOSCAN-1M paper_>`_, `BIOSCAN-5M <BIOSCAN-5M paper_>`_, and `Canadian Invertebrates <Canadian Invertebrates 1.5M paper_>`_ datasets for use within PyTorch.
 These classes are subclasses of :class:`torch.utils.data.Dataset` and are designed to be used with PyTorch's :class:`~torch.utils.data.DataLoader` for batching and model training.
 
 General usage instructions for :class:`~bioscan_dataset.BIOSCAN1M`, :class:`~bioscan_dataset.BIOSCAN5M`, and :class:`~bioscan_dataset.CanadianInvertebrates` are provided in our :doc:`usage <index>` guide.
@@ -40,8 +40,8 @@ BIOSCAN-5M Dataset
 
 .. autofunction:: bioscan_dataset.load_bioscan5m_metadata
 
-Canadian Invertebrates 1.5M Dataset
------------------------------------
+Canadian Invertebrates Dataset
+------------------------------
 
 .. autoclass:: bioscan_dataset.CanadianInvertebrates
     :members:
