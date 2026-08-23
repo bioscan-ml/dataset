@@ -471,7 +471,7 @@ For the Canadian Invertebrates dataset, please cite both the original `Canadian 
     }
 
 .. _BarcodeBERT paper: https://arxiv.org/abs/2311.02401
-.. _BIOSCAN Browser: https://bioscan-browser.netlify.app/
+.. _BIOSCAN Browser: https://browser.bioscan-ml.org/
 .. _BIOSCAN-1M paper: https://papers.nips.cc/paper_files/paper/2023/hash/87dbbdc3a685a97ad28489a1d57c45c1-Abstract-Datasets_and_Benchmarks.html
 .. _BIOSCAN-5M paper: https://arxiv.org/abs/2406.12723
 .. _Canadian Invertebrates paper: https://doi.org/10.1038/s41597-019-0320-2
